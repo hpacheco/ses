@@ -17,7 +17,7 @@ One of the most prominent Valgrind tools is the Memcheck memory error detector, 
 
 Consider a simple SARD example vulnerable C program found [here](c/SARD-testsuite-100/000/149/079/scpy7-bad.c). 
 
-```
+```C
 #define	MAXSIZE		40
 void
 test(char *str)
