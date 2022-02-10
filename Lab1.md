@@ -35,7 +35,7 @@ test(char *str)
 
 This program allocates 40 bytes of heap memory for a buffer, to which it comes some input `str`. There is a likely heap buffer overflow vulnerability, if the size of `str` is larger than 40 (the size of `buf`), which may lead to an exploit.
 If we compile and run this program with a slightly larger input, however:
-```
+```bash
 $ gcc scpy7-bad.c
 $ /a.out aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa             
 result: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
