@@ -1,0 +1,828 @@
+<?xml version="1.0" encoding="utf-8"?>
+<container>
+  <testcase id="149044" type="Source Code" status="Deprecated" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o Format_string_problem-good Format_string_problem-good.c" author="SecureSoftware, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[Format string problems occur when a user has the ability to control or write completely the format string used to format data in the printf style family of C/C++ functions (fixed).]]></description>
+    <association type="pair" testcaseid="149043"/>
+    <association type="replaced" testcaseid="149238"/>
+    <file path="000/149/044/Format_string_problem-good.c" language="C" size="967" checksum="4a47438dcc064bfb4716b65e3f6ed0da949a193d">
+      <fix line="28" name="CWE-134: Uncontrolled Format String"/>
+    </file>
+  </testcase>
+  <testcase id="149046" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o fmt-good fmt-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A printf is called with a static format string.]]></description>
+    <association type="pair" testcaseid="149045"/>
+    <association type="replacing" testcaseid="1556"/>
+    <file path="000/149/046/fmt-good.c" language="C" size="406" checksum="8b2f7603c6af70b46dba6d2d0510d8a3dfc4e376">
+      <fix line="15" name="CWE-134: Uncontrolled Format String"/>
+    </file>
+  </testcase>
+  <testcase id="149048" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o fmt-good fmt-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A syslog is called with a static format string.]]></description>
+    <association type="pair" testcaseid="149047"/>
+    <association type="replacing" testcaseid="1558"/>
+    <file path="000/149/048/fmt-good.c" language="C" size="697" checksum="5c43a83c564affe93b1f2140b288710a83f04eff">
+      <fix line="27" name="CWE-134: Uncontrolled Format String"/>
+    </file>
+  </testcase>
+  <testcase id="149050" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o mem-good mem-good.c" author="PLOVER, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A malloc-ed data is freed only once.]]></description>
+    <association type="pair" testcaseid="149049"/>
+    <file path="000/149/050/mem-good.c" language="C" size="446" checksum="e7f4cc22302269e5c2c3707e6d99d5e4f8501f9a">
+      <fix line="21" name="CWE-415: Double Free"/>
+    </file>
+  </testcase>
+  <testcase id="149052" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o race-good race-good.c" author="PLOVER, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A file is accessed multiple times by its file descriptor in a publically accessible directory. A race condition does not exist between the accesses where an attacker cannot replace the file referenced by the name.]]></description>
+    <association type="pair" testcaseid="149051"/>
+    <file path="000/149/052/race-good.c" language="C" size="680" checksum="3e496ca9b4d5a2188dbd5393f06a4926330a00f0">
+      <fix line="24" name="CWE-367: Time-of-check Time-of-use (TOCTOU) Race Condition"/>
+    </file>
+  </testcase>
+  <testcase id="149054" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o tain-good tain-good.c" author="PLOVER, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A system() is called with user-provided data but the data is strictly scrutinized first.]]></description>
+    <association type="pair" testcaseid="149053"/>
+    <association type="replacing" testcaseid="1646"/>
+    <file path="000/149/054/tain-good.c" language="C" size="721" checksum="7c8900aed2f74747b4022a54c88a507c04edb0e0">
+      <fix line="33" name="CWE-078: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"/>
+    </file>
+  </testcase>
+  <testcase id="149056" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o ahdec1-good ahdec1-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A string decode function properly checks for termination and no buffer overflow occurs.]]></description>
+    <association type="pair" testcaseid="149055"/>
+    <association type="replacing" testcaseid="1545"/>
+    <file path="000/149/056/ahdec1-good.c" language="C" size="1923" checksum="0787cb7b69738a9e5acefb79c1d18ab49616024e">
+      <fix line="59" name="CWE-121: Stack-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149058" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o ahgets1-good ahgets1-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[An ad hoc gets with bounds check does not allow a stack buffer to be overrun.]]></description>
+    <association type="pair" testcaseid="149057"/>
+    <association type="replacing" testcaseid="1547"/>
+    <file path="000/149/058/ahgets1-good.c" language="C" size="1475" checksum="eaea884a27be58b2b9b9c21d629b243bea3919d7">
+      <fix line="39" name="CWE-121: Stack-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149060" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o ahscpy1-good ahscpy1-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[An ad-hoc string copy with bounds check does not overflows a stack buffer.]]></description>
+    <association type="pair" testcaseid="149059"/>
+    <association type="replacing" testcaseid="1549"/>
+    <file path="000/149/060/ahscpy1-good.c" language="C" size="1504" checksum="3674cd693c6d9cf2f06943a541e1073073e7b803">
+      <fix line="39" name="CWE-121: Stack-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149062" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o fmt3-good fmt3-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A syslog is called with a static format string.]]></description>
+    <association type="pair" testcaseid="149061"/>
+    <association type="replacing" testcaseid="1560"/>
+    <file path="000/149/062/fmt3-good.c" language="C" size="1697" checksum="f1602ef2bd9c0a38313c0548695cab8b0d468b40">
+      <fix line="53" name="CWE-134: Uncontrolled Format String"/>
+    </file>
+  </testcase>
+  <testcase id="149064" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o fmt5-good fmt5-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A printf is called with a static format string. This is not a defect.]]></description>
+    <association type="pair" testcaseid="149063"/>
+    <association type="replacing" testcaseid="1562"/>
+    <file path="000/149/064/fmt5-good.c" language="C" size="1390" checksum="df177e340dedcafe54e7b1ad2e7ab363b93f27d8">
+      <fix line="33" name="CWE-134: Uncontrolled Format String"/>
+    </file>
+  </testcase>
+  <testcase id="149066" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o gets1-good gets1-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[An fgets is used in place of gets with a proper bounds check.]]></description>
+    <association type="pair" testcaseid="149065"/>
+    <association type="replacing" testcaseid="1564"/>
+    <file path="000/149/066/gets1-good.c" language="C" size="1370" checksum="124583ea1110a7cb1a69ec91396378dbabcf0ea4">
+      <fix line="37" name="CWE-121: Stack-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149068" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o gets2-good gets2-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[An fgets is called with a correct bound.]]></description>
+    <association type="pair" testcaseid="149067"/>
+    <association type="replacing" testcaseid="1566"/>
+    <file path="000/149/068/gets2-good.c" language="C" size="1326" checksum="eeecbdc12d3ac4b78d2e1b4fa05423cd9f90d3ea">
+      <fix line="37" name="CWE-121: Stack-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149070" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o into2-good into2-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[Integer overflow results in a short malloc and an overflow. A guard is put in place to protect against the overflow.]]></description>
+    <association type="pair" testcaseid="149069"/>
+    <association type="replacing" testcaseid="1574"/>
+    <file path="000/149/070/into2-good.c" language="C" size="1798" checksum="27cdb8fadf422f836ba790c43f95b0faf8309a9a">
+      <fix line="41" name="CWE-122: Heap-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149072" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o mem1-good mem1-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A malloc-ed data is freed.]]></description>
+    <association type="pair" testcaseid="149071"/>
+    <association type="replacing" testcaseid="1586"/>
+    <file path="000/149/072/mem1-good.c" language="C" size="1329" checksum="5157fb336c9021588b67d0892e2c2fb3185c791b">
+      <fix line="38" name="CWE-401: Improper Release of Memory Before Removing Last Reference ('Memory Leak')"/>
+    </file>
+  </testcase>
+  <testcase id="149074" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o mem2-good mem2-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A malloc-ed data is freed in the caller.]]></description>
+    <association type="pair" testcaseid="149073"/>
+    <association type="replacing" testcaseid="1589"/>
+    <file path="000/149/074/mem2-good.c" language="C" size="1371" checksum="67c801d2f095a092734e9faa9865e2de1de6f74e">
+      <fix line="49" name="CWE-401: Improper Release of Memory Before Removing Last Reference ('Memory Leak')"/>
+    </file>
+  </testcase>
+  <testcase id="149076" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o mem3-good mem3-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A malloc-ed data is freed only once.]]></description>
+    <association type="pair" testcaseid="149075"/>
+    <association type="replacing" testcaseid="1591"/>
+    <file path="000/149/076/mem3-good.c" language="C" size="1365" checksum="c184585518db896fdd0695394d391eafb2e4baa7">
+      <fix line="51" name="CWE-415: Double Free"/>
+    </file>
+  </testcase>
+  <testcase id="149078" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o scpy2-good scpy2-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A strcpy does not overflow a stack buffer because a check is made to avoid an overflow condition.]]></description>
+    <association type="pair" testcaseid="149077"/>
+    <association type="replacing" testcaseid="1602"/>
+    <file path="000/149/078/scpy2-good.c" language="C" size="1511" checksum="840f64111860755a786ec28bec26b8cf903a461e">
+      <fix line="40" name="CWE-121: Stack-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149080" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o scpy7-good scpy7-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A length check is made before strcpy, avoiding heap buffer overflow.]]></description>
+    <association type="pair" testcaseid="149079"/>
+    <file path="000/149/080/scpy7-good.c" language="C" size="1501" checksum="12c3b21992968ebdcd57cde37374cd053fb6eaee">
+      <fix line="43" name="CWE-122: Heap-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149082" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o scpy8-good scpy8-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A strncpy safely copies a string into a heap buffer.]]></description>
+    <association type="pair" testcaseid="149081"/>
+    <association type="replacing" testcaseid="1613"/>
+    <file path="000/149/082/scpy8-good.c" language="C" size="1492" checksum="1dcbc96efed69d55edf248f0e2364c1a49957a4c">
+      <fix line="41" name="CWE-122: Heap-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149084" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o scpy9-good scpy9-good.c" author="Fortify Software, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[A strcpy is used to copy a string into a heap buffer. The caller shortens the string to prevent a buffer overflow from occuring.]]></description>
+    <association type="pair" testcaseid="149083"/>
+    <association type="replacing" testcaseid="1615"/>
+    <file path="000/149/084/scpy9-good.c" language="C" size="1701" checksum="4534c2afff0684602eb63efc341dc677ea83358a">
+      <fix line="62" name="CWE-122: Heap-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149086" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o heapinspection-good heapinspection-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[Test if tool can detect a heap inspection vulnerability (fixed).]]></description>
+    <association type="pair" testcaseid="149085"/>
+    <file path="000/149/086/heapinspection-good.c" language="C" size="1685" checksum="15529b68cfda56a8b9a593b506e663264996bff5">
+      <fix line="54" name="CWE-244: Improper Clearing of Heap Memory Before Release ('Heap Inspection')"/>
+    </file>
+  </testcase>
+  <testcase id="149088" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o stack_overflow-good stack_overflow-good.c" author="Redge Bartholomew, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a Stack-based Buffer Overflow.]]></description>
+    <association type="pair" testcaseid="149087"/>
+    <file path="000/149/088/stack_overflow-good.c" language="C" size="268" checksum="c459efac86e198e443c815a7b1b7dd023938ec23">
+      <fix line="9" name="CWE-121: Stack-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149090" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o uninitialized_variable-good uninitialized_variable-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[Test of tool ability to identify use of an uninitialized variable (fixed).]]></description>
+    <association type="pair" testcaseid="149089"/>
+    <file path="000/149/090/uninitialized_variable-good.c" language="C" size="749" checksum="5c97e7e477fcb84bbb25de6320096c1d017230b5">
+      <fix line="13" name="CWE-457: Use of Uninitialized Variable"/>
+    </file>
+  </testcase>
+  <testcase id="149092" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o Unintentional_pointer_scaling-good Unintentional_pointer_scaling-good.c" author="CLASP/SecureSoftware, Paul E. Black, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[Correctly refer to the expected memory address due to the semantics of when math operations are implicitly scaled.]]></description>
+    <association type="pair" testcaseid="149091"/>
+    <file path="000/149/092/Unintentional_pointer_scaling-good.c" language="C" size="315" checksum="49d8dfcba0173871939d9779c9aeaf57000f9c62">
+      <fix line="13" name="CWE-468: Incorrect Pointer Scaling"/>
+    </file>
+  </testcase>
+  <testcase id="149094" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o xss_basic-good xss_basic-good.c cgic.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="4" testsuiteid="101">
+    <description><![CDATA[The test case avoids a Cross-Site Scripting of a CGI program in C that takes the arguments and print it out.]]></description>
+    <association type="pair" testcaseid="149093"/>
+    <association type="replacing" testcaseid="1795"/>
+    <file path="000/149/094/xss_basic-good.c" language="C" size="1250" checksum="e3cf28ad9db2e6102c2d1bb4afc9b303c02cb579">
+      <fix line="35" name="CWE-080: Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS)"/>
+    </file>
+    <file path="000/149/094/cgic.h" language="C" size="7403" checksum="54c74410207a8cea2a8e09b70fd6b8592a93bfc1"/>
+    <file path="000/149/094/license.txt" size="2653" checksum="97c0205bd12cf7f99d2ca4c8d3c995e74553a937"/>
+    <file path="000/149/094/cgic.c" language="C" size="55735" checksum="d23b1a7f4b9154bd2751821c238f059616183c9b"/>
+  </testcase>
+  <testcase id="149096" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o sql_select-good sql_select-good.c -lmysqlclient (Requires mysql library for mysql.h in order to compile.)" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The SQL Injection is not possible because the arguments are validated before the MySQL query.]]></description>
+    <association type="pair" testcaseid="149095"/>
+    <association type="replacing" testcaseid="1797"/>
+    <file path="000/149/096/sql_select-good.c" language="C" size="3905" checksum="24fc4756e7ac2798cedf015f4446a644396e1299">
+      <fix line="136" name="CWE-089: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"/>
+    </file>
+  </testcase>
+  <testcase id="149098" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o sql_array-good sql_array-good.c -lmysqlclient (Requires mysql library for mysql.h in order to compile.)" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The SQL Injection is not possible because the arguments are validated.]]></description>
+    <association type="pair" testcaseid="149097"/>
+    <association type="replacing" testcaseid="1799"/>
+    <file path="000/149/098/sql_array-good.c" language="C" size="4014" checksum="7087d78c4e63d9932e3d002278c22063e862f56a">
+      <fix line="138" name="CWE-089: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"/>
+    </file>
+  </testcase>
+  <testcase id="149100" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o sql_scope-good sql_scope-good.c -lmysqlclient (Requires mysql library for mysql.h in order to compile.)" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The SQL Injection is not possible because the arguments are validated. The code complexity is in the call of another function to perform the MySQL query.]]></description>
+    <association type="pair" testcaseid="149099"/>
+    <association type="replacing" testcaseid="1801"/>
+    <file path="000/149/100/sql_scope-good.c" language="C" size="4032" checksum="d5a667afc44b72364a7d88ac84714e7c1f5c1e34">
+      <fix line="144" name="CWE-089: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"/>
+    </file>
+  </testcase>
+  <testcase id="149102" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o race_basic-good race_basic-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a Time-of-Check-Time-of-Use (TOCTOU) race condition between checking access permissions and then opening and writing to the file.]]></description>
+    <association type="pair" testcaseid="149101"/>
+    <association type="replacing" testcaseid="1807"/>
+    <file path="000/149/102/race_basic-good.c" language="C" size="1918" checksum="329c8d7e0b3570e3d0ad5be2dd169407d238ff33">
+      <fix line="29" name="CWE-367: Time-of-check Time-of-use (TOCTOU) Race Condition"/>
+    </file>
+  </testcase>
+  <testcase id="149104" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o race_fctptr-good race_fctptr-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a Time-of-Check-Time-of-Use (TOCTOU) race condition between checking access permissions and then opening and writing to the file using random calls to function pointers.]]></description>
+    <association type="pair" testcaseid="149103"/>
+    <association type="replacing" testcaseid="1809"/>
+    <file path="000/149/104/race_fctptr-good.c" language="C" size="2819" checksum="76bdf1ceb776aa3e7bae66d959dbc1900485d774">
+      <fix line="72" name="CWE-367: Time-of-check Time-of-use (TOCTOU) Race Condition"/>
+    </file>
+  </testcase>
+  <testcase id="149106" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o Use_of_hardcoded_password1-good Use_of_hardcoded_password1-good.c -lpam (Requires pam library for pam_appl.h in order to compile, please find a suitable version of PAM for your environment.)" author="NIST, SecureSoftware/CLASP, Alexander Hoole, Aurelien Delaitre" numberOfFiles="2" testsuiteid="101">
+    <description><![CDATA[The test case exposes a password which is not hard-coded in the source code.]]></description>
+    <association type="pair" testcaseid="149105"/>
+    <file path="000/149/106/Use_of_hardcoded_password1-good.c" language="C" size="3516" checksum="68c95b4ad079a65cfd7c1c9b57bed5a980107e1f">
+      <fix line="133" name="CWE-259: Use of Hard-coded Password"/>
+    </file>
+    <file path="000/149/106/pam.d/testcase149106" size="104" checksum="68ee73bac08866b64d5fa8108cba892714926ae7"/>
+  </testcase>
+  <testcase id="149108" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o dble_free_local_flow-good dble_free_local_flow-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test case avoids a double free in a local control flow complexity.]]></description>
+    <association type="pair" testcaseid="149107"/>
+    <association type="replacing" testcaseid="1828"/>
+    <file path="000/149/108/dble_free_local_flow-good.c" language="C" size="1664" checksum="9845668a653942031e2c3f98491ebdb5059703a6">
+      <fix line="61" name="CWE-415: Double Free"/>
+    </file>
+  </testcase>
+  <testcase id="149110" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o dble_free_loop-good dble_free_loop-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test case avoids a double free in a for loop structure.]]></description>
+    <association type="pair" testcaseid="149109"/>
+    <association type="replacing" testcaseid="1830"/>
+    <file path="000/149/110/dble_free_loop-good.c" language="C" size="1455" checksum="0aacbe59d08edf234b9be90aea6450e95a48e535">
+      <fix line="54" name="CWE-415: Double Free"/>
+    </file>
+  </testcase>
+  <testcase id="149112" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o fmt_string_local_container-good fmt_string_local_container-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test case avoids a format string vulnerability with a container code complexity.]]></description>
+    <association type="pair" testcaseid="149111"/>
+    <association type="replacing" testcaseid="1832"/>
+    <file path="000/149/112/fmt_string_local_container-good.c" language="C" size="1038" checksum="e0ea15940752941cbe65ffe92c3eb29ee1935557">
+      <fix line="30" name="CWE-134: Uncontrolled Format String"/>
+    </file>
+  </testcase>
+  <testcase id="149114" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o fmt_string_local_control_flow-good fmt_string_local_control_flow-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test case avoids a format string vulnerability in a local control flow; here, we use function pointer for control flow.]]></description>
+    <association type="pair" testcaseid="149113"/>
+    <association type="replacing" testcaseid="1834"/>
+    <file path="000/149/114/fmt_string_local_control_flow-good.c" language="C" size="1000" checksum="de7b3bb73e3eb793920d202d18b81918d99a29fc">
+      <fix line="21" name="CWE-134: Uncontrolled Format String"/>
+    </file>
+  </testcase>
+  <testcase id="149116" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o hardcoded_pass_buffer-good hardcoded_pass_buffer-good.c -lpam (Requires pam library for pam_appl.h in order to compile, please find a suitable version of PAM for your environment.)" author="NIST, Romain Gaucher, Alexander Hoole, Aurelien Delaitre" numberOfFiles="2" testsuiteid="101">
+    <description><![CDATA[The test case shows hard-coded passwords are not used; these passwords are in a array.]]></description>
+    <association type="pair" testcaseid="149115"/>
+    <association type="replacing" testcaseid="2130"/>
+    <file path="000/149/116/pam.d/testcase149116" size="104" checksum="68ee73bac08866b64d5fa8108cba892714926ae7"/>
+    <file path="000/149/116/hardcoded_pass_buffer-good.c" language="C" size="3835" checksum="4dc7538b26109ab7d7f8a04a314c2c1dbe5526c7">
+      <fix line="151" name="CWE-259: Use of Hard-coded Password"/>
+    </file>
+  </testcase>
+  <testcase id="149118" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o hardcoded_pass_container-good hardcoded_pass_container-good.c -lpam (Requires pam library for pam_appl.h in order to compile, please find a suitable version of PAM for your environment.)" author="NIST, Romain Gaucher, Alexander Hoole, Aurelien Delaitre" numberOfFiles="2" testsuiteid="101">
+    <description><![CDATA[The test case exposes a password which is not hard-coded in the source code.]]></description>
+    <association type="pair" testcaseid="149117"/>
+    <association type="replacing" testcaseid="2131"/>
+    <file path="000/149/118/pam.d/testcase149118" size="104" checksum="68ee73bac08866b64d5fa8108cba892714926ae7"/>
+    <file path="000/149/118/hardcoded_pass_container-good.c" language="C" size="3698" checksum="f82db5ebf7b1e5adff2cfccc06a199d890536c33">
+      <fix line="145" name="CWE-259: Use of Hard-coded Password"/>
+    </file>
+  </testcase>
+  <testcase id="149120" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o hardcoded_pass_local_flow-good hardcoded_pass_local_flow-good.c -lpam (Requires pam library for pam_appl.h in order to compile, please find a suitable version of PAM for your environment.)" author="NIST, Romain Gaucher, Alexander Hoole, Aurelien Delaitre" numberOfFiles="2" testsuiteid="101">
+    <description><![CDATA[This test case uses PAM to avoid hard-coded password in a local control flow.]]></description>
+    <association type="pair" testcaseid="149119"/>
+    <association type="replacing" testcaseid="2132"/>
+    <file path="000/149/120/pam.d/testcase149120" size="104" checksum="68ee73bac08866b64d5fa8108cba892714926ae7"/>
+    <file path="000/149/120/hardcoded_pass_local_flow-good.c" language="C" size="3551" checksum="a417f1c31c2b84fcf6f5ea93a5458417f25c8b3d">
+      <fix line="138" name="CWE-259: Use of Hard-coded Password"/>
+    </file>
+  </testcase>
+  <testcase id="149122" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o hardcoded_pass_loop-good hardcoded_pass_loop-good.c -lpam (Requires pam library for pam_appl.h in order to compile, please find a suitable version of PAM for your environment.)" author="NIST, Romain Gaucher, Alexander Hoole, Aurelien Delaitre" numberOfFiles="2" testsuiteid="101">
+    <description><![CDATA[This test case uses PAM to avoid hard coded password in a for loop structure.]]></description>
+    <association type="pair" testcaseid="149121"/>
+    <association type="replacing" testcaseid="2133"/>
+    <file path="000/149/122/hardcoded_pass_loop-good.c" language="C" size="3660" checksum="52c2395eee1d314d779dd42745b1c9cc8d156ffe">
+      <fix line="141" name="CWE-259: Use of Hard-coded Password"/>
+    </file>
+    <file path="000/149/122/pam.d/testcase149122" size="104" checksum="68ee73bac08866b64d5fa8108cba892714926ae7"/>
+  </testcase>
+  <testcase id="149124" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o heap_overflow_array-good heap_overflow_array-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids Heap Overflow with an array complexity.]]></description>
+    <association type="pair" testcaseid="149123"/>
+    <association type="replacing" testcaseid="1844"/>
+    <file path="000/149/124/heap_overflow_array-good.c" language="C" size="1006" checksum="d3ac5d52aca648149b881c93712ab1a2e4eb16cc">
+      <fix line="27" name="CWE-122: Heap-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149126" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o heap_overflow_cplx-good heap_overflow_cplx-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test case avoids Heap Overflow with an array index complexity.]]></description>
+    <association type="pair" testcaseid="149125"/>
+    <association type="replacing" testcaseid="2148"/>
+    <file path="000/149/126/heap_overflow_cplx-good.c" language="C" size="1704" checksum="e592d9879de6a2aa01bdaf7b9af03cc8c4d26c48">
+      <fix line="68" name="CWE-122: Heap-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149128" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o improper_null_term_basic-good improper_null_term_basic-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test cases avoids an improper null termination.]]></description>
+    <association type="pair" testcaseid="149127"/>
+    <association type="replacing" testcaseid="1856"/>
+    <file path="000/149/128/improper_null_term_basic-good.c" language="C" size="978" checksum="198c96160179bd72d1ce617903e7c10cf0215a59">
+      <fix line="25" name="CWE-170: Improper Null Termination"/>
+    </file>
+  </testcase>
+  <testcase id="149130" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o improper_null_term_basic_@alias-good improper_null_term_basic_@alias-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids an improper null termination with an address alias level as code complexity.]]></description>
+    <association type="pair" testcaseid="149129"/>
+    <association type="replacing" testcaseid="1851"/>
+    <file path="000/149/130/improper_null_term_basic_@alias-good.c" language="C" size="985" checksum="4268f59164806fa6d6c0dc17772d3be52bc030d2">
+      <fix line="25" name="CWE-170: Improper Null Termination"/>
+    </file>
+  </testcase>
+  <testcase id="149132" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o improper_null_term_basic_container-good improper_null_term_basic_container-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids an improper null termination in a string which is in a structure.]]></description>
+    <association type="pair" testcaseid="149131"/>
+    <association type="replacing" testcaseid="1855"/>
+    <file path="000/149/132/improper_null_term_basic_container-good.c" language="C" size="1080" checksum="b5d01f22c1e138348c755212f82a472279490a00">
+      <fix line="31" name="CWE-170: Improper Null Termination"/>
+    </file>
+  </testcase>
+  <testcase id="149134" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o improper_null_term_basic_taint-good improper_null_term_basic_taint-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test case avoids an improper null termination which occurs when argv contains tainted data.]]></description>
+    <association type="pair" testcaseid="149133"/>
+    <association type="replacing" testcaseid="1858"/>
+    <file path="000/149/134/improper_null_term_basic_taint-good.c" language="C" size="971" checksum="606003ebaafcbf38af04b128bec5117180349c0e">
+      <fix line="26" name="CWE-170: Improper Null Termination"/>
+    </file>
+  </testcase>
+  <testcase id="149136" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o leftover_debug-good leftover_debug-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a leftover debug weakness.]]></description>
+    <association type="pair" testcaseid="149135"/>
+    <association type="replacing" testcaseid="1862"/>
+    <file path="000/149/136/leftover_debug-good.c" language="C" size="1497" checksum="55e17c12b857f29010ae3ede8a4d47a2bdcec1b5">
+      <fix line="43" name="CWE-489: Leftover Debug Code"/>
+    </file>
+  </testcase>
+  <testcase id="149138" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o misused_string_fct-good misused_string_fct-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a buffer overflow by using an appropriate function.]]></description>
+    <association type="pair" testcaseid="149137"/>
+    <association type="replacing" testcaseid="1866"/>
+    <file path="000/149/138/misused_string_fct-good.c" language="C" size="1006" checksum="18408cbd4499f5c1ac84ba08100c7c00ba5c2be4">
+      <fix line="24" name="CWE-251: Often Misused: String Management"/>
+    </file>
+  </testcase>
+  <testcase id="149140" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o misused_string_fct_@alias-good misused_string_fct_@alias-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a buffer overflow by using an appropriate function with an address alias level code complexity.]]></description>
+    <association type="pair" testcaseid="149139"/>
+    <association type="replacing" testcaseid="1868"/>
+    <file path="000/149/140/misused_string_fct_@alias-good.c" language="C" size="1018" checksum="75688eaa2edd55898f6a08c5830ff44c8666863c">
+      <fix line="24" name="CWE-251: Often Misused: String Management"/>
+    </file>
+  </testcase>
+  <testcase id="149142" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o misused_string_fct_container-good misused_string_fct_container-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a buffer overflow by using an appropriate function with a string which is in a structure.]]></description>
+    <association type="pair" testcaseid="149141"/>
+    <association type="replacing" testcaseid="1870"/>
+    <file path="000/149/142/misused_string_fct_container-good.c" language="C" size="1054" checksum="02513170a86e14923fa42301cb0abb5d2b232b97">
+      <fix line="28" name="CWE-251: Often Misused: String Management"/>
+    </file>
+  </testcase>
+  <testcase id="149144" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o misused_string_fct_scope-good misused_string_fct_scope-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a buffer overflow by using an appropriate function with scope complexity.]]></description>
+    <association type="pair" testcaseid="149143"/>
+    <association type="replacing" testcaseid="1872"/>
+    <file path="000/149/144/misused_string_fct_scope-good.c" language="C" size="1028" checksum="2a0f299369dcd3f7cbc8277abdbdaaed0a9c6bea">
+      <fix line="21" name="CWE-251: Often Misused: String Management"/>
+    </file>
+  </testcase>
+  <testcase id="149146" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o misused_string_fct_taint-good misused_string_fct_taint-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a buffer overflow by using an appropriate function when argv contains tainted data.]]></description>
+    <association type="pair" testcaseid="149145"/>
+    <association type="replacing" testcaseid="1874"/>
+    <file path="000/149/146/misused_string_fct_taint-good.c" language="C" size="969" checksum="8e410ffdca1a5b21d1ca675213a008a4ab0cb54a">
+      <fix line="25" name="CWE-251: Often Misused: String Management"/>
+    </file>
+  </testcase>
+  <testcase id="149148" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o null_deref_@alias-good null_deref_@alias-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a null dereference with an address alias level as code complexity.]]></description>
+    <association type="pair" testcaseid="149147"/>
+    <association type="replacing" testcaseid="1876"/>
+    <file path="000/149/148/null_deref_@alias-good.c" language="C" size="870" checksum="cc1d8e67d4b78a2b8f19f730d9dee023dd7836ac">
+      <fix line="21" name="CWE-476: NULL Pointer Dereference"/>
+    </file>
+  </testcase>
+  <testcase id="149150" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o null_deref_scope-good null_deref_scope-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a null dereference.]]></description>
+    <association type="pair" testcaseid="149149"/>
+    <association type="replacing" testcaseid="1880"/>
+    <file path="000/149/150/null_deref_scope-good.c" language="C" size="872" checksum="5bf9070fa0b67d8fb7a14397ba97b936d0c24eb8">
+      <fix line="18" name="CWE-476: NULL Pointer Dereference"/>
+    </file>
+  </testcase>
+  <testcase id="149152" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o os_cmd_local_flow-good os_cmd_local_flow-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids an OS Command Injection weakness in a local control flow.]]></description>
+    <association type="pair" testcaseid="149151"/>
+    <association type="replacing" testcaseid="2136"/>
+    <file path="000/149/152/os_cmd_local_flow-good.c" language="C" size="1605" checksum="9bde9815371b3c64707e2065dbb5d69b299c7664">
+      <fix line="51" name="CWE-078: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"/>
+    </file>
+  </testcase>
+  <testcase id="149154" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o os_cmd_loop-good os_cmd_loop-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids an OS Command Injection weakness in a loop.]]></description>
+    <association type="pair" testcaseid="149153"/>
+    <association type="replacing" testcaseid="2137"/>
+    <file path="000/149/154/os_cmd_loop-good.c" language="C" size="1571" checksum="d70107bab4cc12d723c84479cea801d93258febb">
+      <fix line="52" name="CWE-078: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"/>
+    </file>
+  </testcase>
+  <testcase id="149156" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o os_cmd_scope-good os_cmd_scope-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids an OS Command Injection in scope complexity.]]></description>
+    <association type="pair" testcaseid="149155"/>
+    <association type="replacing" testcaseid="2138"/>
+    <file path="000/149/156/os_cmd_scope-good.c" language="C" size="1568" checksum="e949deb2da7ee217274842c45eaf0f4dcfc73cc9">
+      <fix line="41" name="CWE-078: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"/>
+    </file>
+  </testcase>
+  <testcase id="149158" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o resource_injection_@alias-good resource_injection_@alias-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a resource injection with an address alias level code complexity.]]></description>
+    <association type="pair" testcaseid="149157"/>
+    <association type="replacing" testcaseid="1896"/>
+    <file path="000/149/158/resource_injection_@alias-good.c" language="C" size="1502" checksum="f668e14614c0f27706bd521bf4e696155d725bae">
+      <fix line="44" name="CWE-099: Improper Control of Resource Identifiers ('Resource Injection')"/>
+    </file>
+  </testcase>
+  <testcase id="149160" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o resource_injection_basic-good resource_injection_basic-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a resource injection.]]></description>
+    <association type="pair" testcaseid="149159"/>
+    <association type="replacing" testcaseid="1898"/>
+    <file path="000/149/160/resource_injection_basic-good.c" language="C" size="1382" checksum="c8d12df893f9fbdbe4c431b3c840f8551648c706">
+      <fix line="41" name="CWE-099: Improper Control of Resource Identifiers ('Resource Injection')"/>
+    </file>
+  </testcase>
+  <testcase id="149162" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o resource_injection_container-good resource_injection_container-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a resource injection with a string which is in a structure.]]></description>
+    <association type="pair" testcaseid="149161"/>
+    <association type="replacing" testcaseid="1900"/>
+    <file path="000/149/162/resource_injection_container-good.c" language="C" size="1584" checksum="933f5fe73c0ccb0c27832c370fa8d9ae8299d18a">
+      <fix line="47" name="CWE-099: Improper Control of Resource Identifiers ('Resource Injection')"/>
+    </file>
+  </testcase>
+  <testcase id="149164" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o resource_injection_scope-good resource_injection_scope-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a resource injection weakness in a scoping context.]]></description>
+    <association type="pair" testcaseid="149163"/>
+    <association type="replacing" testcaseid="1902"/>
+    <file path="000/149/164/resource_injection_scope-good.c" language="C" size="1474" checksum="985ba6ab82a596879f57f0b96f744392f66f265c">
+      <fix line="42" name="CWE-099: Improper Control of Resource Identifiers ('Resource Injection')"/>
+    </file>
+  </testcase>
+  <testcase id="149166" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o stack_overflow_array_length-good stack_overflow_array_length-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a Stack Overflow by fixing a bad array index.]]></description>
+    <association type="pair" testcaseid="149165"/>
+    <association type="replacing" testcaseid="1906"/>
+    <file path="000/149/166/stack_overflow_array_length-good.c" language="C" size="1330" checksum="c658ca6a05eee8169b56564b5aa4c0f5c9779641">
+      <fix line="44" name="CWE-121: Stack-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149168" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o stack_overflow_index_alias-good stack_overflow_index_alias-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a Stack Overflow by fixing a bad array index.]]></description>
+    <association type="pair" testcaseid="149167"/>
+    <association type="replacing" testcaseid="1908"/>
+    <file path="000/149/168/stack_overflow_index_alias-good.c" language="C" size="843" checksum="3ddcfbb52da454c864c3c9472fc837b9aa2da088">
+      <fix line="19" name="CWE-121: Stack-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149170" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o stack_overflow_loop-good stack_overflow_loop-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a Stack Overflow by fixing a bad loop exit condition (and start index).]]></description>
+    <association type="pair" testcaseid="149169"/>
+    <association type="replacing" testcaseid="1910"/>
+    <file path="000/149/170/stack_overflow_loop-good.c" language="C" size="876" checksum="24cfcea281b447db94cbc5a34c0a1b706140f115">
+      <fix line="21" name="CWE-121: Stack-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149172" type="Source Code" status="Deprecated" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o use_after_free_@buffer-good use_after_free_@buffer-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a use of an allocated memory after being freed with an extra allocation and free complexity.]]></description>
+    <association type="pair" testcaseid="149171"/>
+    <association type="replaced" testcaseid="149240"/>
+    <association type="replacing" testcaseid="1914"/>
+    <file path="000/149/172/use_after_free_@buffer-good.c" language="C" size="1046" checksum="cc6476cab5f311569a4ea498d07b476b80602a59">
+      <fix line="29" name="CWE-416: Use After Free"/>
+    </file>
+  </testcase>
+  <testcase id="149174" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o xss_@alias-good xss_@alias-good.c cgic.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="4" testsuiteid="101">
+    <description><![CDATA[The test case avoids a Cross-Site Scripting (XSS) in a C/CGI program with an address alias level code complexity.]]></description>
+    <association type="pair" testcaseid="149173"/>
+    <association type="replacing" testcaseid="1920"/>
+    <file path="000/149/174/cgic.c" language="C" size="55735" checksum="d23b1a7f4b9154bd2751821c238f059616183c9b"/>
+    <file path="000/149/174/cgic.h" language="C" size="7403" checksum="54c74410207a8cea2a8e09b70fd6b8592a93bfc1"/>
+    <file path="000/149/174/xss_@alias-good.c" language="C" size="1243" checksum="cc24ebf817a8652379afa7288322b933b16188e6">
+      <fix line="34" name="CWE-080: Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS)"/>
+    </file>
+    <file path="000/149/174/license.txt" size="2653" checksum="97c0205bd12cf7f99d2ca4c8d3c995e74553a937"/>
+  </testcase>
+  <testcase id="149176" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o xss_container-good xss_container-good.c cgic.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="4" testsuiteid="101">
+    <description><![CDATA[The test case avoids a Cross-Site Scripting (XSS) in a C/CGI program with a string which is in a structure.]]></description>
+    <association type="pair" testcaseid="149175"/>
+    <association type="replacing" testcaseid="1922"/>
+    <file path="000/149/176/cgic.c" language="C" size="55735" checksum="d23b1a7f4b9154bd2751821c238f059616183c9b"/>
+    <file path="000/149/176/cgic.h" language="C" size="7403" checksum="54c74410207a8cea2a8e09b70fd6b8592a93bfc1"/>
+    <file path="000/149/176/license.txt" size="2653" checksum="97c0205bd12cf7f99d2ca4c8d3c995e74553a937"/>
+    <file path="000/149/176/xss_container-good.c" language="C" size="1358" checksum="6614ad5e4358324712fab3668c173503ffc81c2f">
+      <fix line="40" name="CWE-080: Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS)"/>
+    </file>
+  </testcase>
+  <testcase id="149178" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o xss_scope-good xss_scope-good.c cgic.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="4" testsuiteid="101">
+    <description><![CDATA[The test case avoids a Cross-Site Scripting (XSS) in a C/CGI program with scope complexity.]]></description>
+    <association type="pair" testcaseid="149177"/>
+    <association type="replacing" testcaseid="1924"/>
+    <file path="000/149/178/xss_scope-good.c" language="C" size="1282" checksum="daca3401bcc02ce80c74dd5f21fafc6330526781">
+      <fix line="21" name="CWE-080: Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS)"/>
+    </file>
+    <file path="000/149/178/cgic.c" language="C" size="55735" checksum="d23b1a7f4b9154bd2751821c238f059616183c9b"/>
+    <file path="000/149/178/cgic.h" language="C" size="7403" checksum="54c74410207a8cea2a8e09b70fd6b8592a93bfc1"/>
+    <file path="000/149/178/license.txt" size="2653" checksum="97c0205bd12cf7f99d2ca4c8d3c995e74553a937"/>
+  </testcase>
+  <testcase id="149180" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o memory_leak_container-good memory_leak_container-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case prevents a memory leak with a pointer which is in a structure.]]></description>
+    <association type="pair" testcaseid="149179"/>
+    <association type="replacing" testcaseid="1925"/>
+    <file path="000/149/180/memory_leak_container-good.c" language="C" size="1044" checksum="295f7240cb8a6204af6085c506d2390921594e04">
+      <fix line="29" name="CWE-401: Improper Release of Memory Before Removing Last Reference ('Memory Leak')"/>
+    </file>
+  </testcase>
+  <testcase id="149182" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o memory_leak_loop-good memory_leak_loop-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case prevents a memory leak by releasing memory allocated in a loop.]]></description>
+    <association type="pair" testcaseid="149181"/>
+    <association type="replacing" testcaseid="1926"/>
+    <file path="000/149/182/memory_leak_loop-good.c" language="C" size="959" checksum="eed3a46e8aab21d9fa1220711ee95bc2ed86bd45">
+      <fix line="24" name="CWE-401: Improper Release of Memory Before Removing Last Reference ('Memory Leak')"/>
+    </file>
+  </testcase>
+  <testcase id="149184" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o unintentional_pointer_scaling_data-good unintentional_pointer_scaling_data-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case shows a correct pointer scaling.]]></description>
+    <association type="pair" testcaseid="149183"/>
+    <association type="replacing" testcaseid="1927"/>
+    <file path="000/149/184/unintentional_pointer_scaling_data-good.c" language="C" size="894" checksum="2fad9ca5ad8a03bb6f97d5d6017210a760604154">
+      <fix line="21" name="CWE-468: Incorrect Pointer Scaling"/>
+    </file>
+  </testcase>
+  <testcase id="149186" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o unchecked_error_condition-good unchecked_error_condition-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[If we check the return of scanf we know how many parameters have been passed.]]></description>
+    <association type="pair" testcaseid="149185"/>
+    <association type="replacing" testcaseid="1929"/>
+    <file path="000/149/186/unchecked_error_condition-good.c" language="C" size="995" checksum="8e1b9cea56ad17e9c2b622bfde0917ab50c73543">
+      <fix line="23" name="CWE-391: Unchecked Error Condition"/>
+    </file>
+  </testcase>
+  <testcase id="149188" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o sql_injection_loop-good sql_injection_loop-good.c -lmysqlclient (Requires mysql library for mysql.h in order to compile.)" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The SQL Injection is not possible because the arguments are validated before the MySQL query.]]></description>
+    <association type="pair" testcaseid="149187"/>
+    <association type="replacing" testcaseid="1930"/>
+    <file path="000/149/188/sql_injection_loop-good.c" language="C" size="4195" checksum="8188987f39d6277d474a429a718274d0d9caa5e9">
+      <fix line="138" name="CWE-089: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')"/>
+    </file>
+  </testcase>
+  <testcase id="149190" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o memory_leak_basic-good memory_leak_basic-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[No memory leak, the allocated memory is freed.]]></description>
+    <association type="pair" testcaseid="149189"/>
+    <association type="replacing" testcaseid="1933"/>
+    <file path="000/149/190/memory_leak_basic-good.c" language="C" size="985" checksum="4dbe32831e28d75515fa56bc634ecae55f3489fd">
+      <fix line="26" name="CWE-401: Improper Release of Memory Before Removing Last Reference ('Memory Leak')"/>
+    </file>
+  </testcase>
+  <testcase id="149192" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o UninitializedVariable_pointer-good UninitializedVariable_pointer-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The variable px now is initialized, avoiding the use of an uninitialized value.]]></description>
+    <association type="pair" testcaseid="149191"/>
+    <file path="000/149/192/UninitializedVariable_pointer-good.c" language="C" size="942" checksum="2a9b94bcd027ef12dfce9213223edd63f6d46cef">
+      <fix line="15" name="CWE-457: Use of Uninitialized Variable"/>
+    </file>
+  </testcase>
+  <testcase id="149194" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o StackOverflow-good StackOverflow-good.c" author="Robert C. Seacord, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[No buffer overflow even if the input is not validated. Every operation may write outside the bound of the statically allocated character array.]]></description>
+    <association type="pair" testcaseid="149193"/>
+    <file path="000/149/194/StackOverflow-good.c" language="C" size="1282" checksum="1919f6e35c46d93735267dbe9ff0b38319be4378">
+      <fix line="30" name="CWE-121: Stack-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149196" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o Improper_null_term_BufferAddressType-good Improper_null_term_BufferAddressType-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids improper null termination with a buffer address type complexity.]]></description>
+    <association type="pair" testcaseid="149195"/>
+    <association type="replacing" testcaseid="2012"/>
+    <file path="000/149/196/Improper_null_term_BufferAddressType-good.c" language="C" size="970" checksum="2ca5a29c035bcd8c34ced59c2df9a80f264957b6">
+      <fix line="25" name="CWE-170: Improper Null Termination"/>
+    </file>
+  </testcase>
+  <testcase id="149198" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o Uninitialized_variable-good Uninitialized_variable-good.c" author="Michale Koo, SecureSoftware, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[Initializing a variable to avoid using its unitialized value.]]></description>
+    <association type="pair" testcaseid="149197"/>
+    <file path="000/149/198/Uninitialized_variable-good.c" language="C" size="186" checksum="1ab085b6c5cf89c4b4fed43d6aa3cd6f2df8577b">
+      <fix line="6" name="CWE-457: Use of Uninitialized Variable"/>
+    </file>
+  </testcase>
+  <testcase id="149200" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o lock_resource-good lock_resource-good.c" author="NIST, Romain Gaucher, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test cases implements CVE-2002-1869: Checks if you can write a log file allow attackers to avoid logging.]]></description>
+    <association type="pair" testcaseid="149199"/>
+    <association type="replacing" testcaseid="2205"/>
+    <file path="000/149/200/lock_resource-good.c" language="C" size="1801" checksum="bf134274768a2b88011a2bb50f36e7562dba7682">
+      <fix line="54" name="CWE-412: Unrestricted Externally Accessible Lock"/>
+    </file>
+  </testcase>
+  <testcase id="149202" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o HeapOverFlow-good HeapOverFlow-good.c" author="NIST, SecureSoftware, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[An example to prevent heap overflow.]]></description>
+    <association type="pair" testcaseid="149201"/>
+    <association type="replacing" testcaseid="2134"/>
+    <file path="000/149/202/HeapOverFlow-good.c" language="C" size="1042" checksum="b22120f7eafecbf1442db8d7a116b036f298c906">
+      <fix line="26" name="CWE-122: Heap-based Buffer Overflow"/>
+    </file>
+  </testcase>
+  <testcase id="149204" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o UseAfterFree_container-good UseAfterFree_container-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a use of an allocated memory after being freed.]]></description>
+    <association type="pair" testcaseid="149203"/>
+    <association type="replacing" testcaseid="2135"/>
+    <file path="000/149/204/UseAfterFree_container-good.c" language="C" size="1352" checksum="2ede47d40d9586a6a168890b3dd686951a3626d4">
+      <fix line="37" name="CWE-416: Use After Free"/>
+    </file>
+  </testcase>
+  <testcase id="149206" type="Source Code" status="Deprecated" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o os_cmd_injection_basic-good os_cmd_injection_basic-good.c" author="NIST, SecureSoftware, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test case shows an effort made to avoid OS command injection problem.]]></description>
+    <association type="pair" testcaseid="149205"/>
+    <association type="replaced" testcaseid="149242"/>
+    <association type="replacing" testcaseid="2139"/>
+    <file path="000/149/206/os_cmd_injection_basic-good.c" language="C" size="2191" checksum="43af9d036da77c70db98a0dd4409bb8f67a37e8a">
+      <fix line="78" name="CWE-078: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"/>
+    </file>
+  </testcase>
+  <testcase id="149208" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o UninitializedVariable_DataType-good UninitializedVariable_DataType-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[Pointer is checked before use.]]></description>
+    <association type="pair" testcaseid="149207"/>
+    <association type="replacing" testcaseid="2186"/>
+    <file path="000/149/208/UninitializedVariable_DataType-good.c" language="C" size="998" checksum="4cd1f99a7f50c12041bc54b00ca5cd19d44c67e8">
+      <fix line="19" name="CWE-457: Use of Uninitialized Variable"/>
+    </file>
+  </testcase>
+  <testcase id="149210" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o NullPointerDereference-good NullPointerDereference-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test case avoids the problem of NULL pointer dereference.]]></description>
+    <association type="pair" testcaseid="149209"/>
+    <file path="000/149/210/NullPointerDereference-good.c" language="C" size="812" checksum="47273ce3d19409da055b1038f49106b6ec2f254b">
+      <fix line="18" name="CWE-476: NULL Pointer Dereference"/>
+    </file>
+  </testcase>
+  <testcase id="149212" type="Source Code" status="Deprecated" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o null_deref_local_flow-good null_deref_local_flow-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test shows a null pointer is not dereferenced, in a local control flow.]]></description>
+    <association type="pair" testcaseid="149211"/>
+    <association type="replaced" testcaseid="149244"/>
+    <association type="replacing" testcaseid="2194"/>
+    <file path="000/149/212/null_deref_local_flow-good.c" language="C" size="907" checksum="87631756f159dce2130f234e55b257a650308150">
+      <fix line="23" name="CWE-476: NULL Pointer Dereference"/>
+    </file>
+  </testcase>
+  <testcase id="149214" type="Source Code" status="Deprecated" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o null_deref-good null_deref-good.c" author="NIST, Romain Gaucher, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test case avoids the problem of NULL pointer dereference.]]></description>
+    <association type="pair" testcaseid="149213"/>
+    <association type="replaced" testcaseid="149246"/>
+    <association type="replacing" testcaseid="2195"/>
+    <file path="000/149/214/null_deref-good.c" language="C" size="884" checksum="f85343bfba603d46290ae11e3fcac21faf2c6e99">
+      <fix line="23" name="CWE-476: NULL Pointer Dereference"/>
+    </file>
+  </testcase>
+  <testcase id="149216" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o xss_loop-good xss_loop-good.c cgic.c" author="NIST, Romain Gaucher, Alexander Hoole, Aurelien Delaitre" numberOfFiles="4" testsuiteid="101">
+    <description><![CDATA[This is a CGI program which take some parameters values then print it. It avoids Cross-Site Scripting in C within a looping complexity.]]></description>
+    <association type="pair" testcaseid="149215"/>
+    <association type="replacing" testcaseid="2204"/>
+    <file path="000/149/216/cgic.h" language="C" size="7403" checksum="54c74410207a8cea2a8e09b70fd6b8592a93bfc1"/>
+    <file path="000/149/216/cgic.c" language="C" size="55735" checksum="d23b1a7f4b9154bd2751821c238f059616183c9b"/>
+    <file path="000/149/216/xss_loop-good.c" language="C" size="1460" checksum="60919b331edaa83249388e7ba0b54ba4dfe30e42">
+      <fix line="39" name="CWE-080: Improper Neutralization of Script-Related HTML Tags in a Web Page (Basic XSS)"/>
+    </file>
+    <file path="000/149/216/license.txt" size="2653" checksum="97c0205bd12cf7f99d2ca4c8d3c995e74553a937"/>
+  </testcase>
+  <testcase id="149218" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o double_free-good double_free-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test case shows a block of memory freed once.]]></description>
+    <association type="pair" testcaseid="149217"/>
+    <file path="000/149/218/double_free-good.c" language="C" size="782" checksum="0d1d4b9088d7c2ac51a847703445541a937999f6">
+      <fix line="16" name="CWE-415: Double Free"/>
+    </file>
+  </testcase>
+  <testcase id="149220" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o useafterfree-good useafterfree-good.c" author="Klocwork, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[Attepmts to assign a character to a memory that has been freed.]]></description>
+    <association type="pair" testcaseid="149219"/>
+    <file path="000/149/220/useafterfree-good.c" language="C" size="2080" checksum="23f1141cb02706fd6030c4ca1ad45b0e2ba76ec0">
+      <fix line="35" name="CWE-416: Use After Free"/>
+    </file>
+  </testcase>
+  <testcase id="149222" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o use_after_free_scope-good use_after_free_scope-good.c" author="NIST, Romain Gaucher, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case shows protection against the use of an allocated memory after being freed with scope complexity.]]></description>
+    <association type="pair" testcaseid="149221"/>
+    <association type="replacing" testcaseid="2269"/>
+    <file path="000/149/222/use_after_free_scope-good.c" language="C" size="1070" checksum="f3c05da7d6fc4267d0275f037bcf556cef90c75d">
+      <fix line="20" name="CWE-416: Use After Free"/>
+    </file>
+  </testcase>
+  <testcase id="149224" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o use_after_free_container-good use_after_free_container-good.c" author="NIST, Romain Gaucher, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case shows protection against the use of an allocated memory after being freed with a string which is in a structure.]]></description>
+    <association type="pair" testcaseid="149223"/>
+    <file path="000/149/224/use_after_free_container-good.c" language="C" size="1193" checksum="5927bef7a6061d253d8b78528ec93f418d329159">
+      <fix line="36" name="CWE-416: Use After Free"/>
+    </file>
+  </testcase>
+  <testcase id="149226" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o use_after_free_@buffer-good use_after_free_@buffer-good.c" author="NIST, Romain Gaucher, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case shows protection against the use of an allocated memory after being freed.]]></description>
+    <association type="pair" testcaseid="149225"/>
+    <file path="000/149/226/use_after_free_@buffer-good.c" language="C" size="1004" checksum="5189fb67fc77b77204567d2c8a86ae5c204d442d">
+      <fix line="28" name="CWE-416: Use After Free"/>
+    </file>
+  </testcase>
+  <testcase id="149228" type="Source Code" status="Deprecated" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o use_after_free_@alias-good use_after_free_@alias-good.c" author="NIST, Romain Gaucher, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case shows protection against the use of an allocated memory after being freed with an address alias level code complexity.]]></description>
+    <association type="pair" testcaseid="149227"/>
+    <association type="replaced" testcaseid="149248"/>
+    <association type="replacing" testcaseid="2270"/>
+    <file path="000/149/228/use_after_free_@alias-good.c" language="C" size="1029" checksum="695d110ec89305c90f651776b5121b5f7d8e4ed3">
+      <fix line="27" name="CWE-416: Use After Free"/>
+    </file>
+  </testcase>
+  <testcase id="149230" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o double_free-good double_free-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test case shows no double free weakness.]]></description>
+    <association type="pair" testcaseid="149229"/>
+    <association type="replacing" testcaseid="2271"/>
+    <file path="000/149/230/double_free-good.c" language="C" size="1184" checksum="2440e54b7cc816fd29935b1bcdab750e254ff709">
+      <fix line="31" name="CWE-415: Double Free"/>
+    </file>
+  </testcase>
+  <testcase id="149232" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o race_stat_basic-good race_stat_basic-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case shows a Time-of-Check-Time-of-Use (TOCTOU) race condition between checking file attributes and then opening and writing to the file.]]></description>
+    <association type="pair" testcaseid="149231"/>
+    <association type="replacing" testcaseid="1892"/>
+    <file path="000/149/232/race_stat_basic-good.c" language="C" size="2228" checksum="28ec61da6ad32cb727551d16134136e488e7245f">
+      <fix line="31" name="CWE-367: Time-of-check Time-of-use (TOCTOU) Race Condition"/>
+    </file>
+  </testcase>
+  <testcase id="149234" type="Source Code" status="Candidate" submissionDate="2015-03-23" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o race_stat_fctptr-good race_stat_fctptr-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a Time-of-Check-Time-of-Use (TOCTOU) race condition between checking file attributes and then opening and writing to the file using random calls to function pointers.]]></description>
+    <association type="pair" testcaseid="149233"/>
+    <association type="replacing" testcaseid="1894"/>
+    <file path="000/149/234/race_stat_fctptr-good.c" language="C" size="3140" checksum="ced22e4bb4c8874e9dd4e61bbff84b16f5b11637">
+      <fix line="72" name="CWE-367: Time-of-check Time-of-use (TOCTOU) Race Condition"/>
+    </file>
+  </testcase>
+  <testcase id="149238" type="Source Code" status="Candidate" submissionDate="2015-06-19" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o Format_string_problem-good Format_string_problem-good.c" author="SecureSoftware, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[Format string problems occur when a user has the ability to control or write completely the format string used to format data in the printf style family of C/C++ functions (fixed).]]></description>
+    <association type="pair" testcaseid="149237"/>
+    <association type="replacing" testcaseid="149044"/>
+    <file path="000/149/238/Format_string_problem-good.c" language="C" size="993" checksum="9018082422994fd799d7f7d238192ea5        ">
+      <fix line="29" name="CWE-134: Uncontrolled Format String"/>
+    </file>
+  </testcase>
+  <testcase id="149240" type="Source Code" status="Candidate" submissionDate="2015-06-19" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o use_after_free_@buffer-good use_after_free_@buffer-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case avoids a use of an allocated memory after being freed with an extra allocation and free complexity.]]></description>
+    <association type="pair" testcaseid="149239"/>
+    <association type="replacing" testcaseid="149172"/>
+    <file path="000/149/240/use_after_free_@buffer-good.c" language="C" size="1065" checksum="3529b4cff385cb47cb25a77edbd72429        ">
+      <fix line="31" name="CWE-416: Use After Free"/>
+    </file>
+  </testcase>
+  <testcase id="149242" type="Source Code" status="Candidate" submissionDate="2015-06-19" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o os_cmd_injection_basic-good os_cmd_injection_basic-good.c" author="NIST, SecureSoftware, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test case shows an effort made to avoid OS command injection problem.]]></description>
+    <association type="pair" testcaseid="149241"/>
+    <association type="replacing" testcaseid="149206"/>
+    <file path="000/149/242/os_cmd_injection_basic-good.c" language="C" size="2191" checksum="b934385647e8f5b26b96b2adda249208        ">
+      <fix line="78" name="CWE-078: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')"/>
+    </file>
+  </testcase>
+  <testcase id="149244" type="Source Code" status="Candidate" submissionDate="2015-06-19" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o null_deref_local_flow-good null_deref_local_flow-good.c" author="NIST, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test shows a null pointer is not dereferenced, in a local control flow.]]></description>
+    <association type="pair" testcaseid="149243"/>
+    <association type="replacing" testcaseid="149212"/>
+    <file path="000/149/244/null_deref_local_flow-good.c" language="C" size="905" checksum="c6aa58c14dc621cb32c7b8ce7b8a6d23        ">
+      <fix line="23" name="CWE-476: NULL Pointer Dereference"/>
+    </file>
+  </testcase>
+  <testcase id="149246" type="Source Code" status="Candidate" submissionDate="2015-06-19" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o null_deref-good null_deref-good.c" author="NIST, Romain Gaucher, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[This test case avoids the problem of NULL pointer dereference.]]></description>
+    <association type="pair" testcaseid="149245"/>
+    <association type="replacing" testcaseid="149214"/>
+    <file path="000/149/246/null_deref-good.c" language="C" size="881" checksum="e80035b98621c6d0e937ff270c0f9e72        ">
+      <fix line="23" name="CWE-476: NULL Pointer Dereference"/>
+    </file>
+  </testcase>
+  <testcase id="149248" type="Source Code" status="Candidate" submissionDate="2015-06-19" language="C" instruction="gcc -Wall -g -O0 -std=gnu99 -o use_after_free_@alias-good use_after_free_@alias-good.c" author="NIST, Romain Gaucher, Alexander Hoole, Aurelien Delaitre" numberOfFiles="1" testsuiteid="101">
+    <description><![CDATA[The test case shows protection against the use of an allocated memory after being freed with an address alias level code complexity.]]></description>
+    <association type="pair" testcaseid="149247"/>
+    <association type="replacing" testcaseid="149228"/>
+    <file path="000/149/248/use_after_free_@alias-good.c" language="C" size="1083" checksum="00cd9723d2cdb1fc148065d5fc082e1b        ">
+      <fix line="30" name="CWE-416: Use After Free"/>
+    </file>
+  </testcase>
+</container>
