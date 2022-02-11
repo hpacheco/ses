@@ -47,6 +47,7 @@ the program does not crash although `strcpy` is writing past the buffer.
 We can analyze the same program execution with `valgrind` and obtain indicative errors that `strcpy`is performing invalid writes:
 
 <details>
+<summary>Result</summary>
 
 ```ShellSession
 $ valgrind ./a.out aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa         
@@ -100,6 +101,9 @@ int main(int argc, char *argv[])
 This program has a memory leak, since the buffer `buff` is not freed after before the variable is reassigned.
 Although this vulnerability does not affect the behavior of the program, it may clause a program to crash or run too slow due to excessive memory consumption. Valgrind will detect this leak:
 
+<details>
+<summary>Result</summary>
+
 ```ShellSession
 $ valgrind ./a.out                                                     
 ==57431== Memcheck, a memory error detector
@@ -123,6 +127,7 @@ $ valgrind ./a.out
 ==57431== For lists of detected and suppressed errors, rerun with: -s
 ==57431== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
+</details>
 
 #### [Use-after-free](https://owasp.org/www-community/vulnerabilities/Using_freed_memory)
 
@@ -140,6 +145,9 @@ int main(){
 ```
 This vulnerability will often cause the program to crash, and, if the freed memory gets reused, an attacker may control `x` similarly to a buffer overflow attack.
 Valgrind will also detect this error: 
+
+<details>
+<summary>Result</summary>
 
 ```ShellSession
 $ valgrind ./a.out                                                    
@@ -167,6 +175,8 @@ $ valgrind ./a.out
 ==57317== For lists of detected and suppressed errors, rerun with: -s
 ==57317== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
 ```
+</details>
+
 
 
 
