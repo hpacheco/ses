@@ -47,6 +47,7 @@ the program does not crash although `strcpy` is writing past the buffer.
 We can analyze the same program execution with `valgrind` and obtain indicative errors that `strcpy`is performing invalid writes:
 
 <details>
+
 ```ShellSession
 $ valgrind ./a.out aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa         
 ==57008== Memcheck, a memory error detector
