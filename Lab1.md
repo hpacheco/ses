@@ -47,8 +47,6 @@ the program does not crash although `strcpy` is writing past the buffer.
 We can analyze the same program execution with `valgrind` and obtain indicative errors that `strcpy`is performing invalid writes:
 
 <details>
-<summary>Expand</summary>
-
 ```ShellSession
 $ valgrind ./a.out aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa         
 ==57008== Memcheck, a memory error detector
@@ -76,7 +74,7 @@ result: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ==57008== For lists of detected and suppressed errors, rerun with: -s
 ==57008== ERROR SUMMARY: 9 errors from 6 contexts (suppressed: 0 from 0)
 ```
-<details>
+</details>
 
 #### [Memory leak](https://owasp.org/www-community/vulnerabilities/Memory_leak)
 
