@@ -337,7 +337,7 @@ strncpy(command + catLength, argv[1], commandLength - catLength);
 unsigned int t;
 ...
 if (system(command) < 0) { ... }
-````
+```
 
 For more details on how Taintgrind operates check this [presentation](https://github.com/h2hconference/2019/raw/master/H2HC%20-%20Marek%20Zmyslowski%20-%20Crash%20Analysis%20with%20Reverse%20Taint.pptx).
 
