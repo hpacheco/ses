@@ -15,5 +15,9 @@ cd ses/vm
 ./install.sh
 ```
 
+# Additional configurations
+
+You may disable the lock screen feature in your VM by going to `Settings > Power Manager > Security`, changing `Automatically lock the session` to `Never` and unticking the `Lock screen when system is going to sleep` option.
+
 
 

@@ -317,6 +317,30 @@ SUMMARY: UndefinedBehaviorSanitizer: SEGV (/home/parallels/Desktop/SARD-testsuit
 ```
 </details>
 
+### [Taintgrind](https://github.com/wmkhoo/taintgrind)
+
+Taintgrind is a taint-tracking plugin for Valgrind. The purpose of taint analysis is to track information flow from sources to sinks within a program. As a binary instrumentation tool, Taintgrind allows marking specific bytes - typically user input data - as tainted and propagates taint at the byte level through memory operations. 
+
+Consider for instance the program [os_cmd_injection_basic-bad.c](c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad.c) that shows the content of a user-supplied file and contains a classical command injection vulnerability: the user may append additional bash commands to the input, that will get executed. The most relevant snippet is the following:
+```C
+	strncpy(command, cat, catLength);
+	strncpy(command + catLength, argv[1], commandLength - catLength);
+	if (system(command) < 0) { ... }
+```
+The user-supplied string, stored in `argv[1]`, is append to the string `command` that will be executed within a `system` call.
+
+We can use Taintgrind-specific flags to mark the first 8 bytes of `argv[1]` as tainted, and print the taint status of each byte in the `command` string. File [os_cmd_injection_basic-bad-taintgrind.c](c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-taintgrind.c) has the full instrumentation.
+```C
+TNT_TAINT(argv[1],8);
+strncpy(command, cat, catLength);
+strncpy(command + catLength, argv[1], commandLength - catLength);
+unsigned int t;
+...
+if (system(command) < 0) { ... }
+````
+
+For more details on how Taintgrind operates check this [presentation](https://github.com/h2hconference/2019/raw/master/H2HC%20-%20Marek%20Zmyslowski%20-%20Crash%20Analysis%20with%20Reverse%20Taint.pptx).
+
 ## [Static Application Security Testing](https://cacm.acm.org/magazines/2022/1/257444-static-analysis/fulltext)
 
  Static application security testing (SAST) is typically used to denote analysis methods that examine the code of a program to find flaws and weaknesses that may be exploited by an attacker. They therefore focus on statically examining - at compile-time - all the possible runs of an application.
