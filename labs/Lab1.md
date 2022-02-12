@@ -342,7 +342,7 @@ scan-build: Analysis run complete.
 scan-build: 1 bug found.
 scan-build: Run 'scan-view /tmp/scan-build-2022-02-11-165808-3759-1' to examine bug reports.
 $ scan-view /tmp/scan-build-2022-02-11-165808-3759-1
-```ShellSession
+```
 
 ![](lab1_scan-view.ong)
 </details>
