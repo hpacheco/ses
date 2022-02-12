@@ -556,7 +556,7 @@ Eva no longer reports the overflow, however, we get a different out of bounds er
 <summary>Result</summary>
 
 ```ShellSession
-frama-c -eva cwe190_ex2_ok.c                                       
+$ frama-c -eva cwe190_ex2_ok.c                                       
 [kernel] Parsing cwe190_ex2_ok.c (with preprocessing)
 [eva] Analyzing a complete application starting at main
 [eva] Computing initial state
@@ -593,6 +593,7 @@ frama-c -eva cwe190_ex2_ok.c
   No logical properties have been reached by the analysis.
   ----------------------------------------------------------------------------
 ```
+</details>
 
 This error occurs because Eva assumes by default that the `malloc` function may always fail, e.g. if there is insufficient available memory, To avoid this error, we can pass an additional `-no-val-alloc-returns-null` flag to the analysis.
 
