@@ -403,7 +403,6 @@ cwe190_ex2_bad.c:21:47: unreachable: code is dead
 cwe190_ex2_bad.c: In function 'main':
 cwe190_ex2_bad.c:23:1: unreachable: code is dead
 ```
-
 </details>
 
 You may notice that the `ikos` utility also generates a `output.db` file with a log of the performed analysis, in the folder where it was invoked. You can also graphically inspect this log with the `ikos-view` tool:
