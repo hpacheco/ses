@@ -460,6 +460,8 @@ We can fix this uncertainty by making to check that the result of `malloc` is no
 
 <details>
 <summary>Result</summary>
+
+```ShellSession
 $ ikos cwe190_ex2_ok2.c                                                
 [*] Compiling cwe190_ex2_ok2.c
 [*] Running ikos preprocessor
@@ -487,6 +489,7 @@ The program is SAFE
 
 # Results
 No entries.
+```
 </details>
 
 
@@ -543,7 +546,7 @@ For instance, we can replicate the above Eva analysis and see the errors as anno
 <details>
 <summary>Result</summary>
 
-![](lab1_frama-c-gui.png)
+![lab1_frama-c-gui](lab1_frama-c-gui.png)
 </details>
 
 We can also analyze a similar program [cwe190_ex2_ok.c](c/misc/cwe190_ex2_ok.c) with a fixed value for `nresp` that does not overflow.
