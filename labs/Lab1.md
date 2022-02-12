@@ -357,6 +357,7 @@ Consider the program [cwe190_ex2_bad.c](c/misc/cwe190_ex2_bad.c) program from be
 <details>
 <summary>Result</summary>
 
+```ShellSession
 $ ikos cwe190_ex2_bad.c                                                
 [*] Compiling cwe190_ex2_bad.c
 [*] Running ikos preprocessor
@@ -401,6 +402,7 @@ cwe190_ex2_bad.c:21:47: unreachable: code is dead
                                               ^
 cwe190_ex2_bad.c: In function 'main':
 cwe190_ex2_bad.c:23:1: unreachable: code is dead
+```
 
 </details>
 
@@ -411,7 +413,7 @@ $ ikos-view output.db
 <details>
 <summary>Result</summary>
 
-![](lab1_ikos-view.png)
+![lab1_ikos-view](lab1_ikos-view.png)
 </details>
 
 We can also analyze a similar program [cwe190_ex2_ok.c](c/misc/cwe190_ex2_ok.c) with a fixed value for `nresp` that does not overflow.
