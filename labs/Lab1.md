@@ -327,19 +327,49 @@ Consider for instance the program [os_cmd_injection_basic-bad.c](c/SARD-testsuit
 	strncpy(command + catLength, argv[1], commandLength - catLength);
 	if (system(command) < 0) { ... }
 ```
-The user-supplied string, stored in `argv[1]`, is append to the string `command` that will be executed within a `system` call.
+The user-supplied string, stored in `argv[1]`, is appended to the string `command` that will be executed within a `system` call. The cause of this vulnerability is therefore that a critical operation (the system call) depends on user input.
 
-We can use Taintgrind-specific flags to mark the first 8 bytes of `argv[1]` as tainted, and print the taint status of each byte in the `command` string. File [os_cmd_injection_basic-bad-taintgrind.c](c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-taintgrind.c) has the full instrumentation.
+We can use Taintgrind-specific flags to mark the first 8 bytes of `argv[1]` as tainted, and print the taint status of each block of 8 bytes in the `command` string. File [os_cmd_injection_basic-bad-taintgrind.c](c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-taintgrind.c) has the full instrumentation.
 ```C
 TNT_TAINT(argv[1],8);
 strncpy(command, cat, catLength);
 strncpy(command + catLength, argv[1], commandLength - catLength);
 unsigned int t;
-...
+printf("checking taint for %d bytes of command\n",commandLength);
+for (int i=0; i < commandLength; ) {
+  TNT_IS_TAINTED(t,command+i,8);
+  printf("%08x ",t);
+  i+=8;
+}
 if (system(command) < 0) { ... }
 ```
 
-For more details on how Taintgrind operates check this [presentation](https://github.com/h2hconference/2019/raw/master/H2HC%20-%20Marek%20Zmyslowski%20-%20Crash%20Analysis%20with%20Reverse%20Taint.pptx).
+We can now compile the instrumented program and run it with Taintgrid:
+<details>
+<summary>Result</summary>
+
+```ShellSession
+$ taintgrind ./a.out aaaaaaaa 2> log                                                                           
+/usr/local/bin/valgrind --tool=taintgrind ./a.out aaaaaaaa
+tainting first 8 bytes of argv[1] aaaaaaaa
+checking taint for 18 bytes of command
+00000000 ffffff00 000000ff
+```
+</details>
+
+Taintgrind also generates a detailed log that is being redirected to a file in this example. You may render that graph to a SVG image using Graphviz as follows:
+<details>
+<summary>Result</summary>
+
+```ShellSession
+$ taintgrind-log2dot log > log.dot
+$ dot -Tsvg log.dot -o log.svg
+```
+
+![lab1-taintgrind](lab1-taintgrind.svg)
+</details>
+
+For more details on how Taintgrind operates check the [development](https://github.com/wmkhoo/taintgrind) page and this [presentation](https://github.com/h2hconference/2019/raw/master/H2HC%20-%20Marek%20Zmyslowski%20-%20Crash%20Analysis%20with%20Reverse%20Taint.pptx). ALso note that Taintgrind only considers direct flows as information for propagating taint; indirect flows, e.g., when a memory adress depends on a variable used for calculating a conditional branch, are not captured by the analysis.
 
 ## [Static Application Security Testing](https://cacm.acm.org/magazines/2022/1/257444-static-analysis/fulltext)
 
