@@ -10,7 +10,7 @@ For this purpose, we recommend setting up a modern x86_64/amd64 Debian-based vir
 git clone https://github.com/hpacheco/ses
 ```
 3. Install additional tools:
-```Shell
+``` bash
 cd ses
 ./install.sh
 ```
