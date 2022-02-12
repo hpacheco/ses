@@ -11,7 +11,7 @@ git clone https://github.com/hpacheco/ses
 ```
 3. Install additional tools:
 ``` bash
-cd ses
+cd ses/vm
 ./install.sh
 ```
 
