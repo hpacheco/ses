@@ -344,7 +344,7 @@ scan-build: Run 'scan-view /tmp/scan-build-2022-02-11-165808-3759-1' to examine 
 $ scan-view /tmp/scan-build-2022-02-11-165808-3759-1
 ```
 
-![](lab1_scan-view.ong)
+![lab1_scan-view](lab1_scan-view.ong)
 </details>
 
 ### [IKOS](https://ti.arc.nasa.gov/opensource/ikos/)
