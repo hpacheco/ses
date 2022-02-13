@@ -443,9 +443,10 @@ zsh: abort      ./a.out
 </details>
 
 In the working version of Clang 15, there is however an experimental LLVM feature `-dfsan-conditional-callbacks`  that adds conditional support to DataFlowSanitizer. We can try a similar patch to LLVM that is pre-bundled in this [repository](https://github.com/mcopik/clang-dfsan).
-You can try it out:
+Follow these steps:
 <details>
 <summary>Result</summary>
+
 1. Clone the repository and build. This will create a docker image with Clang/LLVM built for indirect control-flow tainting support.
 ```ShellSession
 $ git clone https://github.com/mcopik/clang-dfsan
