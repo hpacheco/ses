@@ -797,9 +797,17 @@ $ frama-c -eva -no-val-alloc-returns-null cwe190_ex2_ok.c
 This example is now analyzed with no errors and alarms, indicating that our program is safe.
 The precision of the Eva plugin is highly configurable. If you encounter issues when analysing other examples, check the Eva [documentation](https://frama-c.com/fc-plugins/eva.html) page for more information about the Eva analysis and its optional flags.
 
-Examples are always a good help. You may find more Frama-C case studies in this repositories:
+Since Frama-C performs a static analysis, it will often fail to fully discard all proof obligations that it generates for a program, and user-supplied annotations may be necessary to guide the verification engine; this is particularly the case for loops whose number of iterations cannot be decided statically. 
+
+For more information on how to verify more challenging example, examples are always a good help. You may find more Frama-C case studies in these repositories:
 * [https://git.frama-c.com/pub/open-source-case-studies](https://git.frama-c.com/pub/open-source-case-studies)
 * [https://git.frama-c.com/pub/sate-6/-/tree/master](https://git.frama-c.com/pub/sate-6/-/tree/master)
+
+#### Taint analysis
+
+The Frama-C Eva plugin also supports a form of static taint analysis, which is a data-dependency analysis together with a special logical annotation which denotes taint. The Eva analysis propagates taint by computing an over-approximation of the set of tainted locations at each program point. Programmers can then supply taint clauses and contracts that need to be verified along-side the traditional program analysis. 
+
+
 
 
 ### Security vulnerability scanners
