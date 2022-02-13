@@ -12,12 +12,13 @@ git clone https://github.com/hpacheco/ses
 3. Install additional tools:
 ``` bash
 cd ses/vm
-./install.sh
+sh install.sh
 ```
 
 # Additional configurations
 
-You may disable the lock screen feature in your VM by going to `Settings > Power Manager > Security`, changing `Automatically lock the session` to `Never` and unticking the `Lock screen when system is going to sleep` option.
+* You may disable the lock screen feature in your VM by going to `Settings > Power Manager > Security`, changing `Automatically lock the session` to `Never` and unticking the `Lock screen when system is going to sleep` option.
+* If you experience network errors in Docker inside your VM, try [this](https://stackoverflow.com/a/55072881) solution.
 
 
 

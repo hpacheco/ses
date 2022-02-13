@@ -19,7 +19,7 @@ One of the most prominent Valgrind tools is the Memcheck memory error detector, 
 
 #### Memory error - [buffer overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)
 
-Consider a simple [scpy7-bad.c](c/SARD-testsuite-100/000/149/079/scpy7-bad.c) vulnerable C program found:
+Consider a simple [scpy7-bad.c](../c/SARD-testsuite-100/000/149/079/scpy7-bad.c) vulnerable C program found:
 
 ```C
 #define	MAXSIZE		40
@@ -82,7 +82,7 @@ result: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
 #### [Memory leak](https://owasp.org/www-community/vulnerabilities/Memory_leak)
 
-Consider a simple program [memory_leak_basic-bad.c](c/SARD-testsuite-100/000/149/189/memory_leak_basic-bad.c).
+Consider a simple program [memory_leak_basic-bad.c](../c/SARD-testsuite-100/000/149/189/memory_leak_basic-bad.c).
 
 ```C
 int main(int argc, char *argv[])
@@ -133,7 +133,7 @@ $ valgrind ./a.out
 
 #### [Use-after-free](https://owasp.org/www-community/vulnerabilities/Using_freed_memory)
 
-Consider a simple program [useafterfree-bad.c](c/SARD-testsuite-100/000/149/219/useafterfree-bad.c) that allocates some memory but uses the variable after being freed:
+Consider a simple program [useafterfree-bad.c](../c/SARD-testsuite-100/000/149/219/useafterfree-bad.c) that allocates some memory but uses the variable after being freed:
 
 ```C
 int main(){
@@ -189,7 +189,7 @@ AddressSanitizer is another runtime memory error detector. It is developed by Go
 
 ####  [Buffer overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)
 
-Consider a simple program [scpy2-bad.c](c/SARD-testsuite-100/000/149/077/scpy2-bad.c) with a stack buffer overflow vulnerability:
+Consider a simple program [scpy2-bad.c](../c/SARD-testsuite-100/000/149/077/scpy2-bad.c) with a stack buffer overflow vulnerability:
 
 ```C
 #define	MAXSIZE		40
@@ -267,7 +267,7 @@ Shadow byte legend (one shadow byte represents 8 application bytes):
 
 #### [Undefined behavior](https://owasp.org/www-community/vulnerabilities/Undefined_Behavior)
 
-Consider the program [cwe190_ex2_bad.c](c/misc/cwe190_ex2_bad.c) that contains a known vulnerable excerpt from OpenSSH 3.3, and reported in [CWE-190](https://cwe.mitre.org/data/definitions/190.html):
+Consider the program [cwe190_ex2_bad.c](../c/misc/cwe190_ex2_bad.c) that contains a known vulnerable excerpt from OpenSSH 3.3, and reported in [CWE-190](https://cwe.mitre.org/data/definitions/190.html):
 
 ```C
 #include <stdio.h>
@@ -321,7 +321,7 @@ SUMMARY: UndefinedBehaviorSanitizer: SEGV (/home/parallels/Desktop/SARD-testsuit
 
 Taintgrind is a taint-tracking plugin for Valgrind. The purpose of taint analysis is to track information flow from sources to sinks within a program. As a binary instrumentation tool, Taintgrind allows marking specific bytes - typically user input data - as tainted and propagates taint at the byte level through memory operations. 
 
-Consider for instance the program [os_cmd_injection_basic-bad.c](c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad.c) that shows the content of a user-supplied file and contains a classical command injection vulnerability: the user may append additional bash commands to the input, that will get executed. The most relevant snippet is the following:
+Consider for instance the program [os_cmd_injection_basic-bad.c](../c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad.c) that shows the content of a user-supplied file and contains a classical command injection [vulnerability](https://cwe.mitre.org/data/definitions/78.html): the user may append additional bash commands to the input, that will get executed. The most relevant snippet is the following:
 ```C
 	strncpy(command, cat, catLength);
 	strncpy(command + catLength, argv[1], commandLength - catLength);
@@ -329,7 +329,7 @@ Consider for instance the program [os_cmd_injection_basic-bad.c](c/SARD-testsuit
 ```
 The user-supplied string, stored in `argv[1]`, is appended to the string `command` that will be executed within a `system` call. The cause of this vulnerability is therefore that a critical operation (the system call) depends on user input.
 
-We can use Taintgrind-specific flags to mark the first 8 bytes of `argv[1]` as tainted, and print the taint status of each block of 8 bytes in the `command` string. File [os_cmd_injection_basic-bad-taintgrind.c](c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-taintgrind.c) has the full instrumentation.
+We can use Taintgrind-specific flags to mark the first 8 bytes of `argv[1]` as tainted, and print the taint status of each block of 8 bytes in the `command` string. File [os_cmd_injection_basic-bad-taintgrind.c](../c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-taintgrind.c) has the full instrumentation.
 ```C
 TNT_TAINT(argv[1],8);
 strncpy(command, cat, catLength);
@@ -344,11 +344,12 @@ for (int i=0; i < commandLength; ) {
 if (system(command) < 0) { ... }
 ```
 
-We can now compile the instrumented program and run it with Taintgrid:
+We can now compile the instrumented program and run it with Taintgrind:
 <details>
 <summary>Result</summary>
 
 ```ShellSession
+$ gcc taintgrind -g -O0 os_cmd_injection_basic-bad-taintgrind.c
 $ taintgrind ./a.out aaaaaaaa 2> log                                                                           
 /usr/local/bin/valgrind --tool=taintgrind ./a.out aaaaaaaa
 tainting first 8 bytes of argv[1] aaaaaaaa
@@ -379,7 +380,7 @@ For more details on how Taintgrind operates check the [development](https://gith
 
 The scan-build utility is a static analysis tool provided by LLVM for detecting programming errors in C/C++ programs.
 
-Consider the [scpy7-bad.c](c/SARD-testsuite-100/000/149/079/scpy7-bad.c) C program from before that has a buffer overflow vulnerability.
+Consider the [scpy7-bad.c](../c/SARD-testsuite-100/000/149/079/scpy7-bad.c) C program from before that has a buffer overflow vulnerability.
 Running `scan-build` on this example will generate a report that signals the call to `strcpy` as unsafe with a contextualization of the associated CWE; you can also graphically visualize the report.
 
 <details>
