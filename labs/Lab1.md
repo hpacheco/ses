@@ -321,6 +321,8 @@ SUMMARY: UndefinedBehaviorSanitizer: SEGV (/home/parallels/Desktop/SARD-testsuit
 
 Taintgrind is a taint-tracking plugin for Valgrind. The purpose of taint analysis is to track information flow from sources to sinks within a program. As a binary instrumentation tool, Taintgrind allows marking specific bytes - typically user input data - as tainted and propagates taint at the byte level through memory operations. 
 
+#### Direct flows
+
 Consider for instance the program [os_cmd_injection_basic-bad.c](../c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad.c) that shows the content of a user-supplied file and contains a classical command injection [vulnerability](https://cwe.mitre.org/data/definitions/78.html): the user may append additional bash commands to the input, that will get executed. The most relevant snippet is the following:
 ```C
 	strncpy(command, cat, catLength);
@@ -335,7 +337,6 @@ TNT_TAINT(argv[1],8);
 strncpy(command, cat, catLength);
 strncpy(command + catLength, argv[1], commandLength - catLength);
 unsigned int t;
-printf("checking taint for %d bytes of command\n",commandLength);
 for (int i=0; i < commandLength; ) {
   TNT_IS_TAINTED(t,command+i,8);
   printf("%08x ",t);
@@ -344,16 +345,14 @@ for (int i=0; i < commandLength; ) {
 if (system(command) < 0) { ... }
 ```
 
-We can now compile the instrumented program and run it with Taintgrind:
+We can now compile the instrumented program and run it with Taintgrind. Note how the outcome of the analysis taints exactly 8 bytes of the input that are copied to the output bytes (note that each 8-byte block is printed in reverse order since `amd64` uses a little endian representation).
 <details>
 <summary>Result</summary>
 
 ```ShellSession
-$ gcc taintgrind -g -O0 os_cmd_injection_basic-bad-taintgrind.c
+$ gcc -g -O0 os_cmd_injection_basic-bad-taintgrind.c
 $ taintgrind ./a.out aaaaaaaa 2> log                                                                           
 /usr/local/bin/valgrind --tool=taintgrind ./a.out aaaaaaaa
-tainting first 8 bytes of argv[1] aaaaaaaa
-checking taint for 18 bytes of command
 00000000 ffffff00 000000ff
 ```
 </details>
@@ -370,7 +369,107 @@ $ dot -Tsvg log.dot -o log.svg
 ![lab1-taintgrind](lab1-taintgrind.svg)
 </details>
 
-For more details on how Taintgrind operates check the [development](https://github.com/wmkhoo/taintgrind) page and this [presentation](https://github.com/h2hconference/2019/raw/master/H2HC%20-%20Marek%20Zmyslowski%20-%20Crash%20Analysis%20with%20Reverse%20Taint.pptx). ALso note that Taintgrind only considers direct flows as information for propagating taint; indirect flows, e.g., when a memory adress depends on a variable used for calculating a conditional branch, are not captured by the analysis.
+#### Indirect flows
+
+Taintgrind only considers direct flows as information for propagating taint; indirect flows - e.g., when a memory adress depends on a variable used for calculating a conditional branch - are not captured by the analysis. We can confirm this with a sample program [sign-32-taintgrind.c](../c/misc/sign32-taintgrind.c) with an indirect flow in the following function:
+```C
+int get_sign(int x) {
+    if (x == 0) return 0;
+    if (x < 0)  return -1;
+    return 1;
+}
+```
+In this function, the value of the output depends on the value of the input variable `x`, however, `x` is not directly assigned/copied to the output. If we run Taintgrind on this example it will signal no taint as expected:
+
+<details>
+<summary>Result</summary>
+
+```ShellSession
+$ gcc -g -O0 sign32-taintgrind.c                                                                        
+$ taintgrind ./a.out 2> log                                                                               
+/usr/local/bin/valgrind --tool=taintgrind ./a.out
+00000000
+```
+</details>
+
+For more details on how Taintgrind operates check the [development](https://github.com/wmkhoo/taintgrind) page and this [presentation](https://github.com/h2hconference/2019/raw/master/H2HC%20-%20Marek%20Zmyslowski%20-%20Crash%20Analysis%20with%20Reverse%20Taint.pptx).
+
+### [Clang Data Flow Sanitizer](https://clang.llvm.org/docs/DataFlowSanitizer.html)
+
+DataFlowSanitizer is a taint-tracking plugin for Clang/LLVM.
+Like Taintgrind, it uses a byte-level memory tracking to propagate taint through the execution of a C program; but unlike Taintgrind, it works by instrumenting the C program at compilation time. This requires that taint will only be precisely tracked for code that has been compiled with support for DataFlowSanitizer. If your program depends on external libraries, you will need to recompile these or pass additional information to DataFlowSanitizer (see the documentation).
+
+#### Direct flows
+
+Consider the [os_cmd_injection_basic-bad-dfsan.c](../c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-dfsan.c), instrumented with DataFlowSanitizer taint trackers. Taint labels are unsigned integers, that can be applied to memory blocks. The relevant snippet is the following:
+```C
+dfsan_label argv1_label = 1;
+dfsan_set_label(argv1_label,argv[1],8);
+strncpy(command, cat, catLength);
+strncpy(command + catLength, argv[1], commandLength - catLength);
+dfsan_label command_label;
+for (int i=0; i < commandLength; ) {
+  command_label = dfsan_read_label(command+i,8);
+  printf("%u ",command_label);
+  i+=8;
+}
+if (system(command) < 0) { ... }
+```
+
+If we compile and run this program, we can see that two byte blocks of the output are tainted with label 1 (0 is the default non-tainted label).
+
+```ShellSession
+$ clang-13 -fsanitize=dataflow os_cmd_injection_basic-bad-dfsan.c
+$ ./a.out aaaaaaaa                        
+/bin/cat: aaaaaaaa: No such file or directory
+0 1 1
+```
+
+#### Indirect flows
+
+Similarly to Taintgrind, DataFlowSanitizer only considers direct information flows by default.
+Recall the [sign-32-dfsan.c](../c/misc/sign32-dfsan.c) example, with an indirect flow in the `get_sign` function, now instrumented with DataFlowSanitizer support.
+
+If we compile and run this program, DataFlowSanitizer will not detect our indirect flow:
+<details>
+<summary>Result</summary>
+
+```ShellSession
+$ clang-13 -fsanitize=dataflow sign32-dfsan.c
+$ ./a.out                                                    
+a.out: sign32.c:18: int main(int, char **): Assertion `dfsan_has_label(s_label, a_label)' failed.
+zsh: abort      ./a.out
+```
+</details>
+
+In the working version of Clang 15, there is however an experimental LLVM feature `-dfsan-conditional-callbacks`  that adds conditional support to DataFlowSanitizer. We can try a similar patch to LLVM that is pre-bundled in this [repository](https://github.com/mcopik/clang-dfsan).
+You can try it out:
+<details>
+<summary>Result</summary>
+1. Clone the repository and build. This will create a docker image with Clang/LLVM built for indirect control-flow tainting support.
+```ShellSession
+$ git clone https://github.com/mcopik/clang-dfsan
+$ cd clang-dfsan
+$ sudo sh build-cfsan.sh
+````
+2. Launch a shell inside a new docker container for the built docker image. Change the `/home/kali` shared folder appropriately.
+```ShellSession
+$ sudo docker run -v /home/kali:/home/kali -it mcopik/clang-dfsan:cfsan-9.0 
+```
+3. Inside the container, move into the `examplefolder` directory (change this) and compile it. Exit the container.
+```ShellSession
+docker@container$ cd examplefolder
+docker@container$ clang-cfsan sign32-dfsan.c
+docker@container$ exit
+$
+```
+4. Outside the container, you may run the example. If the assertion raises no error, taint was tracked as expected.
+```ShellSession
+$ cd examplefolder
+./a.out
+
+```
+</details>
 
 ## [Static Application Security Testing](https://cacm.acm.org/magazines/2022/1/257444-static-analysis/fulltext)
 

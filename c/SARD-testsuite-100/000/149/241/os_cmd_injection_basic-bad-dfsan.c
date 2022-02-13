@@ -16,12 +16,13 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <stdint.h>
-#include <valgrind/taintgrind.h>
+#include <sanitizer/dfsan_interface.h>
 
 int main(int argc, char **argv) 
 {
 	printf("tainting first %d bytes of argv[1] %s\n",8,argv[1]);
-	TNT_TAINT(argv[1],8);
+	dfsan_label argv1_label = 1;
+	dfsan_set_label(argv1_label,argv[1],8);
 	char cat[] = "/bin/cat ";
 	char *command;
 	size_t commandLength, catLength, argLength;
@@ -49,14 +50,15 @@ int main(int argc, char **argv)
 
 	strncpy(command, cat, catLength);
 	strncpy(command + catLength, argv[1], commandLength - catLength);
-
-	unsigned int t;
-	printf("checking taint for %d bytes of command (in 8-byte blocks)\n",commandLength);
+	
+	dfsan_label command_label;
+	printf("checking taint for %d bytes of command (in 8-byte blocks)\n",ommandLength);
 	for (int i=0; i < commandLength; ) {
-	  TNT_IS_TAINTED(t,command+i,8);
-	  printf("%08x ",t);
+	  command_label = dfsan_read_label(command+i,8);
+	  printf("%u ",command_label);
 	  i+=8;
 	}
+
 	if (system(command) < 0)							/* FLAW */
 	{
 		printf("Error running command %s\n", command);
