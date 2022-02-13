@@ -467,8 +467,8 @@ $
 4. Outside the container, you may run the example. If the assertion raises no error, taint was tracked as expected.
 ```ShellSession
 $ cd examplefolder
-./a.out
-
+$ ./a.out
+$
 ```
 </details>
 
@@ -796,6 +796,11 @@ $ frama-c -eva -no-val-alloc-returns-null cwe190_ex2_ok.c
 
 This example is now analyzed with no errors and alarms, indicating that our program is safe.
 The precision of the Eva plugin is highly configurable. If you encounter issues when analysing other examples, check the Eva [documentation](https://frama-c.com/fc-plugins/eva.html) page for more information about the Eva analysis and its optional flags.
+
+Examples are always a good help. You may find more Frama-C case studies in this repositories:
+* [https://git.frama-c.com/pub/open-source-case-studies](https://git.frama-c.com/pub/open-source-case-studies)
+* [https://git.frama-c.com/pub/sate-6/-/tree/master](https://git.frama-c.com/pub/sate-6/-/tree/master)
+
 
 ### Security vulnerability scanners
 
