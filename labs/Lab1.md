@@ -335,7 +335,6 @@ TNT_TAINT(argv[1],8);
 strncpy(command, cat, catLength);
 strncpy(command + catLength, argv[1], commandLength - catLength);
 unsigned int t;
-printf("checking taint for %d bytes of command\n",commandLength);
 for (int i=0; i < commandLength; ) {
   TNT_IS_TAINTED(t,command+i,8);
   printf("%08x ",t);
@@ -349,10 +348,8 @@ We can now compile the instrumented program and run it with Taintgrid:
 <summary>Result</summary>
 
 ```ShellSession
-$ taintgrind ./a.out aaaaaaaa 2> log                                                                           
+$ taintgrind ./a.out aaaaaaaa 2> log          
 /usr/local/bin/valgrind --tool=taintgrind ./a.out aaaaaaaa
-tainting first 8 bytes of argv[1] aaaaaaaa
-checking taint for 18 bytes of command
 00000000 ffffff00 000000ff
 ```
 </details>
@@ -369,7 +366,60 @@ $ dot -Tsvg log.dot -o log.svg
 ![lab1-taintgrind](lab1-taintgrind.svg)
 </details>
 
+$ gcc -g -O0 sign32-taintgrind.c                                                                         232 ⨯ 1 ⚙
+                                                                                                                     
+┌──(kali㉿bad)-[~/Desktop/ses/c/misc]
+└─$ taintgrind ./a.out aaaaaaaa 2> log                                                                           1 ⚙
+/usr/local/bin/valgrind --tool=taintgrind ./a.out aaaaaaaa
+00000000
+                                                                                                                     
+┌──(kali㉿bad)-[~/Desktop/ses/c/misc]
+└─$ taintgrind ./a.out 2> log                                                                                1 ⨯ 1 ⚙
+/usr/local/bin/valgrind --tool=taintgrind ./a.out
+00000000
+
 For more details on how Taintgrind operates check the [development](https://github.com/wmkhoo/taintgrind) page and this [presentation](https://github.com/h2hconference/2019/raw/master/H2HC%20-%20Marek%20Zmyslowski%20-%20Crash%20Analysis%20with%20Reverse%20Taint.pptx). ALso note that Taintgrind only considers direct flows as information for propagating taint; indirect flows, e.g., when a memory adress depends on a variable used for calculating a conditional branch, are not captured by the analysis.
+
+#### [Clang Data Flow Sanitizer]()
+
+```C
+dfsan_label argv1_label = 1;
+dfsan_set_label(argv1_label,argv[1],8);
+strncpy(command, cat, catLength);
+strncpy(command + catLength, argv[1], commandLength - catLength);
+dfsan_label command_label;
+for (int i=0; i < commandLength; ) {
+  command_label = dfsan_read_label(command+i,8);
+  printf("%u ",command_label);
+  i+=8;
+}
+if (system(command) < 0) { ... }
+```
+
+```ShellSession
+$ ./a.out aaaaaaaa                        
+/bin/cat: aaaaaaaa: No such file or directory
+0 1 1
+```
+
+```ShellSession
+$ clang-13 -fsanitize=dataflow sign32.c
+$ ./a.out                                                    
+a.out: sign32.c:18: int main(int, char **): Assertion `dfsan_has_label(s_label, a_label)' failed.
+zsh: abort      ./a.out
+```
+
+git clone https://github.com/mcopik/clang-dfsan
+cd clang-dfsan
+sudo sh build-cfsan.sh
+sudo docker run -v /home/kali:/home/kali -it mcopik/clang-dfsan:cfsan-9.0 
+clang-cfsan sign32.c
+
+```ShellSession
+$ ./a.out
+
+
+```
 
 ## [Static Application Security Testing](https://cacm.acm.org/magazines/2022/1/257444-static-analysis/fulltext)
 
