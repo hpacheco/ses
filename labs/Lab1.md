@@ -749,16 +749,13 @@ $ frama-c -eva cwe190_ex2_ok.c
 ```
 </details>
 
-This error occurs because Eva assumes by default that the `malloc` function may always fail, e.g. if there is insufficient available memory, To avoid this error, we can pass an additional `-no-val-alloc-returns-null` flag to the analysis.
+This error occurs because Eva assumes by default that the `malloc` function may always fail, e.g. if there is insufficient available memory, To avoid this error, we can pass an additional `-eva-no-alloc-returns-null` flag to the analysis.
 
 <details>
 <summary>Result</summary>
 
 ```ShellSession
-$ frama-c -eva -no-val-alloc-returns-null cwe190_ex2_ok.c            
-[kernel] Warning: -no-val-alloc-returns-null is a deprecated alias
-  for option -eva-no-alloc-returns-null.
-  Please use -eva-no-alloc-returns-null instead.
+$ frama-c -eva -eva-no-alloc-returns-null cwe190_ex2_ok.c            
 [kernel] Parsing cwe190_ex2_ok.c (with preprocessing)
 [eva] Analyzing a complete application starting at main
 [eva] Computing initial state
@@ -797,23 +794,23 @@ $ frama-c -eva -no-val-alloc-returns-null cwe190_ex2_ok.c
 This example is now analyzed with no errors and alarms, indicating that our program is safe.
 The precision of the Eva plugin is highly configurable. If you encounter issues when analysing other examples, check the Eva [documentation](https://frama-c.com/fc-plugins/eva.html) page for more information about the Eva analysis and its optional flags.
 
-Since Frama-C performs a static analysis, it will often fail to fully discard all proof obligations that it generates for a program, and user-supplied annotations may be necessary to guide the verification engine; this is particularly the case for loops whose number of iterations cannot be decided statically. 
+#### User-supplied proof annotations
 
-For more information on how to verify more challenging example, examples are always a good help. You may find more Frama-C case studies in these repositories:
+It is important to stress that Frama-C is not particularly designed to be used as an automated SAST framework, which typically scans a code base for known vulnerabilities.
+Since it performs an exhaustive static analysis of all possible program behaviours, it will often fail to automatically discard all proof obligations that it generates for a program, and user-supplied annotations may be necessary to guide the verification engine; this is particularly the case of loops whose number of iterations cannot be decided statically. 
+
+For more information on how to verify more challenging example. You may find more Frama-C case studies in these repositories:
 * [https://git.frama-c.com/pub/open-source-case-studies](https://git.frama-c.com/pub/open-source-case-studies)
 * [https://git.frama-c.com/pub/sate-6/-/tree/master](https://git.frama-c.com/pub/sate-6/-/tree/master)
 
 #### Taint analysis
 
-The Frama-C Eva plugin also supports a form of static taint analysis, which is a data-dependency analysis together with a special logical annotation which denotes taint. The Eva analysis propagates taint by computing an over-approximation of the set of tainted locations at each program point. Programmers can then supply taint clauses and contracts that need to be verified along-side the traditional program analysis. 
-
-
-
+The Frama-C Eva plugin also provides an experimental form of static taint analysis, which is a data-dependency analysis together with a special logical annotation which denotes taint. The Eva analysis propagates taint by computing an over-approximation of the set of tainted locations at each program point. Programmers can then supply taint clauses and contracts that need to be verified along-side the traditional program analysis. 
 
 ### Security vulnerability scanners
 
 Coverity
 CodeQL
-SonarCLoud
+SonarCloud
 
 
