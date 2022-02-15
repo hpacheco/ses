@@ -1,3 +1,28 @@
+#set(CMAKE_VERBOSE_MAKEFILE on)
+
+project(ses)
 cmake_minimum_required(VERSION 3.0)
-file(GLOB_RECURSE SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "c/*.c")
-add_executable(main ${SOURCES})
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY build)
+
+# SARD suites
+file(GLOB SARD_SOURCES RELATIVE ${CMAKE_SOURCE_DIR} "c/SARD-testsuite-???/*/*/*/")
+foreach(SARD_SOURCE ${SARD_SOURCES})
+ file(GLOB SARD_CFILES RELATIVE ${CMAKE_SOURCE_DIR} ${SARD_SOURCE}/*.c)
+ list(FILTER SARD_CFILES EXCLUDE REGEX ".*-dfsan\\.c")
+ list(FILTER SARD_CFILES EXCLUDE REGEX ".*-taintgrind\\.c")
+ string(REGEX REPLACE "/" "-" SARD_EXENAME ${SARD_SOURCE})
+ add_executable( ${SARD_EXENAME} ${SARD_CFILES} )
+ target_link_libraries(${SARD_EXENAME} mysqlclient pam)
+ add_compile_options("-w")
+endforeach()
+
+# misc
+file(GLOB MISC_CFILES RELATIVE ${CMAKE_SOURCE_DIR} "c/misc/*.c")
+list(FILTER MISC_CFILES EXCLUDE REGEX ".*-dfsan\\.c")
+list(FILTER MISC_CFILES EXCLUDE REGEX ".*-taintgrind\\.c")
+foreach(MISC_CFILE ${MISC_CFILES})
+  string(REGEX REPLACE "/" "-" MISC_EXENAME ${MISC_CFILE})
+  add_executable( ${MISC_EXENAME} ${MISC_CFILE} )
+  target_link_libraries(${MISC_EXENAME} mysqlclient pam)
+  add_compile_options("-w")
+endforeach()

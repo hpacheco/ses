@@ -6,6 +6,7 @@ sudo sudo apt-get install gcc g++ cmake libgmp-dev libboost-dev libboost-filesys
     libboost-thread-dev libboost-test-dev python3 python3-pygments libsqlite3-dev libtbb-dev \
     libz-dev libedit-dev llvm-9 llvm-9-dev llvm-9-tools clang-9
 sudo apt install -y clang clang-tools valgrind
+sudo apt install -y libmysql++-dev libpam0g-dev libmysqlcppconn-dev 
 sh install-taintgrind.sh
 sh install-ikos.sh
 sh install-frama-c.sh
