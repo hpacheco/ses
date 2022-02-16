@@ -792,25 +792,139 @@ $ frama-c -eva -eva-no-alloc-returns-null cwe190_ex2_ok.c
 </details>
 
 This example is now analyzed with no errors and alarms, indicating that our program is safe.
-The precision of the Eva plugin is highly configurable. If you encounter issues when analysing other examples, check the Eva [documentation](https://frama-c.com/fc-plugins/eva.html) page for more information about the Eva analysis and its optional flags.
+The precision (in tradeoff with efficiency) of the Eva plugin is highly configurable. If you encounter issues when analysing other examples, you may check the Eva [documentation](https://frama-c.com/fc-plugins/eva.html) page for more information about the Eva analysis and its optional flags.
 
 #### User-supplied proof annotations
 
-It is important to stress that Frama-C is not particularly designed to be used as an automated SAST framework, which typically scans a code base for known vulnerabilities.
-Since it performs an exhaustive static analysis of all possible program behaviours, it will often fail to automatically discard all proof obligations that it generates for a program, and user-supplied annotations may be necessary to guide the verification engine; this is particularly the case of loops whose number of iterations cannot be decided statically. 
+It is important to stress that Frama-C is *not* particularly designed to be used as an automated SAST framework, which typically scans a code base for known vulnerabilities.
+Since Frama-C needs to consider all possible program behaviours, it will often fail to automatically discard all proof obligations that it generates for a program, and user-supplied annotations or domain restrictions may be necessary to guide the verification engine; such a tradeoff between precision and automation is common to all static analysis methods.
 
-For more information on how to verify more challenging example. You may find more Frama-C case studies in these repositories:
+In this lab we will not delve into the details of the different analyses that Frama-C supports, nor give attempt to give a crash course on formal program verification.
+For demonstrative purposes, consider the CWE 190 example from before, but where the `packet_get_int` is left abstract and no longer returns a fixed number; this poses a challenge for verification as the number of iterations of the loop cannot be decided statically and inferring precise constraints for dynamically-allocated memory is often complicated. We illustrate two possible approaches:
+* [c/misc/cwe190-ex2_ok1-frama-c.c](../c/misc/cwe190-ex2_ok-frama-c.c): a user can supply additional annotations (and assumptions) to guide the proof that a general program is safe for any input;
+* [c/misc/cwe190-ex2_ok2-frama-c.c](../c/misc/cwe190-ex2_ok2-frama-c.c): if the range of possible inputs is a computationally small enough set, we can instruct Frama-C's Eva analysis to exhaustively search all possible program paths.
+You may run both examples with:
+```Shell
+frama-c-gui -wp -eva -eva-no-alloc-returns-null c/misc/<examplename>.c
+```
+
+For more information on the concrete proof techniques you may consult the Frama-C [documentation](https://frama-c.com/html/documentation.html).
+You may also consult more challenging Frama-C case studies in these repositories:
 * [https://git.frama-c.com/pub/open-source-case-studies](https://git.frama-c.com/pub/open-source-case-studies)
 * [https://git.frama-c.com/pub/sate-6/-/tree/master](https://git.frama-c.com/pub/sate-6/-/tree/master)
 
 #### Taint analysis
 
-The Frama-C Eva plugin also provides an experimental form of static taint analysis, which is a data-dependency analysis together with a special logical annotation which denotes taint. The Eva analysis propagates taint by computing an over-approximation of the set of tainted locations at each program point. Programmers can then supply taint clauses and contracts that need to be verified along-side the traditional program analysis. 
+The Frama-C Eva plugin also provides an experimental form of static taint analysis that performs of a data-dependency analysis, possibly assisted by user annotations. The Eva analysis propagates taint by computing an over-approximation of the set of tainted locations at each program point. Programmers can then supply special `taint` clauses and contracts that encode typical taint sources and sinks and will to be verified along-side the standard program analysis.
+
+##### Simple example
+
+Consider the [c/misc/sign32_direct_frama-c.c](../c/misc/sign32_direct_frama-c.c) program:
+```C
+int get_sign(int x) {
+    if (x == 0) return 0;
+    if (x < 0)  return -1;
+    return 1;
+}
+
+int main(int argc, char **argv)
+{
+    int a = 1000;
+    //@ taint a;
+    int s = get_sign(a);
+    //@ assert !\tainted(s);
+    
+    return s;
+}
+```
+The first annotation marks the input variable `a` as a taint source; the second asks Frama-C if the variable `s` - computed from `a` - is **not** a tant sink. In general, Frama-C won't be able to prove that memory is not tainted, e.g., due to analysis over-approximations or underspecified specifications; Frama-C taint analysis is rather designed to reason about when some memory location is definitely not tainted.
+If you run this example:
+<details>
+<summary>Result</summary>
+
+```ShellSession
+$ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_direct_frama-c.c
+```
+</details>
+The result may be slightly surprising, but it highlights that Frama-C's taint analysis only considers direct information flows; the input `x` is never directly assigned to the output of the function, and only indirectly the output by affecting the conditional clauses.
+
+Although we can not reason about indirect flows, we can change the default tainting behavior of `get_sign` by explicitly specifying a taint contract.
+Consider the [c/misc/sign32_indirect_frama-c.c](../c/misc/sign32_indirect_frama-c.c) program:
+```C
+/*@ ensures \tainted(\result) <==> \tainted(x);
+  @ assigns \result \from x;
+*/ 
+int get_sign(int x);
+
+int main(int argc, char **argv)
+{
+    int a = 1000;
+    //@ taint a;
+    int s = get_sign(a);
+    //@ assert !\tainted(s);
+    
+    return s;
+}
+```
+This time, we specify that function `get_sign` produces a result that is as tainted as its input; note that it is important to leave the definition of `get_sign` abstract, or else our annotated post-condition and the default taint analysis for the body of the function could lead to logical inconsistencies.
+You can run this example:
+<details>
+<summary>Result</summary>
+
+```ShellSession
+$ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_indirect_frama-c.c
+```
+</details>
+The result is as expected: variable `s` is possibly tainted and the second assertion fails.
+
+##### Command injection
+
+Let's consider a simplified version [c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-frama-c.c](../c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-frama-c.c) of the command injection example from before, where we construct a string that shows the content of an argument file with name passed as an argument. For asking Frama-C if our executed command is tainted by the input, the relevant snippet is the following:
+```C
+//@ taint argv[0..strlen(argv)];
+...
+strncpy(command, cat, catLength);
+strncpy(command + catLength, argv, commandLength - catLength);
+//@ assert !\tainted(command[0..catLength-1]);
+//@ assert !\tainted(command[0..commandLength-1]);
+```
+We can run the program as follows:
+```ShellSession
+$ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-context-valid-pointers c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-frama-c.c
+```
+Looking at the output, Frama-C has correctly separated the command's prefix from the command's argument. Thus, the first assertion is true, since we have not tainted the prefix, while the second assertion is false, since we have tainted the prefix.
+
+We can also analyze a good version [c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c](../c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c) of the program that sanitizes the input with a function `purify`. For that purpose, we can write a contract saying that `purify` always returns an untainted array, irrespective of its inputs:
+```C
+//@ ensures !\tainted(buff[0..buffLength-1]);
+void purify(char *buff,size_t buffLength);
+
+//@ taint argv[0..strlen(argv)];
+...
+strncpy(command, cat, catLength);
+strncpy(command + catLength, argv, commandLength - catLength);
+//@ assert !\tainted(command[0..catLength-1]);
+//@ assert !\tainted(command[0..commandLength-1]);
+```
+We can run the program as before:
+```ShellSession
+$ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-context-valid-pointers c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c
+```
+Given our assumptions, Frama-C is now able to prove that the executed `command` string is not tainted.
 
 ### Security vulnerability scanners
 
 Coverity
 CodeQL
-SonarCloud
+[SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_ses)
+
+## Tasks
+
+The goal of this lab is to experiment with the above described dynamic and static analysis to detect and fix the vulnerabilities found in example C programs from the [SARD] testsuites. 
+0. Study and try out the tools described above.
+1. Choose two vulnerable programs *under different categories* from [c/SARD-testsuite-100](c/SARD-testsuite-100) to analyse.
+2. For each chosen vulnerable program under `c/SARD-testsuite-100/000/140/i`, find and study the equivalent but more secure program under `c/SARD-testsuite-101/000/140/i+1`.
+3. 
+
 
 
