@@ -4,8 +4,9 @@ extraction:
     prepare:
       packages:
       - cmake
-      - golang-go
-      - ninja-build
+      - libmysql++-dev
+      - libpam0g-dev
+      - libmysqlcppconn-dev
     after_prepare:    # Customizable step used by all languages.
       - export GNU_MAKE=make
     configure:    # Customizable step used only by C/C++ extraction.
