@@ -796,19 +796,20 @@ The precision (in tradeoff with efficiency) of the Eva plugin is highly configur
 
 #### User-supplied proof annotations
 
-It is important to stress that Frama-C is *not* particularly designed to be used as an automated SAST framework, which typically scans a code base for known vulnerabilities.
+It is important to stress that Frama-C is *not* particularly designed to be used as an automated SAST framework that typically scans a code base for known vulnerabilities.
 Since Frama-C needs to consider all possible program behaviours, it will often fail to automatically discard all proof obligations that it generates for a program, and user-supplied annotations or domain restrictions may be necessary to guide the verification engine; such a tradeoff between precision and automation is common to all static analysis methods.
 
-In this lab we will not delve into the details of the different analyses that Frama-C supports, nor give attempt to give a crash course on formal program verification.
-For demonstrative purposes, consider the CWE 190 example from before, but where the `packet_get_int` is left abstract and no longer returns a fixed number; this poses a challenge for verification as the number of iterations of the loop cannot be decided statically and inferring precise constraints for dynamically-allocated memory is often complicated. We illustrate two possible approaches:
-* [c/misc/cwe190-ex2_ok1-frama-c.c](../c/misc/cwe190-ex2_ok-frama-c.c): a user can supply additional annotations (and assumptions) to guide the proof that a general program is safe for any input;
-* [c/misc/cwe190-ex2_ok2-frama-c.c](../c/misc/cwe190-ex2_ok2-frama-c.c): if the range of possible inputs is a computationally small enough set, we can instruct Frama-C's Eva analysis to exhaustively search all possible program paths.
-You may run both examples with:
+In this lab we will not delve into the details of the different analyses that Frama-C supports, nor attempt to give a crash course on formal program verification.
+Nonetheless, for demonstrative purposes, consider the CWE 190 example from before, but where the `packet_get_int` is left abstract and no longer returns a fixed number; this poses a challenge for verification as the number of iterations of the loop cannot be decided statically and inferring precise constraints for dynamically-allocated memory is often complicated. We illustrate two possible approaches:
+* [c/misc/cwe190_ex2_ok1-frama-c.c](../c/misc/cwe190_ex2_ok1-frama-c.c): a user can supply additional annotations (and assumptions) to guide the proof that a general program is safe for any input;
+* [c/misc/cwe190_ex2_ok2-frama-c.c](../c/misc/cwe190_ex2_ok2-frama-c.c): if the range of possible inputs is a computationally small enough set, we can instruct Frama-C's Eva analysis to exhaustively search all possible program paths.
+
+You may run and test both examples with:
 ```bash
 frama-c-gui -wp -eva -eva-no-alloc-returns-null c/misc/<examplename>.c
 ```
 For more information on the concrete proof techniques you may consult the Frama-C [documentation](https://frama-c.com/html/documentation.html).
-You may also consult more challenging Frama-C case studies in these repositories:
+You can also have a look at more challenging Frama-C case studies in these repositories:
 * [https://git.frama-c.com/pub/open-source-case-studies](https://git.frama-c.com/pub/open-source-case-studies)
 * [https://git.frama-c.com/pub/sate-6/-/tree/master](https://git.frama-c.com/pub/sate-6/-/tree/master)
 
@@ -818,7 +819,7 @@ The Frama-C Eva plugin also provides an experimental form of static taint analys
 
 ##### Simple example
 
-Consider the [c/misc/sign32_direct_frama-c.c](../c/misc/sign32_direct_frama-c.c) program:
+Consider the [c/misc/sign32_direct-frama-c.c](../c/misc/sign32_direct-frama-c.c) program:
 ```C
 int get_sign(int x) {
     if (x == 0) return 0;
@@ -836,20 +837,21 @@ int main(int argc, char **argv)
     return s;
 }
 ```
-The first annotation marks the input variable `a` as a taint source; the second asks Frama-C if the variable `s` - computed from `a` - is **not** a tant sink. In general, Frama-C won't be able to prove that memory is not tainted, e.g., due to analysis over-approximations or underspecified specifications; Frama-C taint analysis is rather designed to reason about when some memory location is definitely not tainted.
-If you run this example:
+The first annotation marks the input variable `a` as a taint source; the second asks Frama-C if the variable `s` - computed from `a` - is **not** a tant sink. In general, Frama-C won't be able to prove that memory is not tainted, e.g., due to semantic over-approximations; Frama-C taint analysis is rather designed to reason about when some memory location is definitely not tainted.
+If you can run this example using the Eva taint domain:
 <details>
 <summary>Result</summary>
 
 ```ShellSession
 $ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_direct_frama-c.c
-![lab1_framac_taintd](lab1_framac_taintd.png)
 ```
+![lab1_framac_taintd](lab1_framac_taintd.png)
 </details>
-The result may be slightly surprising, but it highlights that Frama-C's taint analysis only considers direct information flows; the input `x` is never directly assigned to the output of the function, and only indirectly the output by affecting the conditional clauses.
+The result may be slightly surprising, but it highlights that Frama-C's taint analysis only considers direct information flows; the input ``x`` is never directly assigned to the output of the function, and only indirectly the output by affecting the conditional clauses.
+
 
 Although we can not reason about indirect flows, we can change the default tainting behavior of `get_sign` by explicitly specifying a taint contract.
-Consider the [c/misc/sign32_indirect_frama-c.c](../c/misc/sign32_indirect_frama-c.c) program:
+Consider the [c/misc/sign32_indirect-frama-c.c](../c/misc/sign32_indirect-frama-c.c) program:
 ```C
 /*@ ensures \tainted(\result) <==> \tainted(x);
   @ assigns \result \from x;
