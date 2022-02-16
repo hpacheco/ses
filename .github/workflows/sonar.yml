@@ -1,4 +1,4 @@
-name: Build
+name: Sonar Cloud Static Analysis
 on:
   push:
     branches:
@@ -9,7 +9,7 @@ on:
     - cron: '17 0 * * SUN' # the example itself doesn't become stale
 jobs:
   build:
-    name: Build
+    name: Sonar Cloud
     runs-on: ubuntu-latest
     env:
       SONAR_SCANNER_VERSION: 4.6.1.2450 
@@ -44,6 +44,10 @@ jobs:
           curl -sSLo $HOME/.sonar/build-wrapper-linux-x86.zip ${{ env.BUILD_WRAPPER_DOWNLOAD_URL }}
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
           echo "$HOME/.sonar/build-wrapper-linux-x86" >> $GITHUB_PATH
+      - name: "Install Ubuntu dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libmysql++-dev libpam0g-dev libmysqlcppconn-dev
       - name: Run build-wrapper
         run: |
           mkdir build
