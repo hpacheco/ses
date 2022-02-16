@@ -845,7 +845,7 @@ If you can run this example using the Eva taint domain:
 ```ShellSession
 $ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_direct_frama-c.c
 ```
-![lab1_framac_taintd](lab1_framac_taintd.png)
+![lab1-framac-taintd](lab1-framac-taintd.png)
 </details>
 The result may be slightly surprising, but it highlights that Frama-C's taint analysis only considers direct information flows; the input ``x`` is never directly assigned to the output of the function, and only indirectly the output by affecting the conditional clauses.
 
@@ -876,7 +876,7 @@ You can run this example:
 ```ShellSession
 $ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_indirect_frama-c.c
 ```
-![lab1_framac_tainti](lab1_framac_tainti.png)
+![lab1-framac-tainti](lab1-framac-tainti.png)
 </details>
 The result is as expected: variable `s` is possibly tainted and the second assertion fails.
 
