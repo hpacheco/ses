@@ -804,10 +804,9 @@ For demonstrative purposes, consider the CWE 190 example from before, but where 
 * [c/misc/cwe190-ex2_ok1-frama-c.c](../c/misc/cwe190-ex2_ok-frama-c.c): a user can supply additional annotations (and assumptions) to guide the proof that a general program is safe for any input;
 * [c/misc/cwe190-ex2_ok2-frama-c.c](../c/misc/cwe190-ex2_ok2-frama-c.c): if the range of possible inputs is a computationally small enough set, we can instruct Frama-C's Eva analysis to exhaustively search all possible program paths.
 You may run both examples with:
-```Shell
+```bash
 frama-c-gui -wp -eva -eva-no-alloc-returns-null c/misc/<examplename>.c
 ```
-
 For more information on the concrete proof techniques you may consult the Frama-C [documentation](https://frama-c.com/html/documentation.html).
 You may also consult more challenging Frama-C case studies in these repositories:
 * [https://git.frama-c.com/pub/open-source-case-studies](https://git.frama-c.com/pub/open-source-case-studies)
@@ -844,6 +843,7 @@ If you run this example:
 
 ```ShellSession
 $ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_direct_frama-c.c
+![lab1_framac_taintd](lab1_framac_taintd.png)
 ```
 </details>
 The result may be slightly surprising, but it highlights that Frama-C's taint analysis only considers direct information flows; the input `x` is never directly assigned to the output of the function, and only indirectly the output by affecting the conditional clauses.
@@ -874,6 +874,7 @@ You can run this example:
 ```ShellSession
 $ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_indirect_frama-c.c
 ```
+![lab1_framac_tainti](lab1_framac_tainti.png)
 </details>
 The result is as expected: variable `s` is possibly tainted and the second assertion fails.
 
@@ -889,9 +890,14 @@ strncpy(command + catLength, argv, commandLength - catLength);
 //@ assert !\tainted(command[0..commandLength-1]);
 ```
 We can run the program as follows:
+<details>
+<summary>Result</summary>
+
 ```ShellSession
 $ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-context-valid-pointers c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-frama-c.c
 ```
+![lab1_framac_cmdi_bad](lab1_framac_cmdi_bad.png)
+</details>
 Looking at the output, Frama-C has correctly separated the command's prefix from the command's argument. Thus, the first assertion is true, since we have not tainted the prefix, while the second assertion is false, since we have tainted the prefix.
 
 We can also analyze a good version [c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c](../c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c) of the program that sanitizes the input with a function `purify`. For that purpose, we can write a contract saying that `purify` always returns an untainted array, irrespective of its inputs:
@@ -907,12 +913,19 @@ strncpy(command + catLength, argv, commandLength - catLength);
 //@ assert !\tainted(command[0..commandLength-1]);
 ```
 We can run the program as before:
+<details>
+<summary>Result</summary>
+
 ```ShellSession
 $ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-context-valid-pointers c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c
 ```
+![lab1_framac_cmdi_good](lab1_framac_cmdi_good.png)
+</details>
 Given our assumptions, Frama-C is now able to prove that the executed `command` string is not tainted.
 
 ### Security vulnerability scanners
+
+There are several automated security vulnerability scanners that will 
 
 Coverity
 CodeQL
