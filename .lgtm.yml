@@ -1,0 +1,17 @@
+# This configuration file is for https://lgtm.com/ code analysis using Semmle.
+extraction:
+  cpp:
+    prepare:
+      packages:
+      - cmake
+      - libmysql++-dev
+      - libpam0g-dev
+      - libmysqlcppconn-dev
+    after_prepare:    # Customizable step used by all languages.
+      - export GNU_MAKE=make
+    configure:    # Customizable step used only by C/C++ extraction.
+      command:
+        - cmake .
+    index:    # Customizable step used by all languages.
+      build_command:
+        - $GNU_MAKE
