@@ -928,6 +928,355 @@ $ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-contex
 </details>
 Given our assumptions, Frama-C is now able to prove that the executed `command` string is not tainted.
 
+### [Smack](https://smackers.github.io/)
+
+SMACK is a software model checker for C programs. Like many previous tools, it is built on top of LLVM.
+It can be used to verify properties encoded as regular C-style assertions in its input programs, and it will try to find a counter-example that violates the given properties.
+SMACK can also check for classical safety properties by automatically generating assertions; explore the option `--check` under `smack --help`.
+
+To set up SMACK, change the path of the shared folder `/home/kali` and run the following Docker command that will automatically open a new prompt inside a SMACK-powered container with access to `/home/kali` in your host VM:
+```ShellSession
+$ sudo docker run -v /home/kali:/home/kali -it smackers/smack
+smack@container$
+```
+
+To make it feasible to statically explore all possible program paths, SMACK resorts to a bounded model checking technique that it will explore all paths only up to a (typically small) maximum depth.
+
+#### Integer overflow
+
+Recall the integer overflow vulnerability from [c/misc/cwe190_ex2_bad-smack.c](../c/misc/cwe190_ex2_bad-smack.c). We can easily test this example in SMACK by defining the function `packet_get_int` as returning a random integer value:
+```C
+int packet_get_int() {
+  return __VERIFIER_nondet_int();
+}
+```
+Inside the SMACK container, run the following command; SMACK will detect the integer overflow and indicate a value of `nresp` for which that happens.
+<details>
+<summary>Result</summary>
+
+```ShellSession
+smack@container$ smack --check=integer-overflow c/misc/cwe190_ex2_bad-smack.c 
+SMACK program verifier version 2.8.0
+/usr/local/share/smack/lib/smack.c(1885,3): 
+/usr/local/share/smack/lib/smack.c(1890,1): 
+c/misc/cwe190_ex2_bad-smack.c(20,11): smack:entry:main = -8305, CALL packet_get_int
+c/misc/cwe190_ex2_bad-smack.c(10,10): CALL __VERIFIER_nondet_int
+/usr/local/share/smack/lib/smack.c(1463,11): smack:ext:__SMACK_nondet_int = 268435456, x = 268435456
+/usr/local/share/smack/lib/smack.c(1464,23): 
+/usr/local/share/smack/lib/smack.c(1464,34): 
+/usr/local/share/smack/lib/smack.c(1464,39): 
+/usr/local/share/smack/lib/smack.c(0,0): 
+/usr/local/share/smack/lib/smack.c(1464,34): 
+/usr/local/share/smack/lib/smack.c(1464,3): CALL __VERIFIER_assume
+/usr/local/share/smack/lib/smack.c(1606,29): __VERIFIER_assume:arg:x = 1
+/usr/local/share/smack/lib/smack.c(45,3): 
+/usr/local/share/smack/lib/smack.c(46,1): 
+/usr/local/share/smack/lib/smack.c(1464,3): RETURN from __VERIFIER_assume
+/usr/local/share/smack/lib/smack.c(1465,3): 
+c/misc/cwe190_ex2_bad-smack.c(10,10): RETURN from __VERIFIER_nondet_int, smack:ext:__VERIFIER_nondet_int = 268435456
+c/misc/cwe190_ex2_bad-smack.c(10,3): 
+c/misc/cwe190_ex2_bad-smack.c(20,11): RETURN from packet_get_int, nresp = 268435456
+c/misc/cwe190_ex2_bad-smack.c(21,13): 
+c/misc/cwe190_ex2_bad-smack.c(21,7): 
+/usr/local/share/smack/lib/smack.c(1606,29): __SMACK_check_overflow:arg:flag = 1
+/usr/local/share/smack/lib/smack.c(1409,3): 
+SMACK found an error: integer overflow.
+```
+</details>
+
+#### Loop unrolling
+
+The main challenge for static program analysis are undoubetedly loops, and SMACK's bounded verification follows a very different approach from the previous tools.
+In practice, SMACK will unroll loops - but only up to a bounded maximum number of iterations that the user can control - and try to find an invalid program execution for the unrolled program.
+
+Consider the [c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad.c](../c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad.c) program that contains a memory inside a loop with the following code:
+```C
+for (i = 0; i < 10; ++i) {
+  buf = (size_t *)malloc(i * sizeof(size_t));
+  if (buf) buf = NULL;                         /* FLAW */
+}
+```
+This loop is executed exactly 10 times; in each iteration, a block of memory is allocated and, if successfully allocated, leaked.
+Since we know that there will be a memory leak if the `malloc` suceeds, we can introduce an assertion in program [c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c](../c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c) to check if that is ever true:
+```C
+for (i = 0; i < 10; ++i) {
+  buf = (size_t *)malloc(i * sizeof(size_t));
+  assert (buf != NULL);
+  if (buf) buf = NULL;                         /* FLAW */
+}
+```
+
+If we run this example with SMACK, it will detect an assertion violation as expected:
+<details>
+<summmary>Result</summary>
+
+```ShellSession
+smack@container$ smack c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c 
+SMACK program verifier version 2.8.0
+/usr/local/share/smack/lib/smack.c(1885,3): 
+/usr/local/share/smack/lib/smack.c(1890,1): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c(23,7): smack:entry:main = -1032, smack:arg:main:$i0 = 11, smack:arg:main:$p1 = 12, main:arg:argc = 11
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c(0,0): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c(23,16): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c(24,26): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c(24,28): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c(25,3): CALL __VERIFIER_assert
+/usr/local/share/smack/lib/smack.c(1606,29): __VERIFIER_assert:arg:x = 0
+/usr/local/share/smack/lib/smack.c(52,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c(25,3): RETURN from __VERIFIER_assert
+SMACK found an error.
+```
+</details>
+
+What if we use SMACK's builtin memory safety checker instead? We can run the original program [c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c](../c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c) as follows:
+<details>
+<summmary>Result</summary>
+
+```ShellSession
+smack@container$ smack c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c  --check=memleak            
+SMACK program verifier version 2.8.0
+/usr/local/share/smack/lib/smack.c:1631:17: warning: cast to smaller integer type 'int' from 'void (*)(void *, void *)' [-Wpointer-to-int-cast]
+  __SMACK_dummy((int)__SMACK_check_memory_safety);
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.
+SMACK found no errors with unroll bound 1.
+```
+</details>
+
+Looking at the output, SMACK detected no memory leaks, but we know that there is one in the code. Is this a tool limitation? If you look closely at the log, you will notice the message:
+
+> SMACK found no errors with unroll bound 1.
+
+This means that, by default, SMACK will unroll the loop once and keep the remainder of the loop (with one less iteration) as it is. Exposing only some iterations of the loop is generally sufficient for invalidating assertions that occur in the body of the loop, as we have seen before. Then why is the memory leak not found? The answer lies in the fact that SMACK only insert the memory leak checking assertion at the end of the program; since we know that our loop needs to get executed exactly 10 times before reaching the end of the program, it won't find the bug unless the loop is fully unrolled.
+
+You can try re-running SMACK with a concrete `unroll` parameter greater than 10:
+<details>
+<summmary>Result</summary>
+
+```ShellSession
+smack@container$ smack --check=memory-safety c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c --unroll=11
+SMACK program verifier version 2.8.0
+/usr/local/share/smack/lib/smack.c:1631:17: warning: cast to smaller integer type 'int' from 'void (*)(void *, void *)' [-Wpointer-to-int-cast]
+  __SMACK_dummy((int)__SMACK_check_memory_safety);
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.
+/usr/local/share/smack/lib/smack.c(1885,3): 
+/usr/local/share/smack/lib/smack.c(1888,3): 
+/usr/local/share/smack/lib/smack.c(1890,1): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,7): smack:entry:main = -1032, smack:arg:main:$i0 = 71, smack:arg:main:$p1 = 73, main:arg:argc = 71
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(0,0): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,16): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,26): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,28): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,22): i = 1
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(0,0): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,16): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,26): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,28): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,22): i = 2
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(0,0): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,16): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,26): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,28): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,22): i = 3
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(0,0): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,16): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,26): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,28): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,22): i = 4
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(0,0): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,16): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,26): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,28): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,22): i = 5
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(0,0): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,16): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,26): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,28): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,22): i = 6
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(0,0): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,16): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,26): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,28): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,22): i = 7
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(0,0): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,16): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,26): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,28): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,22): i = 8
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(0,0): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,16): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,26): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,28): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,22): i = 9
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(0,0): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,16): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,26): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,28): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,22): i = 10
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(0,0): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,16): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(30,2): 
+/usr/local/share/smack/lib/smack.c(1879,3): 
+SMACK found an error: memory leak.
+```
+</details>
+
+Since, for this simple program, the number of iterations is actually known at compile time, we can alternatively just instruct SMACK to statically unroll the loop:
+<details>
+<summmary>Result</summary>
+
+```ShellSession
+smack@container$ smack --check=memory-safety c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c --static-unroll
+SMACK program verifier version 2.8.0
+/usr/local/share/smack/lib/smack.c:1631:17: warning: cast to smaller integer type 'int' from 'void (*)(void *, void *)' [-Wpointer-to-int-cast]
+  __SMACK_dummy((int)__SMACK_check_memory_safety);
+                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.
+/usr/local/share/smack/lib/smack.c(1885,3): 
+/usr/local/share/smack/lib/smack.c(1888,3): 
+/usr/local/share/smack/lib/smack.c(1890,1): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(23,2): smack:entry:main = -1032, smack:arg:main:$i0 = 38, smack:arg:main:$p1 = 39, main:arg:argc = 38
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,19): CALL malloc, RETURN from malloc
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(24,9): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(25,7): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(27,3): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(28,2): 
+c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c(30,2): 
+/usr/local/share/smack/lib/smack.c(1879,3): 
+SMACK found an error: memory leak.
+```
+</details>
+
+1. Navigate to the [vm][../vm] folder.
+2. Build the ctverif docker image:
+```ShellSession
+$ sudo docker build -f ctverif.dockerfile . -t ctverif
+```
+3. Launch a ctverif-powered container:
+```ShellSession
+$ sudo docker run -v /home/kali:/home/kali -it ctverif
+ctverif@container$
+```
+
 ### Security vulnerability scanners
 
 There are several automated security vulnerability scanners that will 
