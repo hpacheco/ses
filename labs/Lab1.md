@@ -505,10 +505,10 @@ $ scan-view /tmp/scan-build-2022-02-11-165808-3759-1
 ### [IKOS](https://ti.arc.nasa.gov/opensource/ikos/)
 
 IKOS is a static analyzer for C/C++ based on the theory of [Abstract Interpretation](https://en.wikipedia.org/wiki/Abstract_interpretation).
-Its analysis is based on LLVM and allows proving the absence of runtime errors in resulting applications.
+Its analysis is performed on top of LLVM and allows proving the absence of runtime errors in resulting applications.
 As a static analysis tool that covers all program executions (e.g. for any input), it is not as precise as a dynamic analysis that covers a single program execution (e.g., for a specific input). IKOS performs a sound over-approximation of the behavior of a program, meaning that analysis may fail to prove that a safe program is safe, but proven programs are always safe.
 
-Consider the program [cwe190_ex2_bad.c](c/misc/cwe190_ex2_bad.c) program from before. IKOS will statically detect the signed integer overflow in the `malloc` argument which makes our program unsafe:
+Consider the program [cwe190_ex2_bad.c](../c/misc/cwe190_ex2_bad.c) program from before. IKOS will statically detect the signed integer overflow in the `malloc` argument which makes our program unsafe:
 <details>
 <summary>Result</summary>
 
@@ -570,7 +570,7 @@ $ ikos-view output.db
 ![lab1_ikos-view](lab1_ikos-view.png)
 </details>
 
-We can also analyze a similar program [cwe190_ex2_ok.c](c/misc/cwe190_ex2_ok.c) with a fixed value for `nresp` that does not overflow.
+We can also analyze a similar program [cwe190_ex2_ok.c](../c/misc/cwe190_ex2_ok.c) with a fixed value for `nresp` that does not overflow.
 IKOS no longer reports the overflow, however, the program is still potentially unsafe, namely if `malloc` fails to allocate memory and returns a `NULL` pointer:
 
 <details>
@@ -610,7 +610,7 @@ cwe190_ex2_ok.c:24:46: warning: pointer '&response[(int64_t)i]' might be null
 ```
 </details>
 
-We can fix this uncertainty by making to check that the result of `malloc` is not `NULL`, as in [cwe190_ex2_ok.c](c/misc/cwe190_ex2_ok.c). IKOS now reports that our program is safe:
+We can fix this uncertainty by making to check that the result of `malloc` is not `NULL`, as in [cwe190_ex2_ok.c](../c/misc/cwe190_ex2_ok.c). IKOS now reports that our program is safe:
 
 <details>
 <summary>Result</summary>
@@ -652,7 +652,7 @@ No entries.
 Frama-C is a source code analysis platform that aims at conducting verification of industrial-size programs written in ISO C99 source code. Frama-C supports the formal verification approach of analyzing a C implementation with respect to a functional specification of the ISO C99 standard, and provides to its users with a collection of [plugins](https://frama-c.com/html/kernel-plugin.html) that perform static and dynamic analysis for safety and security critical software. As an industrial project, some of Frama-C's plugins are [open-sourced](https://git.frama-c.com/pub/frama-c), while others are proprietary.
 
 Frama-C's Eva plugin has been developed to statically show the absence of runtime errors on whole programs. It will perform a value analysis that (over-)estimates the set of possible values for each variables.
-Consider the program [cwe190_ex2_bad.c](c/misc/cwe190_ex2_bad.c) program from before. The Frama-C Eva plugin will statically detect the signed integer overflow in the `malloc` argument:
+Consider the program [cwe190_ex2_bad.c](../c/misc/cwe190_ex2_bad.c) program from before. The Frama-C Eva plugin will statically detect the signed integer overflow in the `malloc` argument:
 
 <details>
 <summary>Result</summary>
@@ -703,7 +703,7 @@ For instance, we can replicate the above Eva analysis and see the errors as anno
 ![lab1_frama-c-gui](lab1_frama-c-gui.png)
 </details>
 
-We can also analyze a similar program [cwe190_ex2_ok.c](c/misc/cwe190_ex2_ok.c) with a fixed value for `nresp` that does not overflow.
+We can also analyze a similar program [cwe190_ex2_ok.c](../c/misc/cwe190_ex2_ok.c) with a fixed value for `nresp` that does not overflow.
 Eva no longer reports the overflow, however, we get a different out of bounds error:
 
 <details>
@@ -926,6 +926,7 @@ $ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-contex
 ```
 ![lab1_framac_cmdi_good](lab1_framac_cmdi_good.png)
 </details>
+
 Given our assumptions, Frama-C is now able to prove that the executed `command` string is not tainted.
 
 ### Security vulnerability scanners
@@ -933,14 +934,14 @@ Given our assumptions, Frama-C is now able to prove that the executed `command` 
 There are several automated security vulnerability scanners that will 
 
 Coverity
-CodeQL
+[CodeQL](https://lgtm.com/projects/g/hpacheco/ses/?mode=list)
 [SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_ses)
 
 ## Tasks
 
 The goal of this lab is to experiment with the above described dynamic and static analysis to detect and fix the vulnerabilities found in example C programs from the [SARD] testsuites. 
 0. Study and try out the tools described above.
-1. Choose two vulnerable programs *under different categories* from [c/SARD-testsuite-100](c/SARD-testsuite-100) to analyse.
+1. Choose two vulnerable programs *under different categories* from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse.
 2. For each chosen vulnerable program under `c/SARD-testsuite-100/000/140/i`, find and study the equivalent but more secure program under `c/SARD-testsuite-101/000/140/i+1`.
 3. 
 
