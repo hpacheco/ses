@@ -472,6 +472,55 @@ $
 ```
 </details>
 
+### [TIMECOP](https://www.post-apocalyptic-crypto.org/timecop/)
+
+```C
+$ clang pass-loop-bad-timecop.c
+$ valgrind ./a.out 
+==305424== Memcheck, a memory error detector
+==305424== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==305424== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==305424== Command: ./a.out
+==305424== 
+==305424== Conditional jump or move depends on uninitialised value(s)
+==305424==    at 0x401213: check (in /home/parallels/Desktop/ses/c/misc/a.out)
+==305424==    by 0x40129C: main (in /home/parallels/Desktop/ses/c/misc/a.out)
+==305424== 
+==305424== Conditional jump or move depends on uninitialised value(s)
+==305424==    at 0x401213: check (in /home/parallels/Desktop/ses/c/misc/a.out)
+==305424==    by 0x4012B8: main (in /home/parallels/Desktop/ses/c/misc/a.out)
+==305424== 
+==305424== 
+==305424== HEAP SUMMARY:
+==305424==     in use at exit: 0 bytes in 0 blocks
+==305424==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated
+==305424== 
+==305424== All heap blocks were freed -- no leaks are possible
+==305424== 
+==305424== Use --track-origins=yes to see where uninitialised values come from
+==305424== For lists of detected and suppressed errors, rerun with: -s
+==305424== ERROR SUMMARY: 8 errors from 2 contexts (suppressed: 0 from 0)
+```
+
+```C
+$ clang pass-loop-good-timecop.c 
+$ valgrind ./a.out 
+==305849== Memcheck, a memory error detector
+==305849== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==305849== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==305849== Command: ./a.out
+==305849== 
+==305849== 
+==305849== HEAP SUMMARY:
+==305849==     in use at exit: 0 bytes in 0 blocks
+==305849==   total heap usage: 0 allocs, 0 frees, 0 bytes allocated
+==305849== 
+==305849== All heap blocks were freed -- no leaks are possible
+==305849== 
+==305849== For lists of detected and suppressed errors, rerun with: -s
+==305849== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
+
 ## [Static Application Security Testing](https://cacm.acm.org/magazines/2022/1/257444-static-analysis/fulltext)
 
  Static application security testing (SAST) is typically used to denote analysis methods that examine the code of a program to find flaws and weaknesses that may be exploited by an attacker. They therefore focus on statically examining - at compile-time - all the possible runs of an application.
@@ -1275,6 +1324,51 @@ $ sudo docker build -f ctverif.dockerfile . -t ctverif
 ```ShellSession
 $ sudo docker run -v /home/kali:/home/kali -it ctverif
 ctverif@container$
+```
+
+```ShellSession
+ctverif@container# ctverif c/misc/pass-loop-bad-ctverif.c --entry-points check --unroll=10 
+ctverif version 1.0.1
+SMACK program verifier version 2.8.0
+Warning: could not resolve constant/variable $load.i8
+c/misc/pass-loop-bad-ctverif.c(15,40): 
+c/misc/pass-loop-bad-ctverif.c(9,13): 
+/usr/local/share/smack/lib/smack.c(1885,3): 
+c/misc/pass-loop-bad-ctverif.c(9,13): 
+c/misc/pass-loop-bad-ctverif.c(0,0): 
+c/misc/pass-loop-bad-ctverif.c(15,34): 
+c/misc/pass-loop-bad-ctverif.c(0,0): 
+c/misc/pass-loop-bad-ctverif.c(15,3): 
+c/misc/pass-loop-bad-ctverif.c(0,0): 
+c/misc/pass-loop-bad-ctverif.c(15,34): 
+c/misc/pass-loop-bad-ctverif.c(0,0): 
+c/misc/pass-loop-bad-ctverif.c(15,3): 
+c/misc/pass-loop-bad-ctverif.c(0,0): 
+c/misc/pass-loop-bad-ctverif.c(15,34): 
+c/misc/pass-loop-bad-ctverif.c(0,0): 
+c/misc/pass-loop-bad-ctverif.c(15,3): 
+c/misc/pass-loop-bad-ctverif.c(0,0): 
+c/misc/pass-loop-bad-ctverif.c(15,34): 
+c/misc/pass-loop-bad-ctverif.c(0,0): 
+c/misc/pass-loop-bad-ctverif.c(15,3): 
+c/misc/pass-loop-bad-ctverif.c(0,0): 
+c/misc/pass-loop-bad-ctverif.c(15,34): 
+c/misc/pass-loop-bad-ctverif.c(0,0): 
+c/misc/pass-loop-bad-ctverif.c(15,3): 
+c/misc/pass-loop-bad-ctverif.c(0,0): 
+c/misc/pass-loop-bad-ctverif.c(15,34): 
+c/misc/pass-loop-bad-ctverif.c(0,0): 
+c/misc/pass-loop-bad-ctverif.c(17,12): 
+SMACK found an error.
+```
+
+```ShellSession
+ctverif@container# ctverif c/misc/pass-loop-good-ctverif.c --entry-points check --unroll=10 
+ctverif version 1.0.1
+SMACK program verifier version 2.8.0
+c/misc/pass-loop-good-ctverif.c:16:9: SMACK warning: overapproximating bitwise operation and (can lead to false alarms); try adding all the flag(s) in: { --integer-encoding=bit-vector }
+Warning: could not resolve constant/variable $load.i8
+SMACK found no errors with unroll bound 10.
 ```
 
 ### Security vulnerability scanners

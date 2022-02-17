@@ -11,3 +11,4 @@ sudo apt install -y python3-distutils
 sh install-taintgrind.sh
 sh install-ikos.sh
 sh install-frama-c.sh
+sh install-timecop.sh
