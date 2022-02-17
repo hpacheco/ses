@@ -847,7 +847,8 @@ $ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_direct_frama-c.c
 ```
 ![lab1-framac-taintd](lab1-framac-taintd.png)
 </details>
-The result may be slightly surprising, but it highlights that Frama-C's taint analysis only considers direct information flows; the input ``x`` is never directly assigned to the output of the function, and only indirectly the output by affecting the conditional clauses.
+
+The result may be slightly surprising, but it highlights that Frama-C's taint analysis only considers direct information flows; the input is never directly assigned to the output of the function, and only indirectly the output by affecting the conditional clauses.
 
 
 Although we can not reason about indirect flows, we can change the default tainting behavior of `get_sign` by explicitly specifying a taint contract.
@@ -869,7 +870,7 @@ int main(int argc, char **argv)
 }
 ```
 This time, we specify that function `get_sign` produces a result that is as tainted as its input; note that it is important to leave the definition of `get_sign` abstract, or else our annotated post-condition and the default taint analysis for the body of the function could lead to logical inconsistencies.
-You can run this example:
+You can run this example as before:
 <details>
 <summary>Result</summary>
 
@@ -900,7 +901,9 @@ $ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-contex
 ```
 ![lab1_framac_cmdi_bad](lab1_framac_cmdi_bad.png)
 </details>
-Looking at the output, Frama-C has correctly separated the command's prefix from the command's argument. Thus, the first assertion is true, since we have not tainted the prefix, while the second assertion is false, since we have tainted the prefix.
+
+Looking at the output, Frama-C has correctly separated the command's prefix from the command's argument. Thus, the first assertion is true, since we have not tainted the prefix, while the second assertion is false, since we have tainted the argument.
+
 
 We can also analyze a good version [c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c](../c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c) of the program that sanitizes the input with a function `purify`. For that purpose, we can write a contract saying that `purify` always returns an untainted array, irrespective of its inputs:
 ```C
