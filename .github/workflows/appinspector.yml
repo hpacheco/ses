@@ -1,6 +1,21 @@
-- uses: actions/checkout@v2
-- uses: microsoft/ApplicationInspector-Action@v1
-- uses: actions/upload-artifact@v2
-    with:
-        name: AppInspectorResults
-        path: AppInspectorResults.json
+name: Sonar Cloud Static Analysis
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+  schedule:                # This trigger is here only to make sure
+    - cron: '17 0 * * SUN' # the example itself doesn't become stale
+jobs:
+  build:
+    name: Sonar Cloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: microsoft/ApplicationInspector-Action@v1
+      - uses: actions/upload-artifact@v2
+        with:
+            name: AppInspectorResults
+            path: AppInspectorResults.json
+      
