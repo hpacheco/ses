@@ -345,7 +345,7 @@ for (int i=0; i < commandLength; ) {
 if (system(command) < 0) { ... }
 ```
 
-We can now compile the instrumented program and run it with Taintgrind. Note how the outcome of the analysis taints exactly 8 bytes of the input that are copied to the output bytes (note that each 8-byte block is printed in reverse order since `amd64` uses a little endian representation).
+We can now compile the instrumented program and run it with Taintgrind. Note how the outcome of the analysis taints exactly 8 bytes of the input that are copied to the output bytes [^1].
 <details>
 <summary>Result</summary>
 
@@ -368,6 +368,8 @@ $ dot -Tsvg log.dot -o log.svg
 
 ![lab1-taintgrind](lab1-taintgrind.svg)
 </details>
+
+[^1]: Note that each 8-byte block is printed in reverse order since `amd64` uses a little endian representation.
 
 #### Indirect flows
 
@@ -474,6 +476,46 @@ $
 
 ### [TIMECOP](https://www.post-apocalyptic-crypto.org/timecop/)
 
+#### Timing attacks
+
+Imagine a naive login program that receives a password from a user and checks it is the same as a fixed *secret* stored password.
+The core of such program could be a function:
+```C
+int check(char *arg, char *pass)
+{
+  int n = 5;
+  int i;
+  for (i=0; arg[i]==pass[i] && i < n; i++);
+  return (i==n);
+}
+```
+For simplicity, we are assuming that all passwords are 5 characters in length.
+This code traverses both arrays until the predefined length, but stops as soon as a character is different among both arrays.
+
+Although this code is perfectly correct in terms of behavior, it has a non-functional security vulnerability: the number of loop iterations depends on the value of the secretly stored password. Therefore, if an attacker gets to measure the amount of time that the program takes to execute for different inputs, he will be able to extract more information about the secret password. As it turns out, the security community knows for a fact that it is not difficult at all for an attackers that has physical access to the computer to precisely measure execution times and quickly find the secret password. Even worse, [remote timing attacks](https://snyk.io/blog/node-js-timing-attack-ccc-ctf/), e.g. to an authentication module of a web server, are also perfectly feasible.
+
+Timing attacks belong to a larger class of side-channel attacks, which encompasses any attack that exploits additional architectural aspects of the system to leak additional information about security-sensitive data. There are naturally many types of side-channel attacks, including [timing attacks](https://medium.com/spidernitt/introduction-to-timing-attacks-4e1e8c84b32b), [energy consumption attacks](https://en.wikipedia.org/wiki/Power_analysis), or the more recently-found [cache-based speculative execution attacks](https://seedsecuritylabs.org/Labs_20.04/System/).
+The main characteristic of this general class of attacks is that they are harder to replicate and mitigate, as they are likely to vary across computers and installations, and are not 100% accurate, often requiring careful statistical analysis.
+
+#### Constant-time analysis
+
+The prevailing technique for protecting against timing attacks in low-level C code, accepted both by [industry](https://github.com/veorq/cryptocoding) and [academia](https://hal.inria.fr/hal-03046757/file/BarbosaetalOakland21.pdf) in the context of highly critical cryptographic code, is to to follow constant-time coding guidelines. The idea is that a program is constant-time if its control flow (if conditions, loop conditions, gotos) and memory accesses do not depend on secret data[^2]. 
+
+There are nowadays several [tools](https://neuromancer.sk/article/26) that can automatically verify if code follows the constant-time guidelines. TIMECOP is a Valgrind plugin to dynamically check if a program's execution is constant time.
+For TIMECOP, all memory locations are considered public by default; the user can explicitly mark some memory locations, e.g., the password in our example as secret, using annotations as shown in [pass-loop-bad-timecop.c](../c/misc/pass-loop-bad-timecop.c):
+```C
+int check(char *arg, char *pass)
+{
+  poison(pass,5); // secret password of size 5 bytes
+  int i;
+  for (i=0; arg[i]==pass[i] && i < 5; i++);
+  return (i==n);
+}
+```
+If we compile and run this program, with valgrind, secret locations will be treated as if they were uninitialized memory, which is conveniently restricted in a similar way; we can see in this case that the conditional expression `arg[i]==pass[i]` in the loop depends on secret/uninitialized memory, triggering an error:
+<details>
+<summary>Result</summary>
+    
 ```C
 $ clang pass-loop-bad-timecop.c
 $ valgrind ./a.out 
@@ -501,8 +543,26 @@ $ valgrind ./a.out
 ==305424== For lists of detected and suppressed errors, rerun with: -s
 ==305424== ERROR SUMMARY: 8 errors from 2 contexts (suppressed: 0 from 0)
 ```
+</details>
 
+How can we then make our program constant-time? The major change is that the number of iterations of the loop cannot depend on the secret password. We can achieve that if we, for instance, iterate through all elements of both arrays, and compute a boolean that is the conjunction of the equality of all pairs of elements. Program [pass-loop-good-timecop.c](../c/misc/pass-loop-good-timecop.c)
+illustrates this change:
 ```C
+int check(char *arg, char *pass)
+{
+  poison(pass,5); // secret password of size 5 bytes
+  int i,res=1;
+  for (i=0; i < 5; i++) {
+    res &= arg[i] == pass[i];
+  }
+  return res;
+}
+```
+
+TIMECOP will not find any constant-time violations this time:
+<details>
+<summary>Result</summary>
+```ShellSession
 $ clang pass-loop-good-timecop.c 
 $ valgrind ./a.out 
 ==305849== Memcheck, a memory error detector
@@ -520,6 +580,9 @@ $ valgrind ./a.out
 ==305849== For lists of detected and suppressed errors, rerun with: -s
 ==305849== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
+</details>
+
+[^2]: This is a simplification, as some CPU instructions may also take variable-time.
 
 ## [Static Application Security Testing](https://cacm.acm.org/magazines/2022/1/257444-static-analysis/fulltext)
 
@@ -695,7 +758,6 @@ No entries.
 ```
 </details>
 
-
 ### [Frama-C](https://frama-c.com/)
 
 Frama-C is a source code analysis platform that aims at conducting verification of industrial-size programs written in ISO C99 source code. Frama-C supports the formal verification approach of analyzing a C implementation with respect to a functional specification of the ISO C99 standard, and provides to its users with a collection of [plugins](https://frama-c.com/html/kernel-plugin.html) that perform static and dynamic analysis for safety and security critical software. As an industrial project, some of Frama-C's plugins are [open-sourced](https://git.frama-c.com/pub/frama-c), while others are proprietary.
@@ -850,8 +912,8 @@ Since Frama-C needs to consider all possible program behaviours, it will often f
 
 In this lab we will not delve into the details of the different analyses that Frama-C supports, nor attempt to give a crash course on formal program verification.
 Nonetheless, for demonstrative purposes, consider the CWE 190 example from before, but where the `packet_get_int` is left abstract and no longer returns a fixed number; this poses a challenge for verification as the number of iterations of the loop cannot be decided statically and inferring precise constraints for dynamically-allocated memory is often complicated. We illustrate two possible approaches:
-* [c/misc/cwe190_ex2_ok1-frama-c.c](../c/misc/cwe190_ex2_ok1-frama-c.c): a user can supply additional annotations (and assumptions) to guide the proof that a general program is safe for any input;
-* [c/misc/cwe190_ex2_ok2-frama-c.c](../c/misc/cwe190_ex2_ok2-frama-c.c): if the range of possible inputs is a computationally small enough set, we can instruct Frama-C's Eva analysis to exhaustively search all possible program paths.
+* [cwe190_ex2_ok1-frama-c.c](../c/misc/cwe190_ex2_ok1-frama-c.c): a user can supply additional annotations (and assumptions) to guide the proof that a general program is safe for any input;
+* [cwe190_ex2_ok2-frama-c.c](../c/misc/cwe190_ex2_ok2-frama-c.c): if the range of possible inputs is a computationally small enough set, we can instruct Frama-C's Eva analysis to exhaustively search all possible program paths.
 
 You may run and test both examples with:
 ```bash
@@ -868,7 +930,7 @@ The Frama-C Eva plugin also provides an experimental form of static taint analys
 
 ##### Simple example
 
-Consider the [c/misc/sign32_direct-frama-c.c](../c/misc/sign32_direct-frama-c.c) program:
+Consider the [sign32_direct-frama-c.c](../c/misc/sign32_direct-frama-c.c) program:
 ```C
 int get_sign(int x) {
     if (x == 0) return 0;
@@ -901,7 +963,7 @@ The result may be slightly surprising, but it highlights that Frama-C's taint an
 
 
 Although we can not reason about indirect flows, we can change the default tainting behavior of `get_sign` by explicitly specifying a taint contract.
-Consider the [c/misc/sign32_indirect-frama-c.c](../c/misc/sign32_indirect-frama-c.c) program:
+Consider the [sign32_indirect-frama-c.c](../c/misc/sign32_indirect-frama-c.c) program:
 ```C
 /*@ ensures \tainted(\result) <==> \tainted(x);
   @ assigns \result \from x;
@@ -932,7 +994,7 @@ The result is as expected: variable `s` is possibly tainted and the second asser
 
 ##### Command injection
 
-Let's consider a simplified version [c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-frama-c.c](../c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-frama-c.c) of the command injection example from before, where we construct a string that shows the content of an argument file with name passed as an argument. For asking Frama-C if our executed command is tainted by the input, the relevant snippet is the following:
+Let's consider a simplified version [os_cmd_injection_basic-bad-frama-c.c](../c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-frama-c.c) of the command injection example from before, where we construct a string that shows the content of an argument file with name passed as an argument. For asking Frama-C if our executed command is tainted by the input, the relevant snippet is the following:
 ```C
 //@ taint argv[0..strlen(argv)];
 ...
@@ -953,8 +1015,7 @@ $ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-contex
 
 Looking at the output, Frama-C has correctly separated the command's prefix from the command's argument. Thus, the first assertion is true, since we have not tainted the prefix, while the second assertion is false, since we have tainted the argument.
 
-
-We can also analyze a good version [c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c](../c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c) of the program that sanitizes the input with a function `purify`. For that purpose, we can write a contract saying that `purify` always returns an untainted array, irrespective of its inputs:
+We can also analyze a good version [os_cmd_injection_basic-good-frama-c.c](../c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c) of the program that sanitizes the input with a function `purify`. For that purpose, we can write a contract saying that `purify` always returns an untainted array, irrespective of its inputs:
 ```C
 //@ ensures !\tainted(buff[0..buffLength-1]);
 void purify(char *buff,size_t buffLength);
@@ -994,7 +1055,7 @@ To make it feasible to statically explore all possible program paths, SMACK reso
 
 #### Integer overflow
 
-Recall the integer overflow vulnerability from [c/misc/cwe190_ex2_bad-smack.c](../c/misc/cwe190_ex2_bad-smack.c). We can easily test this example in SMACK by defining the function `packet_get_int` as returning a random integer value:
+Recall the integer overflow vulnerability from [cwe190_ex2_bad-smack.c](../c/misc/cwe190_ex2_bad-smack.c). We can easily test this example in SMACK by defining the function `packet_get_int` as returning a random integer value:
 ```C
 int packet_get_int() {
   return __VERIFIER_nondet_int();
@@ -1036,10 +1097,10 @@ SMACK found an error: integer overflow.
 
 #### Loop unrolling
 
-The main challenge for static program analysis are undoubetedly loops, and SMACK's bounded verification follows a very different approach from the previous tools.
+The main challenge for static program analysis are undoubtedly loops, and SMACK's bounded verification follows a very different approach from the previous tools.
 In practice, SMACK will unroll loops - but only up to a bounded maximum number of iterations that the user can control - and try to find an invalid program execution for the unrolled program.
 
-Consider the [c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad.c](../c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad.c) program that contains a memory inside a loop with the following code:
+Consider the [memory_leak_loop-bad.c](../c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad.c) program that contains a memory inside a loop with the following code:
 ```C
 for (i = 0; i < 10; ++i) {
   buf = (size_t *)malloc(i * sizeof(size_t));
@@ -1047,7 +1108,7 @@ for (i = 0; i < 10; ++i) {
 }
 ```
 This loop is executed exactly 10 times; in each iteration, a block of memory is allocated and, if successfully allocated, leaked.
-Since we know that there will be a memory leak if the `malloc` suceeds, we can introduce an assertion in program [c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c](../c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c) to check if that is ever true:
+Since we know that there will be a memory leak if the `malloc` suceeds, we can introduce an assertion in program [memory_leak_loop-bad-assert-smack.c](../c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c) to check if that is ever true:
 ```C
 for (i = 0; i < 10; ++i) {
   buf = (size_t *)malloc(i * sizeof(size_t));
@@ -1058,7 +1119,7 @@ for (i = 0; i < 10; ++i) {
 
 If we run this example with SMACK, it will detect an assertion violation as expected:
 <details>
-<summmary>Result</summary>
+<summary>Result</summary>
 
 ```ShellSession
 smack@container$ smack c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-assert-smack.c 
@@ -1081,7 +1142,7 @@ SMACK found an error.
 ```
 </details>
 
-What if we use SMACK's builtin memory safety checker instead? We can run the original program [c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c](../c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c) as follows:
+What if we use SMACK's builtin memory safety checker instead? We can run the original program [memory_leak_loop-bad-smack.c](../c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c) as follows:
 <details>
 <summmary>Result</summary>
 
@@ -1104,7 +1165,7 @@ This means that, by default, SMACK will unroll the loop once and keep the remain
 
 You can try re-running SMACK with a concrete `unroll` parameter greater than 10:
 <details>
-<summmary>Result</summary>
+<summary>Result</summary>
 
 ```ShellSession
 smack@container$ smack --check=memory-safety c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c --unroll=11
@@ -1248,7 +1309,7 @@ SMACK found an error: memory leak.
 
 Since, for this simple program, the number of iterations is actually known at compile time, we can alternatively just instruct SMACK to statically unroll the loop:
 <details>
-<summmary>Result</summary>
+<summary>Result</summary>
 
 ```ShellSession
 smack@container$ smack --check=memory-safety c/SARD-testsuite-100/000/149/181/memory_leak_loop-bad-smack.c --static-unroll
@@ -1316,16 +1377,47 @@ SMACK found an error: memory leak.
 ```
 </details>
 
+### [ctverif](https://github.com/michael-emmi/ctverif)
+
+There are also quite a few tools, mostly research prototypes, that can statically check if a C program follows the constant-time guidelines. One such tools is `ctverif`, which is developed on top of the SMACK verification framework.
+
+Beyond being dynamic vs static tools, the analysis techniques of TIMECOP and ctverif are slightly different[^3]:
+* TIMECOP performs a dynamic taint analysis from secret data to time-sensitive expressions. It requires the explicit declaration of secret input data, where all remaining data is considered public;
+* ctverif performs a static information flow analysis to verify a so-called non-interference property stating that *for similar public data, but possibly different secret data, the valuations of time-sensitive expressions shall remain the same*. It requires the explicit declaration of public input data, where all remaining data is considered secret.
+
+You can replicate the following steps to set up a Docker container with ctverif:
 1. Navigate to the [vm][../vm] folder.
 2. Build the ctverif docker image:
 ```ShellSession
 $ sudo docker build -f ctverif.dockerfile . -t ctverif
 ```
-3. Launch a ctverif-powered container:
+3. Launch a ctverif-powered container (replace the path '/home/kali'):
 ```ShellSession
 $ sudo docker run -v /home/kali:/home/kali -it ctverif
 ctverif@container$
 ```
+
+#### Password checker
+
+Recall the password checker example from before. We can annotate the [pass-loop-bad-ctverif.c](../c/misc/pass-loop-bad-ctverif.c) program for ctverif by marking the pointer values and the sizes of public inputs as public; the array contents will remain secret:
+```C
+int check(char *arg, char *pass)
+{
+  public_in(__SMACK_value(arg));     // pointer value is public
+  public_in(__SMACK_value(pass));    // pointer value is public
+  public_in(__SMACK_values(arg,5));  // size of array is public and =5
+  public_in(__SMACK_values(pass,5)); // size of array is public and =5
+  int n = 5;
+  int i;
+  for (i=0; arg[i]==pass[i] && i < n; i++);
+  
+  return (i==n);
+}
+```
+
+Inside the Docker container, you may run this example as follows:
+<details>
+<summary>Result</summary>
 
 ```ShellSession
 ctverif@container# ctverif c/misc/pass-loop-bad-ctverif.c --entry-points check --unroll=10 
@@ -1362,7 +1454,14 @@ c/misc/pass-loop-bad-ctverif.c(0,0):
 c/misc/pass-loop-bad-ctverif.c(17,12): 
 SMACK found an error.
 ```
+</details>
 
+Even tough the message is not very informative, ctverif found an error as expected: our loop's conditional expression depends on secret values.
+
+As before, we can turn our program into a constant-time one [pass-loop-good-ctverif.c](../c/misc/pass-good-bad-ctverif.c), by forcing the loop to always traverse all elements of both arrays.
+We may run such second program in the same way:
+<details>
+<summary>Result</summary>
 ```ShellSession
 ctverif@container# ctverif c/misc/pass-loop-good-ctverif.c --entry-points check --unroll=10 
 ctverif version 1.0.1
@@ -1371,22 +1470,30 @@ c/misc/pass-loop-good-ctverif.c:16:9: SMACK warning: overapproximating bitwise o
 Warning: could not resolve constant/variable $load.i8
 SMACK found no errors with unroll bound 10.
 ```
+</details>
+
+This time, ctverif detectes no constant-time violation. Note that, to guarantee that this result is sound and all potential violations are caught, it is important to set a large-enough loop unroll parameter.
+
+[^3]: Verifying the non-interference property is more challenging in practice but also more precise: information may flow from secret data to particular expression without it affecting the valuations of those expressions. This difference in precision becomes more evident when the program is allowed to reveal some secret information, e.g., it is natural for a password checker to reveal the return value stating if the user-introduced password was correct; this detail is however not relevant for our example. If interested, check the ctverif [paper](https://www.usenix.org/system/files/conference/usenixsecurity16/sec16_paper_almeida.pdf) for more information.
 
 ### Security vulnerability scanners
 
-There are several automated security vulnerability scanners that will 
+There are several security vulnerability scanners that can automatically analyse a codebase for known vulnerabilities.
+The main advantage of these tools is that they support various programming languages, require low setup and can be typically integrated into the software development process using continuous integration to periodically check for vulnerabilities.
 
-Coverity
-[CodeQL](https://lgtm.com/projects/g/hpacheco/ses/?mode=list)
-[SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_ses)
+Although many of these scanners are full-fledged commercial solutions, we list a few that are open-source. The easiest way to try these tools is to set up a public repository and scan it online. For convenience, you may check the pre-computed analysis results for this repository:
+* [Coverity](https://scan.coverity.com/): requires login to view results;
+* [LGTM](https://lgtm.com/projects/g/hpacheco/ses/?mode=list): web interface for [CodeQL](https://codeql.github.com/);
+* [SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_ses): web interface for [SonarQube](https://www.sonarqube.org/).
 
 ## Tasks
 
-The goal of this lab is to experiment with the above described dynamic and static analysis to detect and fix the vulnerabilities found in example C programs from the [SARD] testsuites. 
+The goal of this lab is to experiment with the dynamic and static analysis tools described above. We will detect and fix the vulnerabilities found in example C programs from the [SARD] testsuites. 
 0. Study and try out the tools described above.
-1. Choose two vulnerable programs *under different categories* from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse.
-2. For each chosen vulnerable program under `c/SARD-testsuite-100/000/140/i`, find and study the equivalent but more secure program under `c/SARD-testsuite-101/000/140/i+1`.
-3. 
+1. Choose two vulnerable programs **under different categories** from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse.
+2. For each chosen vulnerable program `c/SARD-testsuite-100/000/140/i`, find and study the equivalent but more secure program `c/SARD-testsuite-101/000/140/i+1`.
+3. Was your vulnerability found by the automated scanners? From the error log (or lack thereof), can you deduct about the scanner's analysis technique?
+4. Write a small report discussing how the above tools have helped in finding the vulnerability; you shall also report and discuss eventual limitations that you encounter or adjustments to the program or tool parameters that you found necessary. Note that you are not required to necessarily experiment with all the tools nor acquire advanced understanding of the more technical details of the analysis behind each tool; you are expected, however, to describe your experience from the perspective of a software developer analysing the security of a program.
 
 
 
