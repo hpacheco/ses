@@ -1,4 +1,4 @@
-name: Sonar Cloud Static Analysis
+name: Microsoft Application Inspector
 on:
   push:
     branches:
@@ -9,7 +9,7 @@ on:
     - cron: '17 0 * * SUN' # the example itself doesn't become stale
 jobs:
   build:
-    name: Sonar Cloud
+    name: MS App Inspector 
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
