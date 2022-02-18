@@ -1495,9 +1495,9 @@ The goal of this lab is to experiment with the dynamic and static analysis tools
 4. Was your vulnerability found by the automated scanners? From the error log (or lack thereof), what can you deduct about the scanner's analysis technique?
 5. Based on your quick experiments, select a reasonable set of tools for analysing your program.
 6. Write a small report discussing, in general, what was your experience from the perspective of a software developer analysing the security of your code; you are **not** required to experiment with all the tools **nor** acquire advanced understanding of the more technical details of the analysis behind each tool. You shall answer these questions in particular:
-  * which tools you have found more suitable for analysing your vulnerability and why;
-  * how the above tools have helped in finding the vulnerability;
-  * eventual limitations that you encounter or adjustments to the program or tool parameters that you found necessary.
+   * which tools you have found more suitable for analysing your vulnerability and why;
+   * how the above tools have helped in finding the vulnerability;
+   * eventual limitations that you encounter or adjustments to the program or tool parameters that you found necessary.
 
 
 
