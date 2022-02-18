@@ -1386,12 +1386,12 @@ Beyond being dynamic vs static tools, the analysis techniques of TIMECOP and ctv
 * ctverif performs a static information flow analysis to verify a so-called non-interference property stating that *for similar public data, but possibly different secret data, the valuations of time-sensitive expressions shall remain the same*. It requires the explicit declaration of public input data, where all remaining data is considered secret.
 
 You can replicate the following steps to set up a Docker container with ctverif:
-1. Navigate to the [vm][../vm] folder.
+1. Navigate to the [vm](../vm) folder.
 2. Build the ctverif docker image:
 ```ShellSession
 $ sudo docker build -f ctverif.dockerfile . -t ctverif
 ```
-3. Launch a ctverif-powered container (replace the path '/home/kali'):
+3. Launch a ctverif-powered container (replace the path `/home/kali`):
 ```ShellSession
 $ sudo docker run -v /home/kali:/home/kali -it ctverif
 ctverif@container$
@@ -1482,18 +1482,22 @@ There are several security vulnerability scanners that can automatically analyse
 The main advantage of these tools is that they support various programming languages, require low setup and can be typically integrated into the software development process using continuous integration to periodically check for vulnerabilities.
 
 Although many of these scanners are full-fledged commercial solutions, we list a few that are open-source. The easiest way to try these tools is to set up a public repository and scan it online. For convenience, you may check the pre-computed analysis results for this repository:
-* [Coverity](https://scan.coverity.com/): requires login to view results;
-* [LGTM](https://lgtm.com/projects/g/hpacheco/ses/?mode=list): web interface for [CodeQL](https://codeql.github.com/);
-* [SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_ses): web interface for [SonarQube](https://www.sonarqube.org/).
+* [Coverity](https://scan.coverity.com/): requires login to view results, you need to set it up for your repository;
+* [LGTM](https://lgtm.com/projects/g/hpacheco/ses/?mode=list): public web interface for [CodeQL](https://codeql.github.com/) analysis results;
+* [SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_ses): public web interface for [SonarQube](https://www.sonarqube.org/) analysis results.
 
 ## Tasks
 
 The goal of this lab is to experiment with the dynamic and static analysis tools described above. We will detect and fix the vulnerabilities found in example C programs from the [SARD] testsuites. 
-0. Study and try out the tools described above.
-1. Choose two vulnerable programs **under different categories** from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse.
-2. For each chosen vulnerable program `c/SARD-testsuite-100/000/140/i`, find and study the equivalent but more secure program `c/SARD-testsuite-101/000/140/i+1`.
-3. Was your vulnerability found by the automated scanners? From the error log (or lack thereof), can you deduct about the scanner's analysis technique?
-4. Write a small report discussing how the above tools have helped in finding the vulnerability; you shall also report and discuss eventual limitations that you encounter or adjustments to the program or tool parameters that you found necessary. Note that you are not required to necessarily experiment with all the tools nor acquire advanced understanding of the more technical details of the analysis behind each tool; you are expected, however, to describe your experience from the perspective of a software developer analysing the security of a program.
+1. Study and try out the tools described above.
+2. Choose two vulnerable programs **under different categories** from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse.
+3. For each chosen vulnerable program `c/SARD-testsuite-100/000/140/i`, find and study the equivalent but more secure program `c/SARD-testsuite-101/000/140/i+1`.
+4. Was your vulnerability found by the automated scanners? From the error log (or lack thereof), what can you deduct about the scanner's analysis technique?
+5. Based on your quick experiments, select a reasonable set of tools for analysing your program.
+6. Write a small report discussing, in general, what was your experience from the perspective of a software developer analysing the security of your code; you are **not** required to experiment with all the tools **nor** acquire advanced understanding of the more technical details of the analysis behind each tool. You shall answer these questions in particular:
+  * which tools you have found more suitable for analysing your vulnerability and why;
+  * how the above tools have helped in finding the vulnerability;
+  * eventual limitations that you encounter or adjustments to the program or tool parameters that you found necessary.
 
 
 
