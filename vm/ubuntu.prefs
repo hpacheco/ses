@@ -1,0 +1,7 @@
+Package: *
+Pin: origin http://security.ubuntu.com/ubuntu
+Pin-Priority: -20
+
+Package: *
+Pin: origin http://cz.archive.ubuntu.com/ubuntu
+Pin-Priority: -10
