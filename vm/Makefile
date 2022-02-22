@@ -12,6 +12,9 @@ run-juiceshop:
 e2e-juiceshop:
 	cd juice-shop && npm run protractor
 
+run-dependency-check:
+	./dependency-check/bin/dependency-check.sh --enableExperimental --scan juice-shop
+
 run-dfsan:
 	rm -rf clang-dfsan
 	git clone https://github.com/mcopik/clang-dfsan
