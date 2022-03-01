@@ -28,3 +28,10 @@ run-smack:
 run-ctverif:
 	sudo docker build -f ctverif.dockerfile . -t ctverif
 	sudo docker run -v ${HOME}:${HOME} -it ctverif
+
+run-driller:
+	sudo docker run  -v /home/kali:/home/kali -it shellphish/mechaphish
+
+run-klee:
+	sudo docker pull klee/klee:2.1
+	sudo docker run --rm -v ${HOME}:${HOME} -ti --ulimit='stack=-1:-1' klee/klee:2.1

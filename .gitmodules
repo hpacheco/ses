@@ -1,0 +1,3 @@
+[submodule "c/misc/heartbleed/openssl"]
+	path = c/misc/heartbleed/openssl
+	url = git://github.com/openssl/openssl.git
