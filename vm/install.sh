@@ -7,8 +7,8 @@ sudo add-apt-repository 'deb http://cz.archive.ubuntu.com/ubuntu focal main univ
 sudo add-apt-repository 'deb http://security.ubuntu.com/ubuntu focal-security main'
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32 871920D1991BC93C
 
-sudo cp ubuntu.prefs /etc/apt/preferences.d/ubuntu.prefs
-sudo chown root /etc/apt/preferences.d/ubuntu.prefs
+sudo cp ubuntu.pref /etc/apt/preferences.d/ubuntu.pref
+sudo chown root /etc/apt/preferences.d/ubuntu.pref
 
 sudo apt update
 sudo apt install -y curl wget gedit vim pkg-config cmake autotools-dev automake docker docker.io git
