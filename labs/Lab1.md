@@ -1,15 +1,16 @@
 
 # Lab 1 - Low-level security
 
-One of the most common source vulnerabilities, even to this day, remains to be related to exploits for low-level programming languages such as C or C++. C and C++ are very insecure and error-prone languages, and one of the main sources of problems is memory access errors. For instance, many of the [2021 Top 25 CWEs](https://cwe.mitre.org/top25/archive/2021/2021_cwe_top25.html) are due to memory violations, type violations or undefined behavior in C or similar languages.
+One of the most common source vulnerabilities, even to this day, remains to be related to exploits for low-level programming languages such as C or C++.
+As languages that offer the programmers very fine-grained control, C and C++ are very insecure and error-prone, and one of the main sources of problems are related to memory management errors. For instance, many of the [2021 Top 25 CWEs](https://cwe.mitre.org/top25/archive/2021/2021_cwe_top25.html) are due to memory violations, type violations or undefined behavior in C or similar languages. To assist programmers in avoiding to develop code susceptible to many of these violations, secure C coding standards such [SEI CERT](https://wiki.sei.cmu.edu/confluence/display/seccode/SEI+CERT+Coding+Standards) have also been proposed.
 
 Instead of focusing on exploitation and mitigation, we will study how various existing analysis tools can support developers in detecting and fixing vulnerabilities.
 
 In this lab we will use a series of C examples that are part of the [SARD test suite](https://samate.nist.gov/SRD/testsuite.php#sardsuites). Each example comes as a pair of C programs where the first has a flaw and the second demonstrates how to possibly fix the flaw.
 
-## [Dynamic Application Security Testing](https://oaklandsok.github.io/papers/song2019.pdf)
+## [Dynamic Program Analysis](https://oaklandsok.github.io/papers/song2019.pdf)
 
-Dynamic application security testing (DAST) is typically used to denote analysis methods that examine an application as it’s running to find vulnerabilities that an attacker could exploit. They therefore focus on dynamically examining - at runtime - a single run of an application.
+Dynamic program analysis is typically used to denote analysis methods that examine an application as it’s running to find vulnerabilities that an attacker could exploit. They therefore focus on dynamically examining - at runtime - a single run of an application.
 
 ### [Valgrind](https://valgrind.org/)
 
@@ -366,7 +367,7 @@ $ taintgrind-log2dot log > log.dot
 $ dot -Tsvg log.dot -o log.svg
 ```
 
-![lab1-taintgrind](lab1-taintgrind.svg)
+![lab1/lab1-taintgrind](lab1-taintgrind.svg)
 </details>
 
 [^1]: Note that each 8-byte block is printed in reverse order since `amd64` uses a little endian representation.
@@ -584,9 +585,9 @@ $ valgrind ./a.out
 
 [^2]: This is a simplification, as some CPU instructions may also take variable-time.
 
-## [Static Application Security Testing](https://cacm.acm.org/magazines/2022/1/257444-static-analysis/fulltext)
+## [Static Program Analysis](https://cacm.acm.org/magazines/2022/1/257444-static-analysis/fulltext)
 
- Static application security testing (SAST) is typically used to denote analysis methods that examine the code of a program to find flaws and weaknesses that may be exploited by an attacker. They therefore focus on statically examining - at compile-time - all the possible runs of an application.
+Static program analysis is typically used to denote analysis methods that examine the code of a program to find flaws and weaknesses that may be exploited by an attacker. They therefore focus on statically examining - at compile-time - all the possible runs of an application.
 
 ### [Scan-build](https://clang-analyzer.llvm.org/scan-build.html)
 
@@ -611,7 +612,7 @@ scan-build: Run 'scan-view /tmp/scan-build-2022-02-11-165808-3759-1' to examine 
 $ scan-view /tmp/scan-build-2022-02-11-165808-3759-1
 ```
 
-![lab1_scan-view](lab1_scan-view.png)
+![lab1/lab1_scan-view](lab1_scan-view.png)
 </details>
 
 ### [IKOS](https://ti.arc.nasa.gov/opensource/ikos/)
@@ -679,7 +680,7 @@ $ ikos-view output.db
 <details>
 <summary>Result</summary>
 
-![lab1_ikos-view](lab1_ikos-view.png)
+![lab1/lab1_ikos-view](lab1_ikos-view.png)
 </details>
 
 We can also analyze a similar program [cwe190_ex2_ok.c](../c/misc/cwe190_ex2_ok.c) with a fixed value for `nresp` that does not overflow.
@@ -811,7 +812,7 @@ For instance, we can replicate the above Eva analysis and see the errors as anno
 <details>
 <summary>Result</summary>
 
-![lab1_frama-c-gui](lab1_frama-c-gui.png)
+![lab1/lab1_frama-c-gui](lab1_frama-c-gui.png)
 </details>
 
 We can also analyze a similar program [cwe190_ex2_ok.c](../c/misc/cwe190_ex2_ok.c) with a fixed value for `nresp` that does not overflow.
@@ -907,7 +908,7 @@ The precision (in tradeoff with efficiency) of the Eva plugin is highly configur
 
 #### User-supplied proof annotations
 
-It is important to stress that Frama-C is *not* particularly designed to be used as an automated SAST framework that typically scans a code base for known vulnerabilities.
+It is important to stress that Frama-C is *not* particularly designed to be used as an automated static analysis framework that typically scans a code base for known vulnerabilities.
 Since Frama-C needs to consider all possible program behaviours, it will often fail to automatically discard all proof obligations that it generates for a program, and user-supplied annotations or domain restrictions may be necessary to guide the verification engine; such a tradeoff between precision and automation is common to all static analysis methods.
 
 In this lab we will not delve into the details of the different analyses that Frama-C supports, nor attempt to give a crash course on formal program verification.
@@ -956,11 +957,10 @@ If you can run this example using the Eva taint domain:
 ```ShellSession
 $ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_direct_frama-c.c
 ```
-![lab1-framac-taintd](lab1-framac-taintd.png)
+![lab1/lab1-framac-taintd](lab1-framac-taintd.png)
 </details>
 
 The result may be slightly surprising, but it highlights that Frama-C's taint analysis only considers direct information flows; the input is never directly assigned to the output of the function, and only indirectly the output by affecting the conditional clauses.
-
 
 Although we can not reason about indirect flows, we can change the default tainting behavior of `get_sign` by explicitly specifying a taint contract.
 Consider the [sign32_indirect-frama-c.c](../c/misc/sign32_indirect-frama-c.c) program:
@@ -988,7 +988,7 @@ You can run this example as before:
 ```ShellSession
 $ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_indirect_frama-c.c
 ```
-![lab1-framac-tainti](lab1-framac-tainti.png)
+![lab1/lab1-framac-tainti](lab1-framac-tainti.png)
 </details>
 The result is as expected: variable `s` is possibly tainted and the second assertion fails.
 
@@ -1010,7 +1010,7 @@ We can run the program as follows:
 ```ShellSession
 $ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-context-valid-pointers c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-frama-c.c
 ```
-![lab1_framac_cmdi_bad](lab1_framac_cmdi_bad.png)
+![lab1/lab1_framac_cmdi_bad](lab1_framac_cmdi_bad.png)
 </details>
 
 Looking at the output, Frama-C has correctly separated the command's prefix from the command's argument. Thus, the first assertion is true, since we have not tainted the prefix, while the second assertion is false, since we have tainted the argument.
@@ -1034,7 +1034,7 @@ We can run the program as before:
 ```ShellSession
 $ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-context-valid-pointers c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c
 ```
-![lab1_framac_cmdi_good](lab1_framac_cmdi_good.png)
+![lab1/lab1_framac_cmdi_good](lab1_framac_cmdi_good.png)
 </details>
 
 Given our assumptions, Frama-C is now able to prove that the executed `command` string is not tainted.
@@ -1476,10 +1476,10 @@ This time, ctverif detectes no constant-time violation. Note that, to guarantee 
 
 [^3]: Verifying the non-interference property is more challenging in practice but also more precise: information may flow from secret data to particular expression without it affecting the valuations of those expressions. This difference in precision becomes more evident when the program is allowed to reveal some secret information, e.g., it is natural for a password checker to reveal the return value stating if the user-introduced password was correct; this detail is however not relevant for our example. If interested, check the ctverif [paper](https://www.usenix.org/system/files/conference/usenixsecurity16/sec16_paper_almeida.pdf) for more information.
 
-### Security vulnerability scanners
+### [Security vulnerability scanners](https://www.nist.gov/itl/ssd/software-quality-group/source-code-security-analyzers)
 
 There are several security vulnerability scanners that can automatically analyse a codebase for known vulnerabilities.
-The main advantage of these tools is that they support various programming languages, require low setup and can be typically integrated into the software development process using continuous integration to periodically check for vulnerabilities.
+The main advantage of these tools is that they tend to support various programming languages, require low setup and can be typically integrated into the software development process using continuous integration to periodically check for vulnerabilities.
 
 Although many of these scanners are full-fledged commercial solutions, we list a few that are open-source. The easiest way to try these tools is to set up a public repository and scan it online. For convenience, you may check the pre-computed analysis results for this repository:
 * [Coverity](https://scan.coverity.com/): requires login to view results, you need to set it up for your repository;
@@ -1488,16 +1488,18 @@ Although many of these scanners are full-fledged commercial solutions, we list a
 
 ## Tasks
 
-The goal of this lab is to experiment with the dynamic and static analysis tools described above. We will detect and fix the vulnerabilities found in example C programs from the [SARD] testsuites. 
+The goal of this lab is to experiment with the dynamic and static analysis tools described above. We will detect and fix the vulnerabilities found in example C programs from the [c/SARD-testsuite-100](../c/SARD-testsuite-100) testsuite. 
 1. Study and try out the tools described above.
-2. Choose two vulnerable programs **under different categories** from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse.
-3. For each chosen vulnerable program `c/SARD-testsuite-100/000/140/i`, find and study the equivalent but more secure program `c/SARD-testsuite-101/000/140/i+1`.
+2. Choose two vulnerable programs **under different categories** from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse. It is not mandatory to choose examples from this dataset; you may also choose examples of vulnerable C programs from other resources such as, e.g., another [SARD dataset](https://samate.nist.gov/SARD/testsuite.php) or the [US-CERT dataset](https://www.cisa.gov/uscert/bsi/articles/tools/source-code-analysis/source-code-analysis-tools---example-programs).
+3. For each chosen vulnerable program `c/SARD-testsuite-100/000/140/i`, find and study the equivalent but more secure program `c/SARD-testsuite-101/000/140/i+1`. If you chose a different dataset, propose a secure version of the vulnerable program.
 4. Was your vulnerability found by the automated scanners? From the error log (or lack thereof), what can you deduct about the scanner's analysis technique?
-5. Based on your quick experiments, select a reasonable set of tools for analysing your program.
-6. Write a small report discussing, in general, what was your experience from the perspective of a software developer analysing the security of your code; you are **not** required to experiment with all the tools **nor** acquire advanced understanding of the more technical details of the analysis behind each tool. You shall answer these questions in particular:
-   * which tools you have found more suitable for analysing your vulnerability and why;
-   * how the above tools have helped in finding the vulnerability;
-   * eventual limitations that you encounter or adjustments to the program or tool parameters that you found necessary.
+5. Based on the above experiments, select a reasonable set of tools for analysing your program.
+6. **In your group's GitHub repository, write a small report to the markdown file `Lab1.md`.**
+6. The report shall discuss, in general, what was your experience from the perspective of a software developer analysing the security of your code; you are **not** required to experiment with all the tools **nor** acquire advanced understanding of the more technical details of the analysis behind each tool. You shall answer these questions in particular:
+   * which [CWE](https://cwe.mitre.org/)s are associated with each vulnerability?
+   * which tools have you found more suitable for analysing your vulnerabilities and why?
+   * how have the chosen tools helped in finding those vulnerabilities?
+   * which tool limitations did you encounter and which adjustments to the program or tool parameters have you found necessary?
 
 
 
