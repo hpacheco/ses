@@ -1,5 +1,5 @@
 
-# Lab 2 - Testing
+# Lab 2 - Testing for security
 
 In the previous lab we have looked into dynamic and static analyses techniques to find vulnerabilities in the internal behavior of programs.
 Another essential process of secure software design is that of software testing, i.e., providing inputs for the programs and checking the outputs of programs against such inputs.
