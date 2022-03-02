@@ -1,6 +1,7 @@
 #/bin/sh
 
 # add ubuntu repositories for older packages
+sudo apt update
 sudo apt install -y apt-add-repository
 sudo add-apt-repository 'deb http://cz.archive.ubuntu.com/ubuntu focal main universe'
 sudo add-apt-repository 'deb http://security.ubuntu.com/ubuntu focal-security main'
