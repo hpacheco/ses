@@ -1,16 +1,7 @@
 #/bin/sh
 
-# add ubuntu repositories for older packages
 sudo apt update
 sudo apt install -y software-properties-common
-sudo add-apt-repository 'deb http://cz.archive.ubuntu.com/ubuntu focal main universe'
-sudo add-apt-repository 'deb http://security.ubuntu.com/ubuntu focal-security main'
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32 871920D1991BC93C
-
-sudo cp ubuntu.pref /etc/apt/preferences.d/ubuntu.pref
-sudo chown root /etc/apt/preferences.d/ubuntu.pref
-
-sudo apt update
 sudo apt install -y curl wget gedit vim pkg-config cmake autotools-dev automake docker docker.io git
 sudo sudo apt-get install -y gcc g++ cmake libgmp-dev libboost-dev libboost-filesystem-dev \
     libboost-thread-dev libboost-test-dev python3 python3-pygments libsqlite3-dev libtbb-dev \
