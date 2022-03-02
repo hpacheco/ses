@@ -32,6 +32,19 @@ run-ctverif:
 run-driller:
 	sudo docker run  -v /home/kali:/home/kali -it shellphish/mechaphish
 
+run-fuzzolic:
+	sudo docker run -v /home/kali:/home/kali -u 0 -ti --rm ercoppa/fuzzolic-runner-v1
+
+build-symcc:
+	git clone https://github.com/eurecom-s3/symcc
+	cd symcc && \
+	  git submodule init && \
+		git submodule update && \
+		sudo docker build -t symcc .
+
+run-symcc:
+	cd symcc && sudo docker run -v /home/kali:/home/kali -it --rm symcc
+
 run-klee:
 	sudo docker pull klee/klee:2.1
 	sudo docker run --rm -v ${HOME}:${HOME} -ti --ulimit='stack=-1:-1' klee/klee:2.1
