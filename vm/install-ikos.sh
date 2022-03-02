@@ -4,6 +4,7 @@
 
 sudo apt update
 sudo apt install -y libsqlite3-dev libboost-thread-dev libboost-test-dev libboost-filesystem-dev libtbb-dev binfmt-support
+sudo apt install -y llvm-9 llvm-9-dev llvm-9-tools clang-9
 # download packages
 #mkdir -p deb
 #wget -nc -P deb http://mirrors.kernel.org/ubuntu/pool/universe/l/llvm-toolchain-9/libllvm9_9.0.1-12_amd64.deb
