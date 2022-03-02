@@ -7,7 +7,7 @@ sudo add-apt-repository 'deb http://cz.archive.ubuntu.com/ubuntu focal main univ
 sudo add-apt-repository 'deb http://security.ubuntu.com/ubuntu focal-security main'
 sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32 871920D1991BC93C
 
-sudo cp ubuntu.prefs /etc/apt/preferences.d/ubuntu
+sudo cp ubuntu.prefs /etc/apt/preferences.d/ubuntu.prefs
 sudo chown root /etc/apt/preferences.d/ubuntu.prefs
 
 sudo apt update
