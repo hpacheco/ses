@@ -1493,7 +1493,7 @@ Although many of these scanners are full-fledged commercial solutions, we list a
 The goal of this lab is to experiment with the dynamic and static analysis tools described above. We will detect and fix the vulnerabilities found in example C programs from the [c/SARD-testsuite-100](../c/SARD-testsuite-100) testsuite. 
 1. Study and try out the tools described above.
 2. Choose two vulnerable programs **under different categories** from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse. It is not mandatory to choose examples from this dataset; you may also choose examples of vulnerable C programs from other resources such as, e.g., another [SARD dataset](https://samate.nist.gov/SARD/testsuite.php) or the [US-CERT dataset](https://www.cisa.gov/uscert/bsi/articles/tools/source-code-analysis/source-code-analysis-tools---example-programs).
-3. For each chosen vulnerable program `c/SARD-testsuite-100/000/140/i`, find and study the equivalent but more secure program `c/SARD-testsuite-101/000/140/i+1`. If you chose a different dataset, propose a secure version of the vulnerable program.
+3. For each chosen vulnerable program `c/SARD-testsuite-100/000/149/i`, find and study the equivalent but more secure program `c/SARD-testsuite-101/000/149/i+1`. If you chose a different dataset, propose a secure version of the vulnerable program.
 4. Was your vulnerability found by the automated scanners? From the error log (or lack thereof), what can you deduct about the scanner's analysis technique?
 5. Based on the above experiments, select a reasonable set of tools for analysing your program.
 6. **In your group's GitHub repository, write a small report to the markdown file `Lab1.md`.**

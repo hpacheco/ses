@@ -218,7 +218,7 @@ Did it find a solution? You may try to improve the grammar, the seed or the numb
 
 ## [American Fuzzy Lopp (AFL)](https://github.com/google/AFL)
 
-AFL is a white-box fuzzing tool which symbolically executes programs and takes the constraints of inputs into account to create dynamic tests. The tested program should first be compiled with a utility program to enable control flow tracking. Any behavioural changes as a response to the input can then be detected by the fuzzer. If there is no access to the source code, then blackbox testing is supported as well.
+AFL is a grey-box (not black-box nor white-box) fuzzing tool which symbolically executes programs and takes the constraints of inputs into account to create dynamic tests. The tested program should first be compiled with a utility program to enable control flow tracking. Any behavioural changes as a response to the input can then be detected by the fuzzer. If there is no access to the source code, then blackbox testing is supported as well.
 
 We will try a few examples from this AFL [tutorial](https://github.com/mykter/afl-training).
 
@@ -268,6 +268,10 @@ This may make your VM allocate a lot of memory and lead to random crashes; make 
 
 ## [Driller](https://github.com/shellphish/driller)
 
+There are many other modern grey-box fuzzing techniques that can achieve better results for custom programs, often by combining some form of symbolic execution. Many of the associated tools are experimental, possibly quite complex to configure and use, and can become out-of-date quickly.
+
+**Remark:** For the sake of demonstration, we will look at a few, but be advised that it may be hard to understand their behavior outside of the example programs that we provide. 
+
 Driller is a concolic execution tool that explores only the paths that are found interesting by the fuzzer and uses symbolic execution to generate inputs for path branches that a fuzzer cannot satisfy. It uses AFL as a fuzzer and angr, a binary analysis framework, as a symbolic tracer over the executable's control flow graph.
 
 Consider an example [buggy.c](../c/misc/buggy.c) program taken from this [article](https://blog.grimm-co.com/2020/05/guided-fuzzing-with-driller.html) that simply reads 6 bytes of input, checks them one by one against a sequence of characters, and crashes if all 6 of them match.
@@ -304,7 +308,6 @@ Fuzzolic also provides automated support for alternating between fuzzolic and AF
 ```ShellSession
 fuzzolic@container# ./fuzzolic/run_afl_fuzzolic.py --address-reasoning --optimistic-solving --fuzzy -o workdir/ -i tests/example/inputs -- ./tests/example/example
 ```
-**Remark:** Fuzzolic, and in particular its novel SAT solver, are experimental tools. It may be hard to understand why they fail for non-tested programs.
 
 ## [SymCC](https://github.com/eurecom-s3/symcc)
 

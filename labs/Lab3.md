@@ -87,7 +87,7 @@ In the context of web applications, DAST is a testing methodology that analyses 
 
 [^1]: White-box dynamic web application analysis is usually termed Interactive Application Security Testing (IAST).
 Like traditional dynamic program analysis, IAST tools analyze running web applications by first instrumenting their code to better observe application behavior and data flow.
-Unfortunately, IAST is very much dependent on used technologies since it requires significant more integration with the host applications, are there are few open-source solutions (aside from hard to set up research prototypes) for us to experiment with. We will therefore focus on DAST.
+Unfortunately, IAST is very much dependent on used technologies since it requires significantly more integration with the host applications, are there are few open-source solutions (aside from hard to set up research prototypes) for us to experiment with. We will therefore focus on DAST.
 
 ### [OWASP ZAP](https://www.zaproxy.org/)
 
@@ -160,7 +160,7 @@ We can concoct such an illegitimate request using a simple command line tool suc
 
 ### Admin Registration challenge
 
-Try to solve the (very similar) **Admin Registration** challenge on your own.
+**Try to solve** the (very similar) **Admin Registration** challenge on your own.
 After you have solved the challenge, follow the mitigation link to understand more about the associated vulnerability and solve the associated coding challenge.
 
 ## SQL injection
@@ -234,7 +234,7 @@ The `--data` options tells SQLMap to send a POST request; `*` is treated as a wi
 ### Other SQLi challenges
 
 Juice Shop features a couple other SQL injection challenges.
-Try to solve by yourself two other challenges, one from each of the following pairs which are similar:
+**Try to solve by yourself two other challenges, one from each of the following pairs which are similar:**
 * **Login Bender** or **Login Jim**: these challenges are very similar to the **Login Admin** and attack the login page, you just need to find the correct email first.
 * **Database Schema** or **User Credentials**: these challenges require inferring some information about the database and attack the search page [^3].
 
@@ -247,7 +247,7 @@ After you have solved the challenges, follow the mitigation link to understand m
 The **GDPR Data Erasure** is another SQLi-related challenge that requires combining the exploits of the above two classes.
 Nonetheless, its origin goes beyond the SQLi vulnerabilities and can be attributed to a lack of proper GDPR compliance in the data erasure process.
 
-Try to solve it by yourself and to trace back the problem to the [source code](https://github.com/juice-shop/juice-shop) responsible for the data erasure process. Can this problem be detected by the automated tools?
+**Try to solve it** by yourself and to trace back the problem to the [source code](https://github.com/juice-shop/juice-shop) responsible for the data erasure process. Can this problem be detected by the automated tools?
 
 ## Cross-Site Scripting (XSS)
 
@@ -273,7 +273,7 @@ Luckily, there are many other XSS payloads that we can try. For example, our scr
 ### Other XSS challenges
 
 Juice Shop features a couple other SQL injection challenges.
-Try to solve by yourself two other challenges described below.
+**Try to solve by yourself two other challenges from the ones described below.**
     
 #### Reflected XSS challenge
 
@@ -311,7 +311,11 @@ Tip: check for a vulnerable dependency.
 **In your group's GitHub repository, create the markdown file `Lab3.md` to write a small report for this lab.**
 
 Your report file shall cover the following:
-* Give a brief description on how you solved the challenges proposed above.
+* Give a brief description on how you solved the challenges proposed above, namely:
+    - **Login Bender** or **Login Jim**
+    - **Database Schema** or **User Credentials**
+    - **GDPR Data Erasure**
+    - two from **Reflected XSS**, **API-only XSS**, **Client-side XSS Protection** or **Server-side XSS Protection**
 * Describe the general vulnerability class associated with each group of challenges, including relevant CWEs and typical mitigation and fixing strategies.
 * Describe the specific vulnerabilities that allowed the attacks:
     - which lines of which code files were responsible for the vulnerabilities?
