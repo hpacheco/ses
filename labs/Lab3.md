@@ -364,12 +364,7 @@ In other words, we need to add more structure to the data; instead of doing it d
 We can try out Trusted Types with our DOM-based challenge:
 1. Open the page `http://localhost:3000/#/search?q=<iframe src="javascript:alert(`xss`)">` with Chrome; you shall see a `XSS` popup.
 2. Enabled Trusted types and try again:
-    * Edit the file [frontend/src/index.html](https://github.com/juice-shop/juice-shop/blob/master/frontend/src/index.html) and and insert the following code in the HMTL header
-```HTML
-<meta http-equiv="Content-Security-Policy: trusted-types; require-trusted-types-for 'script'">
-```
-
-to enable Trusted Types.
+    * Edit the file [frontend/src/index.html](https://github.com/juice-shop/juice-shop/blob/master/frontend/src/index.html) and insert the following code in the HMTL header `<meta http-equiv="Content-Security-Policy: trusted-types; require-trusted-types-for 'script'">`{:.HTML} to enable Trusted Types.
     * Rebuild Juice Shop (you may alternatively edit the `index.html` file in the `dist` folder to avoid rebuilding).
     * Open the page again; this time, you won't see a popup. In the `Developer Tools`, you shall see an error similar to the following:
 <details>
