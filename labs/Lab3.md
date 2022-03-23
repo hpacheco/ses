@@ -364,27 +364,23 @@ In other words, we need to add more structure to the data; instead of doing it d
 We can try out Trusted Types with our DOM-based challenge:
 1. Open the page `http://localhost:3000/#/search?q=<iframe src="javascript:alert(`xss`)">` with Chrome; you shall see a `XSS` popup.
 2. Enabled Trusted types and try again:
-    * Edit the file [frontend/src/index.html](https://github.com/juice-shop/juice-shop/blob/master/frontend/src/index.html) and insert the following code in the HMTL header `<meta http-equiv="Content-Security-Policy: trusted-types; require-trusted-types-for 'script'">`{:.HTML} to enable Trusted Types.
+    * Edit the file [frontend/src/index.html](https://github.com/juice-shop/juice-shop/blob/master/frontend/src/index.html) and insert the following code in the HMTL header `<meta http-equiv="Content-Security-Policy: trusted-types; require-trusted-types-for 'script'">` to enable Trusted Types.
     * Rebuild Juice Shop (you may alternatively edit the `index.html` file in the `dist` folder to avoid rebuilding).
     * Open the page again; this time, you won't see a popup. In the `Developer Tools`, you shall see an error similar to the following:
 <details>
 <summary>Screenshots</summary>
 
-![lab3/tt_angular1](lab3/tt_angular1.png)
+![lab3/ttangular1](lab3/ttangular1.png)
 </details>
 
-3. Trusted Types allows users to control data sanitization by defining custom security policies. Conveniently, recent versions of Angular provide a built-in `angular` policy, in which Angular-internal sanitizers produce typed data respecting the safe DOM API. You may turn it on by changing the policy header in [frontend/src/index.html](https://github.com/juice-shop/juice-shop/blob/master/frontend/src/index.html) to:
-```HTML
-<meta http-equiv="Content-Security-Policy: trusted-types angular; require-trusted-types-for 'script'">
-```
-If you rebuild Juice Shop and reload the page, you shall see an error similar to the following:
+3. Trusted Types allows users to control data sanitization by defining custom security policies. Conveniently, recent versions of Angular provide a built-in `angular` policy, in which Angular-internal sanitizers produce typed data respecting the safe DOM API. You may turn it on by changing the policy header in [frontend/src/index.html](https://github.com/juice-shop/juice-shop/blob/master/frontend/src/index.html) to
+`<meta http-equiv="Content-Security-Policy: trusted-types angular; require-trusted-types-for 'script'">`. If you rebuild Juice Shop and reload the page, you shall see an error similar to the one below. This time, Trusted Types complains that, under the `angular` policy, the assignment of the output of `bypassSecurityTrustHtml` to a `innerHTML` is still unsafe. This is expected, as `bypassSecurityTrustHtml` does not perform any input sanitization and therefore its Angular output does not have a safe type.
 <details>
 <summary>Screenshots</summary>
 
-![lab3/tt_angular2](lab3/tt_angular2.png)
+![lab3/ttangular2](lab3/ttangular2.png)
 </details>
 
-This time, Trusted Types complains that, under the `angular` policy, the assignment of the output of `bypassSecurityTrustHtml` to a `innerHTML` is still unsafe. This is expected, as `bypassSecurityTrustHtml` does not perform any input sanitization and therefore its Angular output does not have a safe type.
 4. If we fix the vulnerability as suggested in the code challenge, by removing the call to `bypassSecurityTrustHtml`, Angular will sanitise all data passed to a `innerHTML` and return an appropriately safe type.
     * Edit the file [frontend/src/app/search-result/search-result-component.ts](https://github.com/juice-shop/juice-shop/blob/master/frontend/src/app/search-result/search-result-component.ts) and fix the code by removing the call to `bypassSecurityTrustHtml`.
     * Rebuild Juice Shop.
