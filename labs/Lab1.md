@@ -320,7 +320,11 @@ SUMMARY: UndefinedBehaviorSanitizer: SEGV (/home/parallels/Desktop/SARD-testsuit
 
 ### [Taintgrind](https://github.com/wmkhoo/taintgrind)
 
-Taintgrind is a taint-tracking plugin for Valgrind. The purpose of taint analysis is to track information flow from sources to sinks within a program. As a binary instrumentation tool, Taintgrind allows marking specific bytes - typically user input data - as tainted and propagates taint at the byte level through memory operations.
+The purpose of taint analysis, a powerful method for discovering security violations, is to track information flow from sources to sinks within a program.
+It is typically used for checking an *integrity* property, by identifying dangerous flows from untrusted inputs (sources) into sensitive destinations (sinks).
+
+Taintgrind is a taint-tracking plugin for Valgrind.
+As a binary instrumentation tool, Taintgrind allows marking specific bytes - typically user input data - as tainted and propagates taint at the byte level through memory operations.
 
 #### Direct flows
 
@@ -505,6 +509,9 @@ The main characteristic of this general class of attacks is that they are harder
 The prevailing technique for protecting against timing attacks in low-level C code, accepted both by [industry](https://github.com/veorq/cryptocoding) and [academia](https://hal.inria.fr/hal-03046757/file/BarbosaetalOakland21.pdf) in the context of highly critical cryptographic code, is to to follow constant-time coding guidelines. The idea is that a program is constant-time if its control flow (if conditions, loop conditions, gotos) and memory accesses do not depend on secret data[^2].
 
 There are nowadays several [tools](https://neuromancer.sk/article/26) that can automatically verify if code follows the constant-time guidelines. TIMECOP is a Valgrind plugin to dynamically check if a program's execution is constant time.
+In a way, TIMECOP operates dually to Taintgrind, by using taint analysis techniques to check a *confidentiality* property, i.e., trying to find violations in which sensitive sources leak to untrusted sinks (for the case of constant-time, time-measurable operations). 
+
+
 For TIMECOP, all memory locations are considered public by default; the user can explicitly mark some memory locations, e.g., the password in our example as secret, using annotations as shown in [pass-loop-bad-timecop.c](../c/misc/pass-loop-bad-timecop.c):
 ```C
 int check(char *arg, char *pass)

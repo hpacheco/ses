@@ -165,7 +165,7 @@ After you have solved the challenge, follow the mitigation link to understand mo
 
 ## SQL injection
 
-SQL injection is not of the most classical web attacks which may have devastating consequences on web applications suffering from associated vulnerabilities.
+SQL injection (SQLi) is not of the most classical web attacks which may have devastating consequences on web applications suffering from associated vulnerabilities.
 Juice Shop itself as a few challenges related to SQL injection vulnerabilities.
 
 ### Login Admin challenge
@@ -207,13 +207,10 @@ SELECT * FROM Users WHERE email = 'admin' -- AND password = '...' AND deletedAt 
 We no longer get a syntax error since the query is valid. However, we do not get a valid login. This is because, by default, the server will log us as the first user that is returned by the selection; as it turns out that there is no user in the database with email `admin`, our selection is empty and we get a login error. You may check the source code for further clarification.
 
 We can overcome this limitation easily, e.g., by returning all users in the `Users` database table, which is part of another challenge.
-
-Since the login fields are vulnerable to SQL injection, which enables access to unauthorized access to the system. 
-
 Let us inject SQL into the login field to bypass the login and login as the first user in the database, by sending the request:
 ```
 POST http://localhost:3000/rest/user/login
-{"email":"admin' -- OR TRUE","password":"123"}
+{"email":"admin' OR TRUE --","password":"123"}
 ```
 for which we get a successful login!
 ```
@@ -231,16 +228,61 @@ sqlmap -u 'http://localhost:3000/rest/user/login' --data=email=*&password=*" --l
 ```
 The `--data` options tells SQLMap to send a POST request; `*` is treated as a wildcard standing for any string that SQLMap will try to fill. SQLMap shall find a vulnerable input similar to our previous successful exploit.
 
+#### Fuzzing with OWASP ZAP
+
+We can also use ZAP to automatically fuzz HTTP requests.
+For detailed info, check the [wiki](https://www.zaproxy.org/docs/desktop/addons/fuzzer/) or this video [tutorial](https://www.youtube.com/watch?v=uSfGeyJKIVA).
+
+After finding the user POST login form with a ZAP scan, select `Open/Resend with Request Editor`. Then select the email field and right-click `Fuzz`.
+Next, you need to provide ZAP with a list of fuzz vectors, which are strings of common exploits to vulnerabilities [^3]. Conveniently, ZAP already comes with some lists. Select `Add Payload > File Fuzzers > jbrofuzz > SQL Injection`.
+
+An `OK` response with an authentication token in its content demonstrates that the login form is vulnerable to SQLi. Note that, unlike with active or passive scanners, ZAP will not generate any alerts from fuzz testing; you always need to interpret the results manually.
+
+[^3]: It is important to note that ZAP does not perform fuzzing in the traditional sense: it simply automates the process of testing a list of user-given inputs, and it will not try to mutate the inputs to find new inputs.
+
+<details>
+<summary>Screenshots</summary>
+
+![lab3/zap_sqli1.png](lab3/zap_sqli1.png)
+![lab3/zap_sqli2.png](lab3/zap_sqli2.png)
+![lab3/zap_sqli3.png](lab3/zap_sqli3.png)
+![lab3/zap_sqli4.png](lab3/zap_sqli4.png)
+![lab3/zap_sqli5.png](lab3/zap_sqli5.png)
+
+</details>
+
+#### Fuzzing with [wfuzz](https://www.kali.org/tools/wfuzz/)
+
+Wfuzz is a command-line alternative to ZAP, that comes pre-installed in Kali Linux.
+It is also popular for other vulnerabilities beyond SQLi.
+
+We can fuzz the user login POST request with the following command:
+```Shell
+wfuzz -c -z file,/usr/share/wordlists/wfuzz/Injections/SQL.txt -d “email=FUZZ&password=any” -u http://localhost:3000/rest/user/login
+```
+The `-c` flag makes color output.
+The `-z` flag specifies a list of payloads (inputs) to the fuzzer. 
+The wfuzz tool will replace the keyword FUZZ with the words within the provided payload file; in this case, the `email` field of the POST data.
+
+You will get an output similar to the shown below; successful logins can be distinguished form their `200 OK`responses.
+
+<details>
+<summary>Screenshots</summary>
+
+![lab3/wfuzz_sqli.png](lab3/wfuzz_sqli.png)
+
+</details>
+
 ### Other SQLi challenges
 
 Juice Shop features a couple other SQL injection challenges.
 **Try to solve by yourself two other challenges, one from each of the following pairs which are similar:**
 * **Login Bender** or **Login Jim**: these challenges are very similar to the **Login Admin** and attack the login page, you just need to find the correct email first.
-* **Database Schema** or **User Credentials**: these challenges require inferring some information about the database and attack the search page [^3].
+* **Database Schema** or **User Credentials**: these challenges require inferring some information about the database and attack the search page [^4].
 
 After you have solved the challenges, follow the mitigation link to understand more about the associated vulnerability and solve the associated coding challenge.
 
-[^3]: You shall be able to use SQLMap to easily assist you in leaking the whole database; explore the command-line options for more information on how to accomplish it. Note that Juice Shop may not be able to detect the SQLMap leak as a successful resolution of the challenge, because its detection mechanism is only looking out for certain queries.
+[^4]: You shall be able to use SQLMap to easily assist you in leaking the whole database; explore the command-line options for more information on how to accomplish it. Note that Juice Shop may not be able to detect the SQLMap leak as a successful resolution of the challenge, because its detection mechanism is only looking out for certain queries.
 
 #### GDPR Data Erasure challenge
 
@@ -251,7 +293,7 @@ Nonetheless, its origin goes beyond the SQLi vulnerabilities and can be attribut
 
 ## Cross-Site Scripting (XSS)
 
-XSS is another very common web vulnerability related to lack of input sanitization, and it take several forms:
+XSS is another very common web vulnerability related to lack of input sanitization, which can take several forms:
 * Stored XSS, a persistent form where a user can store malicious data in the database that will affect further requests;
 * Reflected XSS, a non-persistent form where the user sends a malicious payload to the server which is not stored but instantaneously reflected back to the client;
 * DOM-based XSS, a simpler form than a reflected XSS, where the attack takes place instantaneously in the client-side browser, without server intervention. From a user perspective, it is usually indistinguishable from a reflected XSS attack.
@@ -268,7 +310,88 @@ This time, nothing happens... is the search field immune to XSS? Not at all, it 
 > script elements inserted using innerHTML do not execute when they are inserted.
 Check this [post](https://security.stackexchange.com/a/199850) for more details.
 
-Luckily, there are many other XSS payloads that we can try. For example, our script will run if put inside an `iframe`; inserting the search string `<iframe src=javascript:alert('XSS')>` in the search form shall produce the desired popup.
+Luckily, there are many other XSS payloads that we can try. For example, our script will run if put inside an `iframe`; inserting the search string `<iframe src="javascript:alert('XSS')">` in the search form shall produce the desired popup.
+    
+As you solve the coding challenge, you will realize that the search results page is constructed using an [Angular](https://angular.io/) template, and the user input form is used to construct the `innerHTML` of a HTML element in the template page; by default, Angular sanitizes all output rendered to an `innerHTML`; however, the call to `bypassSecurityTrustHtml` is telling Angular not to sanitize the output that is rendered on the search results page, leading to the vulnerability studied in this challenge. Check the logs of the automated tools: they will tell you a similar story.
+    
+#### Fuzzing with OWASP ZAP
+
+We can also test XSS vulnerabilities using ZAP fuzz testing.
+
+After finding the search GET request (<http://localhost:3000/rest/products/search?q=searchValue>) with a ZAP scan, select the search term in the `Request` tab and right-click `Fuzz`.
+Select `Add Payload > File Fuzzers > jbrofuzz > XSS`.
+
+Successful XSS attacks in ZAP are signaled by the yellow star-like `Reflected` symbol. You may quickly notice that only `500 Internal Server Error` requests are reflected, and there is no successful `200 OK` attack. This is precisely because an `OK` response will include a listing of matching items, and error responses will include the search query within the SQL error. **However, testing the REST API for this DOM-based XSS challenge is not a faithful representation of the attack**. If you carefully manually explore with ZAP the requests generated from an interaction with the browser, you will notice the request's `q` argument is independent of the search string! The frontend is always querying the whole database of items and performing a client-side filtering in the client-side using Javascript.
+
+You may try fuzzing the frontend url <http://localhost:3000/#/search?q=searchValue>. Unfortunately, it will also not succeed in finding an attack, because it will lack the site's client-side item listing from the previous page. Analysing this vulnerability is in fact challenging, as much of the juice shop functionality is developed using [Angular](https://angular.io/) with complex dynamic Javascript code on the client side.
+
+As a rule of thumb, **ZAP and other similar web vulnerability scanners (such as [wfuzz](https://www.kali.org/tools/wfuzz), [w3af](http://w3af.org/) or [XSSStrike](https://github.com/s0md3v/XSStrike)) only detect reflected XSS vulnerabilities**, by analysing HTTP requests and finding portions of text reflected in the HTTP responses. Finding stored XSS vulnerabilities is harder as they depend on the logic of the application and may only reveal themselves after many (often seemingly-unrelated) requests.
+
+#### Dynamic taint analysis for JavaScript
+
+Finding DOM-based XSS vulnerabilities requires analysing the data flow inside the client-side JavaScript code of the application.
+However, statically analysing the data flows of highly-dynamic modern applications quickly become unfeasible, as in fact happens for juice shop that relies heavily on Angular [^5].
+The most common approach for finding DOM-based XSS vulnerabilities in the large is therefore to perform dynamic taint analysis of JavaScript, where user inputs are the dangerous sources and DOM rendering functions such as innerHTML or document.write and sensitive sinks; taint propagation is then used to check if data originating from the sources may be flow to the sinks.
+
+Performing taint analysis of JavaScript is an established research topic, and there exist numerous tools and approaches which mostly rely on instrumenting a JS runtime such as node.js (e.g.  [Augur](https://github.com/nuprl/augur)) or a particular browser (e.g. [Mystique](https://mystique.csc.ncsu.edu/about)). Unfortunately, these tools are often academic, heavy on resources (e.g., compiling a specifically patched Chrome) and quite complicated to setup.
+
+As a toy demonstration, consider [Tainting Testing Tool](https://github.com/ollseg/ttt-ext), a simple Chrome extension to assist in finding DOM-based XSS vulnerabilities that injects specific strings into sources (e.g., form inputs, request arguments, page location or cookies) and insert JavaScript hooks that search for those strings in output sinks (e.g., `eval()` or `innerHTML`).
+
+Install Google Chrome and the extension (`Extensions > Manage Extensions > Load unpacked > select the folder of the ttt-ext`).
+Then open the `Developer Tools` and load the product search page <http://localhost:3000/#/search?q=searchValue> in Chrome.
+You shall see a similar error log in the JavaScript `Console`. The relevant error is highlighted in the below screenshot: the user-provided GET request arguments ends up being rendered as the `innerHTML` of a HTML element with id `searchValue`.
+
+[^5]: Simple analyses such as finding calls to `bypassSecurityTrustHtml` in the source code are always feasible, as we have witnessed above, but may lead to a high number of false positives if the complex information flows are not taken into account.
+
+<details>
+<summary>Screenshots</summary>
+
+![lab3/ttt_domxss](lab3/ttt_domxss.png)
+
+</details>
+
+#### Restricting JavaScript flows with Trusted Types
+
+Trusted Types is a new browser security mechanism spearheaded by Google security engineers that is evolving into a [W3C standard](https://w3c.github.io/webappsec-trusted-types/dist/spec/). It is currently supported by [recent versions of Google Chrome](https://chromestatus.com/feature/5650088592408576) and [a few other browsers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/trusted-types). For more information, I found [this tutorial](https://auth0.com/blog/securing-spa-with-trusted-types/) to be a great introduction.
+
+The main problem leading to DOM-based XSS vulnerabilities is the inherently loose nature of JavaScript, that does not promote a clear distinction between user data and page code: user data can be stored in the JavaScript context, which in turn may dynamically influence how the page is rendered. This is particularly dangerous because both user inputs - e.g., coming from forms - and page rendering outputs are simply seen as strings in JavaScript, and various forms of string manipulations may take place in-between.
+One possible approach to mitigate this problem is to use dynamic taint propagation: associate additional tainted information to each source string, and check if the tainted source annotations reach the sink data.
+In other words, we need to add more structure to the data; instead of doing it dynamically, we can statically distinguish between different types of strings, as a strongly-typed programming language could do [^6]. This is exactly the proposal behind Trusted Types: to define a safe DOM API that **only** manipulates strings with specific types (see types as tags), and have the browser's JavaScript compiler validating those types before the code is executed. Since non-typed string assignments to safe DOM functions receiving typed arguments will lead to a compilation error, only typed data generated by safe DOM sanitizers will be allowed. This also has an important advantage of greatly reducing the focus of a security analysis: instead of tracking dynamic flows of information across all the code, only the code producing typed data can introduce vulnerabilities.
+
+[^6]: Examples of with static typing disciplines for more secure web-development include [Pysa](https://pyre-check.org/docs/pysa-basics/) for Python, [Jif](https://www.cs.cornell.edu/jif/) for Java, or the Haskell-like functional [Ur](http://www.impredicative.com/ur/) language.
+
+We can try out Trusted Types with our DOM-based challenge:
+1. Open the page <http://localhost:3000/#/search?q=<iframe src="javascript:alert(`xss`)">> with Chrome; you shall see a `XSS` popup.
+2. Enabled Trusted types and try again:
+    * Edit the file [frontend/src/index.html](https://github.com/juice-shop/juice-shop/blob/master/frontend/src/index.html) and and insert the following code in the HMTL header
+```HTML
+<meta http-equiv="Content-Security-Policy: trusted-types; require-trusted-types-for 'script'">
+```
+to enable Trusted Types.
+    * Rebuild Juice Shop (you may alternatively edit the `index.html` file in the `dist` folder to avoid rebuilding).
+    * Open the page again; this time, you won't see a popup. In the `Developer Tools`, you shall see an error similar to the following:
+<details>
+<summary>Screenshots</summary>
+
+![lab3/tt_angular1](lab3/tt_angular1.png)
+</details>
+
+3. Trusted Types allows users to control data sanitization by defining custom security policies. Conveniently, recent versions of Angular provide a built-in `angular` policy, in which Angular-internal sanitizers produce typed data respecting the safe DOM API. You may turn it on by changing the policy header in [frontend/src/index.html](https://github.com/juice-shop/juice-shop/blob/master/frontend/src/index.html) to:
+```HTML
+<meta http-equiv="Content-Security-Policy: trusted-types angular; require-trusted-types-for 'script'">
+```
+If you rebuild Juice Shop and reload the page, you shall see an error similar to the following:
+<details>
+<summary>Screenshots</summary>
+
+![lab3/tt_angular2](lab3/tt_angular2.png)
+</details>
+
+This time, Trusted Types complains that, under the `angular` policy, the assignment of the output of `bypassSecurityTrustHtml` to a `innerHTML` is still unsafe. This is expected, as `bypassSecurityTrustHtml` does not perform any input sanitization and therefore its Angular output does not have a safe type.
+4. If we fix the vulnerability as suggested in the code challenge, by removing the call to `bypassSecurityTrustHtml`, Angular will sanitise all data passed to a `innerHTML` and return an appropriately safe type.
+    * Edit the file [frontend/src/app/search-result/search-result-component.ts](https://github.com/juice-shop/juice-shop/blob/master/frontend/src/app/search-result/search-result-component.ts) and fix the code by removing the call to `bypassSecurityTrustHtml`.
+    * Rebuild Juice Shop.
+    * Reload the page; this time, you shall not see the previous error.
     
 ### Other XSS challenges
 

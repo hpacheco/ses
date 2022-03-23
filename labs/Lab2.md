@@ -9,7 +9,8 @@ In this lab we will look at two techniques that, both separately and combined, h
 * **fuzzing**, a black-box testing technique that consists in *blindly* generating a wide set of random program-independent inputs according to some genetic algorithm;
 * **symbolic execution**, a white-box testing technique that consists in substituting program inputs by symbolic (undefined) values and partially evaluating the program; an outcome of the program exploration is to generate program-dependent tests for symbolic inputs.
 * **concolic execution** is a software testing technique that combines symbolic execution with concrete execution of particular inputs, e.g. generated using fuzzing.
-Fuzzing, symbolic execution and concolic execution are a currently hot research topic, and there are many experimental academic tools being proposed recently. The [FuzzBench](https://google.github.io/fuzzbench/) project is an effort to standardize benchmarks of such tools.
+
+Fuzzing, symbolic execution and concolic execution are a currently hot research topic, and there are many experimental academic tools being proposed recently. The [FuzzBench](https://google.github.io/fuzzbench/) project is an effort to standardize benchmarks of such tools. You may get a visual picture of the ever-growing list of available techniques and tools in this [survey](https://github.com/SoftSec-KAIST/Fuzzing-Survey).
 
 ## [Radamsa](https://gitlab.com/akihe/radamsa)
 
@@ -331,6 +332,16 @@ symcc@container# ./util/pure_concolic_execution.sh -i inputs -o results /path/to
 It will run indefinitely; stop it after a while and inspect the `results` folder. Can you find an input that causes the bug?
 
 Even though it does not offer an not automated script, SymCC may also be combined with AFL similarly to fuzzolic; check the [documentation](https://github.com/eurecom-s3/symcc/blob/master/docs/Fuzzing.txt). 
+
+## [ct-fuzz](https://github.com/michael-emmi/ct-fuzz)
+
+The testing methodologies that we have seen so far focus on traditional safety properties such as undefined behavior or memory errors.
+These do not permit to directly capture security properties such as information leakage, as we have seen before for constant-time security.
+
+It is well known, however, that it is possible to reduce the analysis of some security properties to the analysis of *self-composed* programs which simulate multiple simultaneous executions of the original program; this is precisely what ct-verif does.
+Using the same rationale, it is possible to generalize any testing technique to handle some security properties as *self-composed* safety properties of *self-composed* programs.
+Very recent academic tools allow applying traditional fuzzers to support the automated testing of security properties; one such example is ct-fuzz, tailored for automated testing of constant-time security for cryptographic implementations.
+Since most of these tools are not yet very user-friendly, we refrain from providing running examples. If you are interested in learning more check, the ct-fuzz [paper](http://www.cs.utah.edu/~shaobo/ct-fuzz.pdf).
 
 ## Tasks
 
