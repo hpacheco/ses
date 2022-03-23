@@ -368,8 +368,8 @@ We can try out Trusted Types with our DOM-based challenge:
 ```HTML
 <meta http-equiv="Content-Security-Policy: trusted-types; require-trusted-types-for 'script'">
 ```
-to enable Trusted Types.
 
+to enable Trusted Types.
     * Rebuild Juice Shop (you may alternatively edit the `index.html` file in the `dist` folder to avoid rebuilding).
     * Open the page again; this time, you won't see a popup. In the `Developer Tools`, you shall see an error similar to the following:
 <details>
