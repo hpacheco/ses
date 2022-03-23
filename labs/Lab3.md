@@ -373,8 +373,11 @@ We can try out Trusted Types with our DOM-based challenge:
 ![lab3/ttangular1](lab3/ttangular1.png)
 </details>
 
-3. Trusted Types allows users to control data sanitization by defining custom security policies. Conveniently, recent versions of Angular provide a built-in `angular` policy, in which Angular-internal sanitizers produce typed data respecting the safe DOM API. You may turn it on by changing the policy header in [frontend/src/index.html](https://github.com/juice-shop/juice-shop/blob/master/frontend/src/index.html) to
-`<meta http-equiv="Content-Security-Policy: trusted-types angular; require-trusted-types-for 'script'">`. If you rebuild Juice Shop and reload the page, you shall see an error similar to the one below. This time, Trusted Types complains that, under the `angular` policy, the assignment of the output of `bypassSecurityTrustHtml` to a `innerHTML` is still unsafe. This is expected, as `bypassSecurityTrustHtml` does not perform any input sanitization and therefore its Angular output does not have a safe type.
+3. Trusted Types allows users to control data sanitization by defining custom security policies. Conveniently, recent versions of Angular provide a built-in `angular` policy, in which Angular-internal sanitizers produce typed data respecting the safe DOM API.
+    * Turn it on by changing the policy header in [frontend/src/index.html](https://github.com/juice-shop/juice-shop/blob/master/frontend/src/index.html) to
+`<meta http-equiv="Content-Security-Policy: trusted-types angular; require-trusted-types-for 'script'">`.
+    * Rebuild Juice Shop and reload the page; you shall see an error similar to the one below.
+    * This time, Trusted Types complains that, under the `angular` policy, the assignment of the output of `bypassSecurityTrustHtml` to a `innerHTML` is still unsafe. This is expected, as `bypassSecurityTrustHtml` does not perform any input sanitization and therefore its Angular output does not have a safe type.
 <details>
 <summary>Screenshots</summary>
 
