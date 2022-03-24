@@ -80,7 +80,6 @@ Each component will have the following percentage in the project's final grade:
 | Implementation         | 25 |  
 | Analysis               | 30 |  
 | Presentation & Report  | 20 |  
-|------------------------|----|
 
 
 
