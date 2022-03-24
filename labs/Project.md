@@ -72,8 +72,6 @@ At the end of the semester, each group will present their assignments during cla
 
 ## Grading
 
-Each component will have the following percentage in the project's final grade:
-
 | Component              | %  |
 |------------------------|----|
 | Design                 | 25 |  
