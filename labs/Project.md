@@ -51,14 +51,13 @@ Beyond advanced functionality, familiarity or ease of deployment, you choice sha
 
 You shall also seek to demonstrate that your implementation respects your design and fulfils its security requirements.
 You shall describe the security analysis methodology that you have employed to validate your implementation and corroborate the overall security of your system. 
-
 This includes, e.g.:
-    - security guarantees offered by the programming languages;
-    - adopted secure software design patterns;
-    - security analysis of dependencies or external libraries;
-    - adopted mitigations for common vulnerabilities;
-    - security testing methodologies that you have put in place;
-    - source code analysis tools that you have considered adequate.
+- security guarantees offered by the programming languages;
+- adopted secure software design patterns;
+- security analysis of dependencies or external libraries;
+- adopted mitigations for common vulnerabilities;
+- security testing methodologies that you have put in place;
+- source code analysis tools that you have considered adequate.
 
 ## Report
 
