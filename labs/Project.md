@@ -22,7 +22,7 @@ You shall design and build your service according to the following general requi
         - Perform batch or more advanced operations via a Unix-like shell environment over their local directory structure;
         - Both modes of operation may be supported by a backend RESTful API reminiscent of, e.g., (a simplification of) the [Google Drive API](https://developers.google.com/drive/api/v2/reference).
     * Users shall be able to share files/directories among each other.
-    * Users shall be able to publish a personal web page reminiscent of, e.g., (a simplification of) [GitHub pages](https://pages.github.com/). You are free to choose a design. For instance, a user may have a separate public HTML folder or all his/her directory structure may be rendered via the backend's HTTP server.
+    * Users shall be able to publish a personal web page reminiscent of, e.g., (a simplification of) [GitHub pages](https://pages.github.com/). You are free to choose a design. For instance, a user may have a separate public HTML folder or all published his/her page files may be rendered via the backend's HTTP server.
 2. **Authentication**:
     * Users have to login in the web frontend before accessing their directory structure.
     * Operations on a user's directory structure require authenticated users.
