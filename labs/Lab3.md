@@ -4,7 +4,7 @@
 In this lab we will be focusing on analysing the security of web applications.
 Web applications are extremely vulnerable in the sense that they mix a multitude of technologies and libraries and feature highly dynamic features and content that are often difficult to enclose and characterise.
 
-Instead of focusing on exploitation, we will study how various existing analysis tools can support developers in detecting and fixing web vulnerabilities:
+Instead of focusing on exploitation, we will study how various existing analysis tools can help developers in detecting and fixing web vulnerabilities:
 * SAST: As for low-level C programs, various vulnerability scanners such as [SonarCloud](https://sonarcloud.io/) and [LGTM](https://lgtm.com/) also have good support for analysis the source code of web applications written in various languages (HTTP/PHP/JS/TS/Java/etc).
 * DAST: In particular for web applications, vulnerability assessment tools such as [BurpSuite Community Edition](https://portswigger.net/burp/communitydownload) and [OWASP Zed Attack Proxy](https://owasp.org/www-project-zap/) can be used to navigating web sites, analyse HTTP requests/responses and perform automatic dynamic scans for vulnerabilities.
 
@@ -27,6 +27,20 @@ Inside the [vm](../vm) folder, you may just type:
 * `make run-docker-juiceshop` to build and run from a Docker container. An instance of Juice Shop will be readily listening at `http://localhost:3000`.
 * `make build-juiceshop` to build from sources.
 * `make run-juiceshop` to run from built sources. An instance of Juice Shop will be readily listening at `http://localhost:3000`.
+
+## Setting up [OWASP Mutillidae II](https://github.com/webpwnized/mutillidae)
+
+**For this lab, we will only consider Juice Shop exercises.** Nevertheless, for students interested in a more extensive list of web vulnerabilities or learning more about a particular vulnerability, OWASP Mutillidae II is a good source. It is a vulnerable web site that contains a categorised listing of OWASP vulnerabilities and a series of example vulnerable pages per category. You may also easily find additional information such as tutorials.
+
+To install Mutillidae II, cd into the [vm](../vm) folder and run the following commands:
+```ShellSession
+git pull
+sh install-mutillidae.sh
+make start-mutillidae
+```
+You can try it out at <http://localhost/mutillidae/>.
+In the first run, you will need to setup the DB; check [this link](https://miloserdov.org/?p=87) for further information.
+You may also need to set a root mysql password; check [this link](https://miloserdov.org/?p=5873).
 
 ## Dependency scanning
 
@@ -105,7 +119,7 @@ You may overcome this limitation by running a *Manual Explore* on http://localho
 It will launch a new browser instance proxied via ZAP network traffic monitors.
 Turn on the *Attack Mode* and login into one of the user accounts; you may navigate through the site and run a traditional *Passive Spider* analysis to detect web pages; then run an *Active Scan* to detect further vulnerabilities.
 
-For the case of Juice Shop, an interesting detail is that it comes with a large of end-to-end (E2E) tests. The main purpose of E2E testing is to test the end user's experience by simulation real scenarios using the web application's interface. For the case of Juice Shop, E2E tests attempt to exploit the web page to solve each challenge. Juice Shop's E2E tests are written using [Selenium](https://www.selenium.dev/) scripts to emulate user interactions with the browser.
+For the case of Juice Shop, an interesting detail is that it comes with a large set of end-to-end (E2E) tests. The main purpose of E2E testing is to test the end user's experience by simulation real scenarios using the web application's interface. For the case of Juice Shop, E2E tests attempt to exploit the web page to solve each challenge. Juice Shop's E2E tests are written using [Selenium](https://www.selenium.dev/) scripts to emulate user interactions with the browser.
 
 So, a nice idea (originally from this [blog post](https://www.omerlh.info/2018/12/23/hacking-juice-shop-the-devsecops-way/)) to maximize vulnerability coverage would be to include these tests in ZAP scan to automate an otherwise manual search for known vulnerabilities. It turns out that the only thing that we need to do is compile Juice Shop from sources and proxy the E2E tests via ZAP.
 
@@ -323,7 +337,7 @@ Select `Add Payload > File Fuzzers > jbrofuzz > XSS`.
 
 Successful XSS attacks in ZAP are signaled by the yellow star-like `Reflected` symbol. You may quickly notice that only `500 Internal Server Error` requests are reflected, and there is no successful `200 OK` attack. This is precisely because an `OK` response will include a listing of matching items, and error responses will include the search query within the SQL error. **However, testing the REST API for this DOM-based XSS challenge is not a faithful representation of the attack**. If you carefully manually explore with ZAP the requests generated from an interaction with the browser, you will notice the request's `q` argument is independent of the search string! The frontend is always querying the whole database of items and performing a client-side filtering in the client-side using Javascript.
 
-You may try fuzzing the frontend url <http://localhost:3000/#/search?q=searchValue>. Unfortunately, it will also not succeed in finding an attack, because it will lack the site's client-side item listing from the previous page. Analysing this vulnerability is in fact challenging, as much of the juice shop functionality is developed using [Angular](https://angular.io/) with complex dynamic Javascript code on the client side.
+You may try fuzzing the frontend url <http://localhost:3000/#/search?q=searchValue>. Unfortunately, it will also not succeed in finding an attack, because the search result listing is handled by the client-side JavaScript code. Analysing this and other DOM-based XSS vulnerabilities is in fact challenging, as much of the juice shop functionality is developed using [Angular](https://angular.io/) with complex dynamic Javascript code on the client side.
 
 As a rule of thumb, **ZAP and other similar web vulnerability scanners (such as [wfuzz](https://www.kali.org/tools/wfuzz), [w3af](http://w3af.org/) or [XSSStrike](https://github.com/s0md3v/XSStrike)) only detect reflected XSS vulnerabilities**, by analysing HTTP requests and finding portions of text reflected in the HTTP responses. Finding stored XSS vulnerabilities is harder as they depend on the logic of the application and may only reveal themselves after many (often seemingly unrelated) requests.
 
@@ -359,7 +373,7 @@ The main problem leading to DOM-based XSS vulnerabilities is the inherently loos
 One possible approach to mitigate this problem is to use dynamic taint propagation: associate additional tainted information to each source string, and check if the tainted source annotations reach the sink data.
 In other words, we need to add more structure to the data; instead of doing it dynamically, we can statically distinguish between different types of strings, as a strongly-typed programming language could do [^6]. This is exactly the proposal behind Trusted Types: to define a safe DOM API that **only** manipulates strings with specific types (see types as tags), and have the browser's JavaScript compiler validating those types before the code is executed. Since non-typed string assignments to safe DOM functions receiving typed arguments will lead to a compilation error, only typed data generated by safe DOM sanitizers will be allowed. This also has an important advantage of greatly reducing the focus of a security analysis: instead of tracking dynamic flows of information across all the code, only the code producing typed data can introduce vulnerabilities.
 
-[^6]: Examples of with static typing disciplines for more secure web-development include [Pysa](https://pyre-check.org/docs/pysa-basics/) for Python, [Jif](https://www.cs.cornell.edu/jif/) for Java, or the Haskell-like functional [Ur](http://www.impredicative.com/ur/) language.
+[^6]: Examples of static typing disciplines for more secure web-development include [Pysa](https://pyre-check.org/docs/pysa-basics/) for Python, [Jif](https://www.cs.cornell.edu/jif/) for Java, or the Haskell-like functional [Ur](http://www.impredicative.com/ur/) language.
 
 We can try out Trusted Types with our DOM-based challenge:
 1. Open the page `http://localhost:3000/#/search?q=<iframe src="javascript:alert(`xss`)">` with Chrome; you shall see a `XSS` popup.
@@ -391,7 +405,7 @@ We can try out Trusted Types with our DOM-based challenge:
     
 ### Other XSS challenges
 
-Juice Shop features a couple other SQL injection challenges.
+Juice Shop features a couple other XSS injection challenges.
 **Try to solve by yourself two other challenges from the ones described below.**
     
 #### Reflected XSS challenge
@@ -439,7 +453,7 @@ Your report file shall cover the following:
 * Describe the specific vulnerabilities that allowed the attacks:
     - which lines of which code files were responsible for the vulnerabilities?
     - how can the code that led to these vulnerabilities be fixed? 
-    - were the vulnerabilities detected by the automated analyses? why do you think that is the case?
+    - were the vulnerabilities detected by the automated analysers? why do you think that is the case?
     - you may patch the code and rerun the analyses. would the analysers no longer report the fixed code as vulnerabilities? why do you think that is the case?
 
 

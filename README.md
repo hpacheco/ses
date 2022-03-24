@@ -11,3 +11,9 @@ The different [labs](labs) for the pratical classes:
 * [Lab 1 - Low-level security](labs/Lab1.md)
 * [Lab 2 - Testing for security](labs/Lab2.md)
 * [Lab 3 - Web security](labs/Lab3.md)
+
+# Project
+
+The proposal of the final project of the pratical classes:
+* [Final Project - Secure File-Sharing Server](Project.md)
+

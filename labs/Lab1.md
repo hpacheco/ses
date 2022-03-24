@@ -936,7 +936,7 @@ You can also have a look at more challenging Frama-C case studies in these repos
 
 #### Taint analysis
 
-The Frama-C Eva plugin also provides an experimental form of static taint analysis that performs of a data-dependency analysis, possibly assisted by user annotations. The Eva analysis propagates taint by computing an over-approximation of the set of tainted locations at each program point. Programmers can then supply special `taint` clauses and contracts that encode typical taint sources and sinks and will to be verified along-side the standard program analysis.
+The Frama-C Eva plugin also provides an experimental form of static taint analysis that performs a data-dependency analysis, possibly assisted by user annotations. The Eva analysis propagates taint by computing an over-approximation of the set of tainted locations at each program point. Programmers can then supply special `taint` clauses and contracts that encode typical taint sources and sinks and will to be verified along-side the standard program analysis.
 
 ##### Simple example
 
@@ -1481,7 +1481,7 @@ SMACK found no errors with unroll bound 10.
 ```
 </details>
 
-This time, ctverif detectes no constant-time violation. Note that, to guarantee that this result is sound and all potential violations are caught, it is important to set a large-enough loop unroll parameter.
+This time, ctverif detects no constant-time violation. Note that, to guarantee that this result is sound and all potential violations are caught, it is important to set a large-enough loop unroll parameter.
 
 [^3]: Verifying the non-interference property is more challenging in practice but also more precise: information may flow from secret data to particular expression without it affecting the valuations of those expressions. This difference in precision becomes more evident when the program is allowed to reveal some secret information, e.g., it is natural for a password checker to reveal the return value stating if the user-introduced password was correct; this detail is however not relevant for our example. If interested, check the ctverif [paper](https://www.usenix.org/system/files/conference/usenixsecurity16/sec16_paper_almeida.pdf) for more information.
 
