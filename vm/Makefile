@@ -49,7 +49,7 @@ build-symcc:
 		sudo docker build -t hugopacheco/symcc .
 
 run-symcc:
-	cd symcc && sudo docker run -v /home/kali:/home/kali -it --rm hugopacheco/symcc
+	sudo docker run -v /home/kali:/home/kali -it --rm hugopacheco/symcc
 
 run-klee:
 	sudo docker pull klee/klee:2.1
