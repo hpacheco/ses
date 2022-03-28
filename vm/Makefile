@@ -12,6 +12,12 @@ run-juiceshop:
 e2e-juiceshop:
 	cd juice-shop && npm run protractor
 
+start-mutillidae:
+	sudo systemctl restart php8.1-fpm
+	sudo systemctl restart apache2
+	sudo systemctl restart mysql
+	sudo systemctl restart slapd
+
 run-dependency-check:
 	./dependency-check/bin/dependency-check.sh --enableExperimental --scan juice-shop
 
@@ -40,11 +46,25 @@ build-symcc:
 	cd symcc && \
 	  git submodule init && \
 		git submodule update && \
-		sudo docker build -t symcc .
+		sudo docker build -t hugopacheco/symcc .
 
 run-symcc:
-	cd symcc && sudo docker run -v /home/kali:/home/kali -it --rm symcc
+	cd symcc && sudo docker run -v /home/kali:/home/kali -it --rm hugopacheco/symcc
 
 run-klee:
 	sudo docker pull klee/klee:2.1
 	sudo docker run --rm -v ${HOME}:${HOME} -ti --ulimit='stack=-1:-1' klee/klee:2.1
+
+build-klee-taint:
+	git clone https://github.com/hpacheco/klee-taint
+	cd klee-taint && sudo docker build -f Dockerfile . -t hugopacheco/klee-taint
+
+run-klee-taint:
+	sudo docker run -v /home/kali:/home/kali -it hugopacheco/klee-taint
+
+build-klee-taint-ct:
+	git clone https://github.com/hpacheco/klee-taint-ct
+	cd klee-taint-ct && sudo docker build -f Dockerfile . -t hugopacheco/klee-taint-ct
+
+run-klee-taint-ct:
+	sudo docker run -v /home/kali:/home/kali -it hugopacheco/klee-taint-ct
