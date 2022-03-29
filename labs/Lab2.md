@@ -388,6 +388,12 @@ The `controlflow` options corresponds to the `indirect` option of KLEE-taint. Th
 Then try the constant-time program [pass-loop-good-klee.c](../c/misc/pass-loop-good-klee.c); this time, KLEE-taint-ct shall not find any constant-time violation.
 
 You may try other constant-time security analysis examples using KLEE-taint-ct in the [examples/taint](https://github.com/rishabh246/klee-taint/tree/master/examples/taint) folder of the GitHub repository.
+Inside the [vm](../vm) folder, you may just run:
+```ShellSession
+$ git clone https://github.com/hpacheco/klee-taint-ct
+$ cd examples/taint/path/to/the/folder/of/the/example/
+$ make verify
+```
 
 ## [ct-fuzz](https://github.com/michael-emmi/ct-fuzz)
 

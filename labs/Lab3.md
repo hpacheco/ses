@@ -11,6 +11,8 @@ Instead of focusing on exploitation, we will study how various existing analysis
 There exists a myriad of vulnerable web applications, e.g. from the [OWASP Vulnerable Web Applications Directory (VWAD)](https://owasp.org/www-project-vulnerable-web-applications-directory/), that have been developed for demonstrating common web vulnerabilities and how to exploit them.
 One of the most modern and complete among such pedagogical web applications is the [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/).
 
+Another good resource with detailed information about each type of vulnerability, including how to manually test if your application is vulnerable, is the [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/v41/).
+
 ## Setting up the [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/)
 
 In this lab we will be looking into solving a few Juice Shop challenges. You will find a lot of information in the Juice Shop [companion guide](https://pwning.owasp-juice.shop/). 
@@ -28,7 +30,7 @@ Inside the [vm](../vm) folder, you may just type:
 * `make build-juiceshop` to build from sources.
 * `make run-juiceshop` to run from built sources. An instance of Juice Shop will be readily listening at `http://localhost:3000`.
 
-## Setting up [OWASP Mutillidae II](https://github.com/webpwnized/mutillidae)
+## Setting up [OWASP Mutillidae II](https://github.com/webpwnized/mutillidae) (Extra)
 
 **For this lab, we will only consider Juice Shop exercises.** Nevertheless, for students interested in a more extensive list of web vulnerabilities or learning more about a particular vulnerability, OWASP Mutillidae II is a good source. It is a vulnerable web site that contains a categorised listing of OWASP vulnerabilities and a series of example vulnerable pages per category. You may also easily find additional information such as tutorials.
 
@@ -438,6 +440,33 @@ Try to solve it by yourself. You can find various hints in the [guide](https://p
 Even though this challenge does not feature a coding challenge, we can make it so: find the code files and lines responsible for the bug and propose a solution.
 Check the logs of the automated tools and the [source code](https://github.com/juice-shop/juice-shop) for hints.
 Tip: check for a vulnerable dependency.
+
+## Broken Access Control
+
+### CSRF challenge
+
+Cross Site Request Forgery (CSRF) is another common web vulnerability much like XSS.
+While XSS concerns itself with injecting code into the web page, e.g. via HTTP responses, CSRF concerns the forging of illegal HTTP requests; a CSRF attack is typically done implicitly, e.g., when loading another web page from a different domain by clicking a link.
+
+Manually explore the Juice Shop web page <http://localhost:3000/#> with ZAP, then login with a registered user and change its profile username to `new`. ZAP will intercept a `POST` request to <http://localhost:3000/profile? username=new>. You may notice that the HTTP request includes a `Cookie` field which is used for that authenticated user. Let's make a few experiments in ZAP:
+* Try re-sending the same `POST` request with a different username. Using the same cookie allows us to replay the request. If you reload the profile web page in the browser, you shall see the new username.
+* Try re-sending the same `POST` request with another username, this time deleting the `Cookie` field. You shall get an error response due to insuficient permissions.
+
+We have seen that we can successfully issue HTTP requests in place of an authenticated user if we have his cookie.
+However, user sessions (including cookies) and automatically managed by the web browser. If we, for instance, open a new tab and visit <http://localhost:3000>, the cookie of the authenticated user will be automatically sent upon further HTTP requests. Therefore, our application may be vulnerable web page if we open a in the same browser session.
+
+For the **CSRF** challenge, we need to change a logged-in user's username via the <http://htmledit.squarefree.com> online HTML editor.
+Go to <http://htmledit.squarefree.com>, and enter the following HTML code:
+```HTML
+<form action="http://localhost:3000/profile" method="POST" style="display:none">
+    <input name="username" value="CSRF"/>
+    <input type="submit"/>
+</form>
+<script>document.forms[0].submit()</script>
+```
+The rationalle behind this code is explained in more detail in the [OWASP WSTG CSRF page](https://owasp.org/www-project-web-security-testing-guide/v41/4-Web_Application_Security_Testing/06-Session_Management_Testing/05-Testing_for_Cross_Site_Request_Forgery). The form is issuing a `POST` request; we can hide it with CSS styling, and make it run automatically on page load using JavaScript.
+
+**Note:** To prevent CSRF, most modern browsers, such as Chrome or Firefox, will block HTTP requests from different origins. To succeed in your attack, try a lightweight browser such as midori, that can be installed with `sudo apt install midori`.
 
 ## Tasks
 
