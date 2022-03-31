@@ -62,7 +62,7 @@ KLEE is a symbolic execution tool which can significantly beat the coverage of d
 KLEE is able to automatically generated high-coverage test inputs that perform better than the poor performance of manual and random testing approaches. It does so by forking symbolic variables on program branches, to make sure that if generates inputs to check every possible program path. In practice, KLEE will not have 100% program coverage: evaluating all program executions is a computationally expensive and undecidable problem, and hence, like all symbolic execution techniques, KLEE needs to compromise on a maximum path depth.
 
 The KLEE tool is a white-box testing instrument that runs on LLVM bitcode.
-To try symbolic on the wisdom program, we have to modify it to identify which variables KLEE should treat as symbolic.
+To try KLEE on the wisdom program, we have to modify it to identify which variables KLEE should treat as symbolic.
 
 ### Wisdom example
 
