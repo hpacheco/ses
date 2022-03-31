@@ -2,7 +2,7 @@
 # Lab 3 - Web security
 
 In this lab we will be focusing on analysing the security of web applications.
-Web applications are extremely vulnerable in the sense that they mix a multitude of technologies and libraries and feature highly dynamic features and content that are often difficult to enclose and characterise.
+Web applications are extremely vulnerable in the sense that they mix a multitude of technologies and libraries and feature highly dynamic pages and content that are often difficult to enclose and characterise.
 
 Instead of focusing on exploitation, we will study how various existing analysis tools can help developers in detecting and fixing web vulnerabilities:
 * SAST: As for low-level C programs, various vulnerability scanners such as [SonarCloud](https://sonarcloud.io/) and [LGTM](https://lgtm.com/) also have good support for analysis the source code of web applications written in various languages (HTTP/PHP/JS/TS/Java/etc).
@@ -43,6 +43,15 @@ make start-mutillidae
 You can try it out at <http://localhost/mutillidae/>.
 In the first run, you will need to setup the DB; check [this link](https://miloserdov.org/?p=87) for further information.
 You may also need to set a root mysql password; check [this link](https://miloserdov.org/?p=5873).
+
+## Threat Modelling
+
+In the theoretical classes you have already studied the importance of [threat modelling](https://owasp.org/www-community/Threat_Modeling).
+The Juice Shop developers have defined a general threat model [here](https://github.com/juice-shop/juice-shop/blob/master/threat-model.json), that provides an overview of the Juice Shop architecture, shown below.
+
+![lab3/jshop_threat_model](lab3/jshop_threat_model.png) 
+
+The model was created with the [OWASP Threat Dragon](https://owasp.org/www-project-threat-dragon/) tool. You may load the JSON file into the [online tool](https://www.threatdragon.com/) to visualize or edit the model.
 
 ## Dependency scanning
 
@@ -520,7 +529,7 @@ The **Easter Egg** challenge is about downloading the <http://localhost:3000/ftp
 It is not listed in the vulnerable components category for the simple reason that the vulnerability is, for demonstration purposes, artificially hardwired in the JavaScript code of the Juice Shop application.
 Nonetheless, this general vulnerability is still very much possible in filepath manipulation libraries.
 
-Tip: Check the [OWASP Null Code page](https://owasp.org/www-community/attacks/Embedding_Null_Code) and the respective [OWASP WSTG page](https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.1-Testing_for_Local_File_Inclusion)
+Tip: Check the [OWASP Null Code page](https://owasp.org/www-community/attacks/Embedding_Null_Code) and the respective [OWASP WSTG page](https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.1-Testing_for_Local_File_Inclusion).
 
 ### Kill Chatbot challenge
 
