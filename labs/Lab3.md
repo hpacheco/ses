@@ -439,7 +439,7 @@ Try to solve it by yourself. You can find various hints in the [guide](https://p
 
 Even though this challenge does not feature a coding challenge, we can make it so: find the code files and lines responsible for the bug and propose a solution.
 Check the logs of the automated tools and the [source code](https://github.com/juice-shop/juice-shop) for hints.
-Tip: check for a vulnerable dependency.
+Tip: check for a vulnerable library dependency.
 
 ## Broken Access Control
 
@@ -468,16 +468,83 @@ The rationalle behind this code is explained in more detail in the [OWASP WSTG C
 
 **Note:** To prevent CSRF, most modern browsers, such as Chrome or Firefox, will block HTTP requests from different origins. To succeed in your attack, try a lightweight browser such as midori, that can be installed with `sudo apt install midori`.
 
+There are many anti-CSRF countermeasures, one of which is browser-side rejection to load pages from different domains as done by recent versions of Firefox or Chrome.
+The most common application-side countermeasure to avoid CSRF attacks is to add a unique server-side secret token to each HTTP request.
+Check the result of the  automated code scanners and run a ZAP analysis on the edit profile page: both shall warn you about the lack of anti-CSRF tokens in the edit profile page.
+
+### Other Broken Access Control challenges
+
+Juice Shop features a couple other Broken Access Control challenges.
+**Try to solve by yourself one other challenge from the ones described below.**
+
+Aside from CSRF, an application must protect various HTTP requests in the REST API and make sure that they are only performed by a legitimate authenticated user.
+There are many challenges that show the effects of inexistent or incomplete RESTful access control, including **Forged Review**, **Forged Feedback**, **Manipulate Basket**, **View Basket** or **Product Tampering**.
+
+Try to solve some of them by yourself. You can find various hints in the [guide](https://pwning.owasp-juice.shop/part2/broken-access-control.html).
+
+Of the above, only the **Forged Review** and the **Product Tampering** feature associated coding challenges. However, the vulnerabilities are similar across all challenges. You can solve the existing code challenges for more information.
+For these Broken Access Control challenges, unlike for CSRF, the analysis tools won't hint at the vulnerability. Discuss why do you think that is the case.
+
+Even though this challenge does not feature a coding challenge, we can make it so: find the code files and lines responsible for the bug and propose a solution.
+Check the logs of the automated tools and the [source code](https://github.com/juice-shop/juice-shop) for hints.
+
+Tip for **Manipulate Basket**: You can sometimes update multiple entries in the same HTTP request.
+Tip for **Product Tampering**: You can try to fabricate `PUT` requests from known `GET` requests.
+
+#### SSRF challenge (Extra)
+
+CSRF is a web security vulnerability that allows an attacker to perform unintended client-side requests. Typically, the attacker can impersonate a legitimate user.
+In contrast, Server-side Request Forgery (SSRF) is a web security vulnerability that allows an attacker to induce the server-side application to make requests to an unintended location. For example, a common SSRF attack is when the user provides a URL, such as an image, and the backend server accesses that URL, e.g. to download the image; if the server accesses any provided URL without restraint., if may allow the attacker to circumvent access permissions of the client-side interface.
+
+Juice Shop features a **SSRF** challenge. To try to solve it, log in and go to your user's profile page. You can upload a profile picture or provide a image URL; in the second case, the server will itself download the image. A successful solution to the challenge requires accessing a specific local page within the <http://localhost:3000> local application page; the needed URL and parameters are hidden in Juice Shop's source code.
+
+This is an artificial challenge, in the sense that we have to access a very specific URL. In general, however, having the server accessing arbitrary user-provided URLs is dangerous; this is also hinted at by the logs of the automated source code analysis tools. How could you avoid SSRF vulnerabilities in your application?
+
+## Advanced Injection (Extra)
+
+JavaScript and its associated web development frameworks constitute a very dynamic execution environment, making it quite hard to protect against general code or command injection vulnerabilities.
+Many of such security issues are introduced by 3rd party components, as you may have already seen in the **Server-side XSS Protection** challenge.
+
+For demonstrative purposes, Juice Shop features a couple more advanced injection challenges that you may try out. Study how to avoid such vulnerabilities in the application's code.
+The information in the [snyk report](https://hpacheco.github.io/ses/labs/lab3/snyk_report.html) will be occasionally useful.
+
+### Arbitrary File Write challenge
+
+The goal of the **Arbitrary File Write** challenge is to replace the contents of the file <http://localhost:3000/ftp/legal.md> stored in the server.
+
+Tip: Check the form for submitting a complaint; if you look at the source code you will notice that your file will be uploaded to `uploads/complaints` in the `vm/juice-shop` folder. Check how ZIP archives are handled by the server.
+
+### Easter Egg challenge
+
+The **Easter Egg** challenge is about downloading the <http://localhost:3000/ftp/eastere.gg> from the server.
+It is not listed in the vulnerable components category for the simple reason that the vulnerability is, for demonstration purposes, artificially hardwired in the JavaScript code of the Juice Shop application.
+Nonetheless, this general vulnerability is still very much possible in filepath manipulation libraries.
+
+Tip: Check the [OWASP Null Code page](https://owasp.org/www-community/attacks/Embedding_Null_Code) and the respective [OWASP WSTG page](https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.1-Testing_for_Local_File_Inclusion)
+
+### Kill Chatbot challenge
+
+The **Kill Chatbot** challenge highlights the possibility of JavaScript code injection in the `Support Chat` page.
+
+Tip: Check the [Juice Shop source code](https://github.com/juice-shop/juice-shop) to see how it calls the chat bot, and check the [chat bot source code](https://github.com/juice-shop/juicy-chat-bot) to see how it responds to user messages. The chat bot is careful enough to sandbox JavaScript code execution, but it turns out that the real problem does not lie with the external sandboxing library.
+
+### Local File Read challenge
+
+The **Local File Read** challenge highlights the possibility of data injection in the `Request Data Erasure` page, that is constructed using server-side templates. See the server-side template injection (SSTi) [OWASP WSTG page](https://owasp.org/www-project-web-security-testing-guide/v41/4-Web_Application_Security_Testing/07-Input_Validation_Testing/18-Testing_for_Server_Side_Template_Injection).
+
+Tip: Search for a vulnerability with the `hbs` template engine.
+
 ## Tasks
 
 **In your group's GitHub repository, create the markdown file `Lab3.md` to write a small report for this lab.**
 
 Your report file shall cover the following:
 * Give a brief description on how you solved the challenges proposed above, namely:
-    - **Login Bender** or **Login Jim**
-    - **Database Schema** or **User Credentials**
+    - one from **Login Bender** or **Login Jim**
+    - one from **Database Schema** or **User Credentials**
     - **GDPR Data Erasure**
     - two from **Reflected XSS**, **API-only XSS**, **Client-side XSS Protection** or **Server-side XSS Protection**
+    - one from **Forged Review**, **Forged Feedback**, **Manipulate Basket** or **View Basket**
 * Describe the general vulnerability class associated with each group of challenges, including relevant CWEs and typical mitigation and fixing strategies.
 * Describe the specific vulnerabilities that allowed the attacks:
     - which lines of which code files were responsible for the vulnerabilities?
