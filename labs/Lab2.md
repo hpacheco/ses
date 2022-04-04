@@ -62,7 +62,7 @@ KLEE is a symbolic execution tool which can significantly beat the coverage of d
 KLEE is able to automatically generated high-coverage test inputs that perform better than the poor performance of manual and random testing approaches. It does so by forking symbolic variables on program branches, to make sure that if generates inputs to check every possible program path. In practice, KLEE will not have 100% program coverage: evaluating all program executions is a computationally expensive and undecidable problem, and hence, like all symbolic execution techniques, KLEE needs to compromise on a maximum path depth.
 
 The KLEE tool is a white-box testing instrument that runs on LLVM bitcode.
-To try symbolic on the wisdom program, we have to modify it to identify which variables KLEE should treat as symbolic.
+To try KLEE on the wisdom program, we have to modify it to identify which variables KLEE should treat as symbolic.
 
 ### Wisdom example
 
@@ -408,7 +408,7 @@ Since most of these tools are not yet very user-friendly, we refrain from provid
 
 The goal of this lab is to experiment with the automated testing tools described above. We will detect and fix the vulnerabilities found in example C programs from the [c/SARD-testsuite-100](../c/SARD-testsuite-100) testsuite. 
 1. Study and try out the tools described above.
-2. Choose one vulnerable programs from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse. It is not mandatory to choose examples from this dataset; you may also choose examples of vulnerable C programs from other resources such as, e.g., another [SARD dataset](https://samate.nist.gov/SARD/testsuite.php) or the [US-CERT dataset](https://www.cisa.gov/uscert/bsi/articles/tools/source-code-analysis/source-code-analysis-tools---example-programs).
+2. Choose one vulnerable program from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse. It is not mandatory to choose examples from this dataset; you may also choose examples of vulnerable C programs from other resources such as, e.g., another [SARD dataset](https://samate.nist.gov/SARD/testsuite.php) or the [US-CERT dataset](https://www.cisa.gov/uscert/bsi/articles/tools/source-code-analysis/source-code-analysis-tools---example-programs). Alternatively, you may wish to try out a more realistic example from, e.g., Google's FuzzBench [benchmarks](https://github.com/google/fuzzbench/tree/master/benchmarks).
 4. Test your program with some of the above tools.
 5. **In your group's GitHub repository, write a small report to the markdown file `Lab2.md`.**
 6. The report shall discuss:
