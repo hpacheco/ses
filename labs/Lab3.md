@@ -2,7 +2,7 @@
 # Lab 3 - Web security
 
 In this lab we will be focusing on analysing the security of web applications.
-Web applications are extremely vulnerable in the sense that they mix a multitude of technologies and libraries and feature highly dynamic features and content that are often difficult to enclose and characterise.
+Web applications are extremely vulnerable in the sense that they mix a multitude of technologies and libraries and feature highly dynamic pages and content that are often difficult to enclose and characterise.
 
 Instead of focusing on exploitation, we will study how various existing analysis tools can help developers in detecting and fixing web vulnerabilities:
 * SAST: As for low-level C programs, various vulnerability scanners such as [SonarCloud](https://sonarcloud.io/) and [LGTM](https://lgtm.com/) also have good support for analysis the source code of web applications written in various languages (HTTP/PHP/JS/TS/Java/etc).
@@ -10,6 +10,8 @@ Instead of focusing on exploitation, we will study how various existing analysis
 
 There exists a myriad of vulnerable web applications, e.g. from the [OWASP Vulnerable Web Applications Directory (VWAD)](https://owasp.org/www-project-vulnerable-web-applications-directory/), that have been developed for demonstrating common web vulnerabilities and how to exploit them.
 One of the most modern and complete among such pedagogical web applications is the [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/).
+
+Another good resource with detailed information about each type of vulnerability, including how to manually test if your application is vulnerable, is the [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/v41/).
 
 ## Setting up the [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/)
 
@@ -28,7 +30,7 @@ Inside the [vm](../vm) folder, you may just type:
 * `make build-juiceshop` to build from sources.
 * `make run-juiceshop` to run from built sources. An instance of Juice Shop will be readily listening at `http://localhost:3000`.
 
-## Setting up [OWASP Mutillidae II](https://github.com/webpwnized/mutillidae)
+## Setting up [OWASP Mutillidae II](https://github.com/webpwnized/mutillidae) (Extra)
 
 **For this lab, we will only consider Juice Shop exercises.** Nevertheless, for students interested in a more extensive list of web vulnerabilities or learning more about a particular vulnerability, OWASP Mutillidae II is a good source. It is a vulnerable web site that contains a categorised listing of OWASP vulnerabilities and a series of example vulnerable pages per category. You may also easily find additional information such as tutorials.
 
@@ -41,6 +43,16 @@ make start-mutillidae
 You can try it out at <http://localhost/mutillidae/>.
 In the first run, you will need to setup the DB; check [this link](https://miloserdov.org/?p=87) for further information.
 You may also need to set a root mysql password; check [this link](https://miloserdov.org/?p=5873).
+
+## Threat Modelling
+
+In the theoretical classes you have already studied the importance of [threat modelling](https://owasp.org/www-community/Threat_Modeling) for understanding the security of a system.
+
+The Juice Shop developers have defined a general threat model [here](https://github.com/juice-shop/juice-shop/blob/master/threat-model.json), that provides an overview of the Juice Shop architecture, depicted below.
+
+![lab3/jshop_threat_model](lab3/jshop_threat_model.png) 
+
+The model was created with the [OWASP Threat Dragon](https://owasp.org/www-project-threat-dragon/) tool. You may load the JSON file into the [online tool](https://www.threatdragon.com/) to visualize or edit the model.
 
 ## Dependency scanning
 
@@ -132,6 +144,89 @@ After a likely slow compilation, a Selenium-controlled Google Chrome instance wi
 
 ZAP scans are likely to run for a really long time. A pre-generated report for Juice Shop, covering the E2E tests followed by an *Active Scan* can be found [here](https://hpacheco.github.io/ses/labs/lab3/2022-02-22-ZAP-Report-e2e-active.html).
 
+### API Testing 
+
+A crucial element of a web application is its API, which mediates communication between the backend and the frontend.
+By nature, APIs expose application logic and sensitive and are a prime target for attackers.
+As an example, the [OWASP API Security](https://owasp.org/www-project-api-security/) project highlights security risks and mitigation strategies for developing secure APIs. For the case of Juice Shop, you may find a mapping between challenges and API Security categories in the [guide](https://pwning.owasp-juice.shop/part1/categories.html).
+
+The [OpenAPI Specification](https://swagger.io/specification/) defines a standard meta-language for describing the interface of RESTful APIs, which also facilitates the study of their security. There is a large ecosystem of tools to generate server/client code from API specifications of vice-versa infer API specifications from existing application code.
+
+A natural direction and an important asset during the development of a secure web application is therefore to able to test an API against its specification. Various DAST tools support OpenAPI specifications, e.g., [ZAP](https://www.zaproxy.org/docs/desktop/addons/openapi-support/) can crawl an API specification.
+
+For Juice Shop, we can test two existing OpenAPI specifications:
+* a complete specification of the hidden API for B2B orders, available [here](https://github.com/juice-shop/juice-shop/blob/master/swagger.yml);
+* an incomplete specification of a small subset of the Juice Shop client API, found [here](https://github.com/apox64/RestSec/blob/master/restsec-samples/src/main/resources/docs_swagger/swagger-juiceshop.json).
+You can inspect them using the online [Swagger Editor](https://editor.swagger.io/).
+
+#### [Schemathesis](https://github.com/schemathesis/schemathesis)
+
+Schemathesis is a tool that uses property-based testing for checking the conformance of an implemented API against a specification.
+Property-based testing is fuzzing-like technique that consists in generating random inputs - in this case API requests - oriented to the testing of a specific output property - in this case conformance of API responses w.r.t. to an OpenAPI specification.
+
+In fact, a great deal of the Juice Shop vulnerabilities that we will explore in the challenges below are related to care-free API implementations: accepting more request parameters than expected, retrieving more response parameters than expected, leaking internal state alongside non-gracefully-handled error messages, etc.
+You can quickly try out schemathesis as follows; make sure that Juice Shop is running. In the [vm](../vm) folder:
+```ShellSession
+$ git pull
+$ sh install-schemathesis.sh
+$ cd juice-shop
+$ schemathesis run swagger-juiceshop.json --checks all --base-url http://localhost:3000
+```
+The tool will try generate various random requests that satisfy the request schema, and check if it receives 5xx server errors or responses that do not satisfy the response schema. The output may vary, depending on the randomness, but you shall some failing tests.
+
+OpenAPI also supports the specification of necessary security, such as authentication, that should be required to perform certain operations.
+For Juice Shop, that is the case of the B2B order interface. Log in into the Juice Shop in your browser, and inspected requests/responses for the header `Authorization: Bearer <TOKEN>`. You can then test the B2B interface with your secret `<TOKEN>` as follows:
+```ShellSession
+$ schemathesis run swagger.yml -H "Authorization: Bearer <TOKEN>" --checks all --base-url http://localhost:3000
+```
+
+By default, schemathesis tests each API operation independently. In real applications, API operations may have dependencies, e.g. getting the details of a product may only work for existing products, which may have been listed before.
+In order to improve the precision of the generated tests, schemathesis also supports [stateful testing](https://schemathesis.readthedocs.io/en/stable/stateful.html) by using [OpenAPI links](https://swagger.io/docs/specification/links/), a new feature for describing how the values returned by one operation may be used as input for other operations. 
+
+#### [Dredd](https://dredd.org/)
+
+Dredd is another API testing tool with a focus on specification conformance.
+In comparison with Schemathesis, Dredd is closer to unit testing and focuses more on complex test sequences and software development pipeline integration.
+
+#### [RESTler](https://github.com/microsoft/restler-fuzzer)
+
+RESTler is a API fuzzing tool that searches for 5xx server errors. More interestingly, it also runs additional [stateful checkers](https://github.com/microsoft/restler-fuzzer/blob/main/docs/user-guide/Checkers.md) that search for fixed vulnerabilities in sequences of operations that may have security implications, such as internal side-effects left by erroneous operations.
+
+In the [vm](../vm) folder, run:
+```ShellSession
+$ git pull
+$ sh install-restler.sh
+$ cd juice-shop
+```
+
+RESTler works in 4 steps; for our Juice Shop client API:
+1. **Compile** the specification
+```ShellSession
+$ Restler compile --api_spec swagger-juiceshop.json
+```
+2. **Test** the coverage of the specification
+```ShellSession
+$ Restler test --grammar_file Compile/grammar.py --dictionary_file Compile/dict.json --settings Compile/engine_settings.json --no_ssl
+```
+3. **Fuzz-lean**: quickly fuzz a few inputs per operation
+```ShellSession
+$ Restler fuzz-lean --grammar_file Compile/grammar.py --dictionary_file Compile/dict.json --settings Compile/engine_settings.json --no_ssl
+```
+4. **Fuzz**: long fuzz during a `time_budget` in hours
+```ShellSession
+$ Restler fuzz --grammar_file Compile/grammar.py --dictionary_file Compile/dict.json --settings Compile/engine_settings.json --no_ssl
+```
+You can find a more detailed description of these steps in the [tutorial](https://github.com/microsoft/restler-fuzzer/blob/main/docs/user-guide/TutorialDemoServer.md).
+RESTler shall find a few simple errors with the Juice Shop client API.
+
+For the B2B orders specification, you will need to obtain a valid JWT token as before for Schemathesis.
+Create a new script `token.sh` with executable permissions and the following content (the first line will be ignored):
+```Shell
+echo "{u'11111111-11111-1111-1111-1111111': {}}"
+echo "Authorization: Bearer <TOKEN>"
+```
+Repeat the 4 steps with the additional parameters `--token_refresh_interval <large number in seconds> --token_refresh_command token.sh`.
+
 ## Static Application Security Testing (SAST)
 
 In the context of web applications, SAST is a testing methodology that analyzes source code to find security vulnerabilities.
@@ -152,13 +247,15 @@ Even better, you may search for vulnerabilities using a SAST vulnerability scann
 
 To scan your own code with these scanners, it is arguably more convenient to upload your code to a public git repository and run it through the online scanners. You may also fork the [juice-shop](https://github.com/juice-shop) git repository in order to test and analyse fixes to the `master` branch. Alternatively, you may also download the offline versions of [SonarQube](https://www.sonarqube.org/downloads/), [CodeQL](https://codeql.github.com/docs/codeql-for-visual-studio-code/analyzing-your-projects/) or [SemGrep](https://semgrep.dev/getting-started) and run them locally.
 
-## Improper input validation
+## Challenges
+
+### Improper input validation
 
 One of the most common vulnerabilities in any software application relates to the potentially devastating impact that user input can have on the intended behavior of the application. For web applications, inputs are typically passed as arguments to HTTP requests.
 
 In Juice Shop, there are various challenges related to [improper input validation](https://pwning.owasp-juice.shop/part2/improper-input-validation.html).
 
-### Zero Stars challenge
+#### Zero Stars challenge
 
 Let's have a look at the **Zero Stars** challenge, which asks us to submit a review with a 0-star rating.
 You may start by writing a review for any product, but surprisingly the review form has no associated rating.
@@ -172,17 +269,17 @@ You will notice that the request contains a `rating` field; setting that to `0` 
 We can concoct such an illegitimate request using a simple command line tool such as `wget` or `curl`. 
 * [Recommended] This simple attack is more convenient if we use a web monitoring tool such as OWASP ZAP or Burp Suite. If using ZAP, start a **Manual Explore** with url `http://localhost:3000/#/contact`. This will launch an instance of your browser extended with ZAP Proxy monitors, which will log all your HTTP requests. Submit a customer review, intercept the relevant request, and select the **Open/Resend with Request Editor** option to easily alter and resubmit your request.
 
-### Admin Registration challenge
+#### Admin Registration challenge
 
 **Try to solve** the (very similar) **Admin Registration** challenge on your own.
 After you have solved the challenge, follow the mitigation link to understand more about the associated vulnerability and solve the associated coding challenge.
 
-## SQL injection
+### SQL injection
 
 SQL injection (SQLi) is not of the most classical web attacks which may have devastating consequences on web applications suffering from associated vulnerabilities.
 Juice Shop itself as a few challenges related to SQL injection vulnerabilities.
 
-### Login Admin challenge
+#### Login Admin challenge
 
 Let's start with the **Login Admin** challenge, which asks us login as an existing account with administrator privileges [^2].
 If we navigate to `http://localhost:3000/#/login`, we can try to login by supplying an `email` (let's try `admin`) and a `password` (randomly `123`). We can also track the HTTP request sent to the server which shall look like:
@@ -234,7 +331,7 @@ SELECT * FROM Users WHERE email = 'admin' OR TRUE -- AND password = '698d51a19d8
 ```
 Now the SQL query will check for `email = 'admin' OR TRUE` which is always `TRUE`, hence effectively selecting all users. If you check the `Account` in the Juice Shop, you will notice that you are logged in as `admin@juice-sh.op`; luckily for us, the administrator turned out to be the first user in the `Users` table.
 
-#### [SQLmap](https://sqlmap.org/)
+##### [SQLmap](https://sqlmap.org/)
 
 SQLMap is an open source penetration testing tool that automates the process of detecting and exploiting SQL injection flaws and taking over of database servers. Try running SQLMap over our login page as follows:
 ```Shell
@@ -242,7 +339,7 @@ sqlmap -u 'http://localhost:3000/rest/user/login' --data=email=*&password=*" --l
 ```
 The `--data` options tells SQLMap to send a POST request; `*` is treated as a wildcard standing for any string that SQLMap will try to fill. SQLMap shall find a vulnerable input similar to our previous successful exploit.
 
-#### Fuzzing with OWASP ZAP
+##### Fuzzing with OWASP ZAP
 
 We can also use ZAP to automatically fuzz HTTP requests.
 For detailed info, check the [wiki](https://www.zaproxy.org/docs/desktop/addons/fuzzer/) or this video [tutorial](https://www.youtube.com/watch?v=uSfGeyJKIVA).
@@ -265,7 +362,7 @@ An `OK` response with an authentication token in its content demonstrates that t
 
 </details>
 
-#### Fuzzing with [wfuzz](https://www.kali.org/tools/wfuzz/)
+##### Fuzzing with [wfuzz](https://www.kali.org/tools/wfuzz/)
 
 Wfuzz is a command-line alternative to ZAP, that comes pre-installed in Kali Linux.
 It is also popular for other vulnerabilities beyond SQLi.
@@ -287,7 +384,7 @@ You will get an output similar to the shown below; successful logins can be dist
 
 </details>
 
-### Other SQLi challenges
+#### Other SQLi challenges
 
 Juice Shop features a couple other SQL injection challenges.
 **Try to solve by yourself two other challenges, one from each of the following pairs which are similar:**
@@ -298,21 +395,21 @@ After you have solved the challenges, follow the mitigation link to understand m
 
 [^4]: You shall be able to use SQLMap to easily assist you in leaking the whole database; explore the command-line options for more information on how to accomplish it. Note that Juice Shop may not be able to detect the SQLMap leak as a successful resolution of the challenge, because its detection mechanism is only looking out for certain queries.
 
-#### GDPR Data Erasure challenge
+##### GDPR Data Erasure challenge
 
 The **GDPR Data Erasure** is another SQLi-related challenge that requires combining the exploits of the above two classes.
 Nonetheless, its origin goes beyond the SQLi vulnerabilities and can be attributed to a lack of proper GDPR compliance in the data erasure process.
 
 **Try to solve it** by yourself and to trace back the problem to the [source code](https://github.com/juice-shop/juice-shop) responsible for the data erasure process. Can this problem be detected by the automated tools?
 
-## Cross-Site Scripting (XSS)
+### Cross-Site Scripting (XSS)
 
 XSS is another very common web vulnerability related to lack of input sanitization, which can take several forms:
 * Stored XSS, a persistent form where a user can store malicious data in the database that will affect further requests;
 * Reflected XSS, a non-persistent form where the user sends a malicious payload to the server which is not stored but instantaneously reflected back to the client;
 * DOM-based XSS, a simpler form than a reflected XSS, where the attack takes place instantaneously in the client-side browser, without server intervention. From a user perspective, it is usually indistinguishable from a reflected XSS attack.
 
-### Dom XSS challenge
+#### Dom XSS challenge
 
 Juice Shop features a multitude of XSS challenges, the simplest being the **Dom XSS** challenge.
 In this challenge, we are asked to again exploit the search page, this time by inserting not malicious SQL code but malicious HTML code.
@@ -328,7 +425,7 @@ Luckily, there are many other XSS payloads that we can try. For example, our scr
     
 As you solve the coding challenge, you will realize that the search results page is constructed using an [Angular](https://angular.io/) template, and the user input form is used to construct the `innerHTML` of a HTML element in the template page; by default, Angular sanitizes all output rendered to an `innerHTML`; however, the call to `bypassSecurityTrustHtml` is telling Angular not to sanitize the output that is rendered on the search results page, leading to the vulnerability studied in this challenge. Check the logs of the automated tools: they will tell you a similar story.
     
-#### Fuzzing with OWASP ZAP
+##### Fuzzing with OWASP ZAP
 
 We can also test XSS vulnerabilities using ZAP fuzz testing.
 
@@ -341,7 +438,7 @@ You may try fuzzing the frontend url <http://localhost:3000/#/search?q=searchVal
 
 As a rule of thumb, **ZAP and other similar web vulnerability scanners (such as [wfuzz](https://www.kali.org/tools/wfuzz), [w3af](http://w3af.org/) or [XSSStrike](https://github.com/s0md3v/XSStrike)) only detect reflected XSS vulnerabilities**, by analysing HTTP requests and finding portions of text reflected in the HTTP responses. Finding stored XSS vulnerabilities is harder as they depend on the logic of the application and may only reveal themselves after many (often seemingly unrelated) requests.
 
-#### Dynamic taint analysis for JavaScript
+##### Dynamic taint analysis for JavaScript
 
 Finding DOM-based XSS vulnerabilities requires analysing the data flow inside the client-side JavaScript code of the application.
 However, statically analysing the data flows of highly-dynamic modern applications quickly become unfeasible, as in fact happens for juice shop that relies heavily on Angular [^5].
@@ -364,7 +461,7 @@ You shall see a similar error log in the JavaScript `Console`. The relevant erro
 
 </details>
 
-#### Restricting JavaScript flows with Trusted Types
+##### Restricting JavaScript flows with Trusted Types
 
 Trusted Types is a new browser security mechanism spearheaded by Google security engineers that is evolving into a [W3C standard](https://w3c.github.io/webappsec-trusted-types/dist/spec/). It is currently supported by [recent versions of Google Chrome](https://chromestatus.com/feature/5650088592408576) and [a few other browsers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/trusted-types). For more information, I found [this tutorial](https://auth0.com/blog/securing-spa-with-trusted-types/) to be a great introduction.
 
@@ -403,26 +500,26 @@ We can try out Trusted Types with our DOM-based challenge:
     * Rebuild Juice Shop.
     * Reload the page; this time, you shall not see the previous error.
     
-### Other XSS challenges
+#### Other XSS challenges
 
 Juice Shop features a couple other XSS injection challenges.
 **Try to solve by yourself two other challenges from the ones described below.**
     
-#### Reflected XSS challenge
+##### Reflected XSS challenge
 
 Try solving the **Reflected XSS** challenge by yourself. You will need to find some form that is vulnerable to XSS attacks. Tip: order some product.
 
 Even though this challenge does feature a coding challenge, we can make it so: find the code files and lines responsible for the bug and propose a solution.
 Check the logs of the automated tools and the [source code](https://github.com/juice-shop/juice-shop) for hints.
 
-#### API-only XSS
+##### API-only XSS
 
 The **API-only XSS** challenge is an example of a stored XSS attack, where clients may call API methods that are not available in the web frontend. Hence, a successful attack will require listening to HTTP requests to extract information and sending a malicious HTTP request. Try to solve it by yourself. You can find various hints in the [guide](https://pwning.owasp-juice.shop/part2/xss.html).
 Tip: check the information of a product.
 
 After a successful attack, solve the associated coding challenge: it will refer to a vulnerable code location, even though this exploit is possible due to multiple vulnerabilities. Identify other vulnerable code locations that lead to this vulnerability.
 
-#### Client-side XSS Protection challenge
+##### Client-side XSS Protection challenge
 
 The **Client-side XSS Protection** challenge is another example of a stored XSS attack.
 This time, the web frontend performs some validation on inputs that is not double-checked before requests are processed by the server. Try to solve it by yourself. You can find various hints in the [guide](https://pwning.owasp-juice.shop/part2/xss.html). Tip: create a new user.
@@ -430,14 +527,107 @@ This time, the web frontend performs some validation on inputs that is not doubl
 Even though this challenge does not feature a coding challenge, we can make it so: find the code files and lines responsible for the bug and propose a solution.
 Check the logs of the automated tools and the [source code](https://github.com/juice-shop/juice-shop) for hints.
 
-#### Server-side XSS Protection challenge
+##### Server-side XSS Protection challenge
 
 The **Server-side XSS Protection** challenge is another example of a stored XSS attack.
 Try to solve it by yourself. You can find various hints in the [guide](https://pwning.owasp-juice.shop/part2/xss.html).
 
 Even though this challenge does not feature a coding challenge, we can make it so: find the code files and lines responsible for the bug and propose a solution.
 Check the logs of the automated tools and the [source code](https://github.com/juice-shop/juice-shop) for hints.
-Tip: check for a vulnerable dependency.
+Tip: check for a vulnerable library dependency.
+
+### Broken Access Control
+
+#### CSRF challenge
+
+Cross Site Request Forgery (CSRF) is another common web vulnerability much like XSS.
+While XSS concerns itself with injecting code into the web page, e.g. via HTTP responses, CSRF concerns the forging of illegal HTTP requests; a CSRF attack is typically done implicitly, e.g., when loading another web page from a different domain by clicking a link.
+
+Manually explore the Juice Shop web page <http://localhost:3000/#> with ZAP, then login with a registered user and change its profile username to `new`. ZAP will intercept a `POST` request to <http://localhost:3000/profile? username=new>. You may notice that the HTTP request includes a `Cookie` field which is used for that authenticated user. Let's make a few experiments in ZAP:
+* Try re-sending the same `POST` request with a different username. Using the same cookie allows us to replay the request. If you reload the profile web page in the browser, you shall see the new username.
+* Try re-sending the same `POST` request with another username, this time deleting the `Cookie` field. You shall get an error response due to insuficient permissions.
+
+We have seen that we can successfully issue HTTP requests in place of an authenticated user if we have his cookie.
+However, user sessions (including cookies) and automatically managed by the web browser. If we, for instance, open a new tab and visit <http://localhost:3000>, the cookie of the authenticated user will be automatically sent upon further HTTP requests. Therefore, our application may be vulnerable web page if we open a in the same browser session.
+
+For the **CSRF** challenge, we need to change a logged-in user's username via the <http://htmledit.squarefree.com> online HTML editor.
+Go to <http://htmledit.squarefree.com>, and enter the following HTML code:
+```HTML
+<form action="http://localhost:3000/profile" method="POST" style="display:none">
+    <input name="username" value="CSRF"/>
+    <input type="submit"/>
+</form>
+<script>document.forms[0].submit()</script>
+```
+The rationalle behind this code is explained in more detail in the [OWASP WSTG CSRF page](https://owasp.org/www-project-web-security-testing-guide/v41/4-Web_Application_Security_Testing/06-Session_Management_Testing/05-Testing_for_Cross_Site_Request_Forgery). The form is issuing a `POST` request; we can hide it with CSS styling, and make it run automatically on page load using JavaScript.
+
+**Note:** To prevent CSRF, most modern browsers, such as Chrome or Firefox, will block HTTP requests from different origins. To succeed in your attack, try a lightweight browser such as midori, that can be installed with `sudo apt install midori`.
+
+There are many anti-CSRF countermeasures, one of which is browser-side rejection to load pages from different domains as done by recent versions of Firefox or Chrome.
+The most common application-side countermeasure to avoid CSRF attacks is to add a unique server-side secret token to each HTTP request.
+Check the result of the  automated code scanners and run a ZAP analysis on the edit profile page: both shall warn you about the lack of anti-CSRF tokens in the edit profile page.
+
+#### Other Broken Access Control challenges
+
+Juice Shop features a couple other Broken Access Control challenges.
+**Try to solve by yourself one other challenge from the ones described below.**
+
+Aside from CSRF, an application must protect various HTTP requests in the REST API and make sure that they are only performed by a legitimate authenticated user.
+There are many challenges that show the effects of inexistent or incomplete RESTful access control, including **Forged Review**, **Forged Feedback**, **Manipulate Basket**, **View Basket** or **Product Tampering**.
+
+Try to solve some of them by yourself. You can find various hints in the [guide](https://pwning.owasp-juice.shop/part2/broken-access-control.html).
+
+Of the above, only the **Forged Review** and the **Product Tampering** feature associated coding challenges. However, the vulnerabilities are similar across all challenges. You can solve the existing code challenges for more information.
+For these Broken Access Control challenges, unlike for CSRF, the analysis tools won't hint at the vulnerability. Discuss why do you think that is the case.
+
+Even though this challenge does not feature a coding challenge, we can make it so: find the code files and lines responsible for the bug and propose a solution.
+Check the logs of the automated tools and the [source code](https://github.com/juice-shop/juice-shop) for hints.
+
+Tip for **Manipulate Basket**: You can sometimes update multiple entries in the same HTTP request.
+Tip for **Product Tampering**: You can try to fabricate `PUT` requests from known `GET` requests.
+
+##### SSRF challenge (Extra)
+
+CSRF is a web security vulnerability that allows an attacker to perform unintended client-side requests. Typically, the attacker can impersonate a legitimate user.
+In contrast, Server-side Request Forgery (SSRF) is a web security vulnerability that allows an attacker to induce the server-side application to make requests to an unintended location. For example, a common SSRF attack is when the user provides a URL, such as an image, and the backend server accesses that URL, e.g. to download the image; if the server accesses any provided URL without restraint., if may allow the attacker to circumvent access permissions of the client-side interface.
+
+Juice Shop features a **SSRF** challenge. To try to solve it, log in and go to your user's profile page. You can upload a profile picture or provide a image URL; in the second case, the server will itself download the image. A successful solution to the challenge requires accessing a specific local page within the <http://localhost:3000> local application page; the needed URL and parameters are hidden in Juice Shop's source code.
+
+This is an artificial challenge, in the sense that we have to access a very specific URL. In general, however, having the server accessing arbitrary user-provided URLs is dangerous; this is also hinted at by the logs of the automated source code analysis tools. How could you avoid SSRF vulnerabilities in your application?
+
+### Advanced Injection (Extra)
+
+JavaScript and its associated web development frameworks constitute a very dynamic execution environment, making it quite hard to protect against general code or command injection vulnerabilities.
+Many of such security issues are introduced by 3rd party components, as you may have already seen in the **Server-side XSS Protection** challenge.
+
+For demonstrative purposes, Juice Shop features a couple more advanced injection challenges that you may try out. Study how to avoid such vulnerabilities in the application's code.
+The information in the [snyk report](https://hpacheco.github.io/ses/labs/lab3/snyk_report.html) will be occasionally useful.
+
+#### Arbitrary File Write challenge
+
+The goal of the **Arbitrary File Write** challenge is to replace the contents of the file <http://localhost:3000/ftp/legal.md> stored in the server.
+
+Tip: Check the form for submitting a complaint; if you look at the source code you will notice that your file will be uploaded to `uploads/complaints` in the `vm/juice-shop` folder. Check how ZIP archives are handled by the server.
+
+#### Easter Egg challenge
+
+The **Easter Egg** challenge is about downloading the <http://localhost:3000/ftp/eastere.gg> from the server.
+It is not listed in the vulnerable components category for the simple reason that the vulnerability is, for demonstration purposes, artificially hardwired in the JavaScript code of the Juice Shop application.
+Nonetheless, this general vulnerability is still very much possible in filepath manipulation libraries.
+
+Tip: Check the [OWASP Null Code page](https://owasp.org/www-community/attacks/Embedding_Null_Code) and the respective [OWASP WSTG page](https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.1-Testing_for_Local_File_Inclusion).
+
+#### Kill Chatbot challenge
+
+The **Kill Chatbot** challenge highlights the possibility of JavaScript code injection in the `Support Chat` page.
+
+Tip: Check the [Juice Shop source code](https://github.com/juice-shop/juice-shop) to see how it calls the chat bot, and check the [chat bot source code](https://github.com/juice-shop/juicy-chat-bot) to see how it responds to user messages. The chat bot is careful enough to sandbox JavaScript code execution, but it turns out that the real problem does not lie with the external sandboxing library.
+
+#### Local File Read challenge
+
+The **Local File Read** challenge highlights the possibility of data injection in the `Request Data Erasure` page, that is constructed using server-side templates. See the server-side template injection (SSTi) [OWASP WSTG page](https://owasp.org/www-project-web-security-testing-guide/v41/4-Web_Application_Security_Testing/07-Input_Validation_Testing/18-Testing_for_Server_Side_Template_Injection).
+
+Tip: Search for a vulnerability with the `hbs` template engine.
 
 ## Tasks
 
@@ -445,10 +635,11 @@ Tip: check for a vulnerable dependency.
 
 Your report file shall cover the following:
 * Give a brief description on how you solved the challenges proposed above, namely:
-    - **Login Bender** or **Login Jim**
-    - **Database Schema** or **User Credentials**
+    - one from **Login Bender** or **Login Jim**
+    - one from **Database Schema** or **User Credentials**
     - **GDPR Data Erasure**
     - two from **Reflected XSS**, **API-only XSS**, **Client-side XSS Protection** or **Server-side XSS Protection**
+    - one from **Forged Review**, **Forged Feedback**, **Manipulate Basket** or **View Basket**
 * Describe the general vulnerability class associated with each group of challenges, including relevant CWEs and typical mitigation and fixing strategies.
 * Describe the specific vulnerabilities that allowed the attacks:
     - which lines of which code files were responsible for the vulnerabilities?
