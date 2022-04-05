@@ -44,6 +44,10 @@ You can try it out at <http://localhost/mutillidae/>.
 In the first run, you will need to setup the DB; check [this link](https://miloserdov.org/?p=87) for further information.
 You may also need to set a root mysql password; check [this link](https://miloserdov.org/?p=5873).
 
+Another important difference is that Juice Shop relies intensively on JavaScript for both client and server code, while Mutillidae II is mostly implemented in PHP.
+Note that, in general, most security analysis tools and techniques perform better on static PHP code when compared to dynamic JavaScript content, due to the its more predictable static structure.
+Therefore, it may prove slightly more challenging for the tools (and ourselves) to identify some vulnerabilities in Juice Shop when compared to similar vulnerabilities in Mutillidae II.
+
 ## Threat Modelling
 
 In the theoretical classes you have already studied the importance of [threat modelling](https://owasp.org/www-community/Threat_Modeling) for understanding the security of a system.
@@ -147,7 +151,7 @@ ZAP scans are likely to run for a really long time. A pre-generated report for J
 ### API Testing 
 
 A crucial element of a web application is its API, which mediates communication between the backend and the frontend.
-By nature, APIs expose application logic and sensitive and are a prime target for attackers.
+By nature, APIs expose application logic and sensitive information and are a prime target for attackers.
 As an example, the [OWASP API Security](https://owasp.org/www-project-api-security/) project highlights security risks and mitigation strategies for developing secure APIs. For the case of Juice Shop, you may find a mapping between challenges and API Security categories in the [guide](https://pwning.owasp-juice.shop/part1/categories.html).
 
 The [OpenAPI Specification](https://swagger.io/specification/) defines a standard meta-language for describing the interface of RESTful APIs, which also facilitates the study of their security. There is a large ecosystem of tools to generate server/client code from API specifications of vice-versa infer API specifications from existing application code.
@@ -162,7 +166,7 @@ You can inspect them using the online [Swagger Editor](https://editor.swagger.io
 #### [Schemathesis](https://github.com/schemathesis/schemathesis)
 
 Schemathesis is a tool that uses property-based testing for checking the conformance of an implemented API against a specification.
-Property-based testing is fuzzing-like technique that consists in generating random inputs - in this case API requests - oriented to the testing of a specific output property - in this case conformance of API responses w.r.t. to an OpenAPI specification.
+Property-based testing is a more lightweight fuzzing-like technique that consists of generating random inputs - in this case API requests - oriented to the testing of a specific output property - in this case conformance of API responses w.r.t. to an OpenAPI specification.
 
 In fact, a great deal of the Juice Shop vulnerabilities that we will explore in the challenges below are related to care-free API implementations: accepting more request parameters than expected, retrieving more response parameters than expected, leaking internal state alongside non-gracefully-handled error messages, etc.
 You can quickly try out schemathesis as follows; make sure that Juice Shop is running. In the [vm](../vm) folder:
@@ -190,7 +194,7 @@ In comparison with Schemathesis, Dredd is closer to unit testing and focuses mor
 
 #### [RESTler](https://github.com/microsoft/restler-fuzzer)
 
-RESTler is a API fuzzing tool that searches for 5xx server errors. More interestingly, it also runs additional [stateful checkers](https://github.com/microsoft/restler-fuzzer/blob/main/docs/user-guide/Checkers.md) that search for fixed vulnerabilities in sequences of operations that may have security implications, such as internal side-effects left by erroneous operations.
+RESTler is a API fuzzing tool that searches for 5xx server errors. More interestingly, it also runs additional [stateful checkers](https://github.com/microsoft/restler-fuzzer/blob/main/docs/user-guide/Checkers.md) that search for fixed vulnerabilities in fuzz-generated sequences of operations that may have security implications, such as internal side-effects left by erroneous operations.
 
 In the [vm](../vm) folder, run:
 ```ShellSession
@@ -219,7 +223,7 @@ $ Restler fuzz --grammar_file Compile/grammar.py --dictionary_file Compile/dict.
 You can find a more detailed description of these steps in the [tutorial](https://github.com/microsoft/restler-fuzzer/blob/main/docs/user-guide/TutorialDemoServer.md).
 RESTler shall find a few simple errors with the Juice Shop client API.
 
-For the B2B orders specification, you will need to obtain a valid JWT token as before for Schemathesis.
+For the B2B orders specification, you will need to obtain a valid JWT token, as before for Schemathesis.
 Create a new script `token.sh` with executable permissions and the following content (the first line will be ignored):
 ```Shell
 echo "{u'11111111-11111-1111-1111-1111111': {}}"
@@ -243,9 +247,18 @@ When solving Juice Shop challenges, Of course you can also cheat a bit and searc
 Even better, you may search for vulnerabilities using a SAST vulnerability scanner on the GitHub repository. This won't be necessary for the **Score Board** challenge, but keep the following pre-generated scans over Juice Shop as a reference for future tasks:
 * [SonarCloud](https://sonarcloud.io/project/overview?id=hpacheco_juice-shop)
 * [LGTM](https://lgtm.com/projects/g/juice-shop/juice-shop/?mode=list)
-* [SemGrep](https://hpacheco.github.io/ses/labs/lab3/semgrep.html)
 
-To scan your own code with these scanners, it is arguably more convenient to upload your code to a public git repository and run it through the online scanners. You may also fork the [juice-shop](https://github.com/juice-shop) git repository in order to test and analyse fixes to the `master` branch. Alternatively, you may also download the offline versions of [SonarQube](https://www.sonarqube.org/downloads/), [CodeQL](https://codeql.github.com/docs/codeql-for-visual-studio-code/analyzing-your-projects/) or [SemGrep](https://semgrep.dev/getting-started) and run them locally.
+To scan your own code with these scanners, it is arguably more convenient to upload your code to a public git repository and run it through the online scanners. You may also fork the [juice-shop](https://github.com/juice-shop) git repository in order to test and analyse fixes to the `master` branch. Alternatively, you may also download the offline versions of [SonarQube](https://www.sonarqube.org/downloads/), [CodeQL](https://codeql.github.com/docs/codeql-for-visual-studio-code/analyzing-your-projects/) or [SemGrep](https://semgrep.dev/getting-started) and run them locally. You may also try [Coverity](https://scan.coverity.com/) online (login needed).
+
+For the case of Juice Shop, we will be mainly interested in tools that can analyse JavaScript and TypeScript code.
+Many generic code scanners also work for other languages. As an example, consider the following pre-generated scans over the PHP code of Mutillidae:
+* [SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_mutillidae)
+
+There are also many other static web application analysis tools designed specifically for specific languages languages. We name a few that you may try on your own for your projects:
+* [Find Security Bugs](https://github.com/find-sec-bugs/find-sec-bugs/) is a static code analysis tool for Java web applications.
+* [Enlightn](https://github.com/enlightn/enlightn) is a static security analyser for applications developed using the Laravel PHP framework.
+* [Progpilot](https://github.com/designsecurity/progpilot) is a static taint analysis tool for PHP. It supports sanitizers, which allows more control over the taint analysis when compared to automated scanners such as SonarCloud.
+* [Psalm](https://github.com/vimeo/psalm) is another security analysis tool for PHP. It supports user-controlled taint analysis much like Progpilot, but claims to perform better PHP type inference, which should reduce false positives significatively.
 
 ## Challenges
 
@@ -276,7 +289,7 @@ After you have solved the challenge, follow the mitigation link to understand mo
 
 ### SQL injection
 
-SQL injection (SQLi) is not of the most classical web attacks which may have devastating consequences on web applications suffering from associated vulnerabilities.
+SQL injection (SQLi) is one of the most classical web attacks which may have devastating consequences on web applications suffering from associated vulnerabilities.
 Juice Shop itself as a few challenges related to SQL injection vulnerabilities.
 
 #### Login Admin challenge
@@ -330,6 +343,11 @@ Behind the scenes, the executed SQL query was:
 SELECT * FROM Users WHERE email = 'admin' OR TRUE -- AND password = '698d51a19d8a121ce581499d7b701668' AND deletedAt IS NULL
 ```
 Now the SQL query will check for `email = 'admin' OR TRUE` which is always `TRUE`, hence effectively selecting all users. If you check the `Account` in the Juice Shop, you will notice that you are logged in as `admin@juice-sh.op`; luckily for us, the administrator turned out to be the first user in the `Users` table.
+
+##### Static taint analysis
+
+The static code analysers will be able to find this vulnerability. The culprit will be in the file `routes/login.ts`.
+if you inspect the logs, you will notice that some tools perform static taint analysis to be able to identify that the user input - origination from a POST request in the login form - may affect the SQL query.
 
 ##### [SQLmap](https://sqlmap.org/)
 
@@ -436,7 +454,7 @@ Successful XSS attacks in ZAP are signaled by the yellow star-like `Reflected` s
 
 You may try fuzzing the frontend url <http://localhost:3000/#/search?q=searchValue>. Unfortunately, it will also not succeed in finding an attack, because the search result listing is handled by the client-side JavaScript code. Analysing this and other DOM-based XSS vulnerabilities is in fact challenging, as much of the juice shop functionality is developed using [Angular](https://angular.io/) with complex dynamic Javascript code on the client side.
 
-As a rule of thumb, **ZAP and other similar web vulnerability scanners (such as [wfuzz](https://www.kali.org/tools/wfuzz), [w3af](http://w3af.org/) or [XSSStrike](https://github.com/s0md3v/XSStrike)) only detect reflected XSS vulnerabilities**, by analysing HTTP requests and finding portions of text reflected in the HTTP responses. Finding stored XSS vulnerabilities is harder as they depend on the logic of the application and may only reveal themselves after many (often seemingly unrelated) requests.
+As a rule of thumb, **ZAP and other similar web vulnerability scanners (such as [wfuzz](https://www.kali.org/tools/wfuzz), [w3af](http://w3af.org/) , [XSSStrike](https://github.com/s0md3v/XSStrike) or [XSpear](https://github.com/hahwul/XSpear)) only detect reflected XSS vulnerabilities**, by analysing HTTP requests and finding portions of text reflected in the HTTP responses. Finding stored XSS vulnerabilities is harder as they depend on the logic of the application and may only reveal themselves after many (often seemingly unrelated) requests.
 
 ##### Dynamic taint analysis for JavaScript
 
@@ -468,9 +486,11 @@ Trusted Types is a new browser security mechanism spearheaded by Google security
 The main problem leading to DOM-based XSS vulnerabilities is the inherently loose nature of JavaScript, that does not promote a clear distinction between user data and page code: user data can be stored in the JavaScript context, which in turn may dynamically influence how the page is rendered. This is particularly dangerous because both user inputs - e.g., coming from forms - and page rendering outputs are simply seen as strings in JavaScript, and various forms of string manipulations may take place in-between.
 
 One possible approach to mitigate this problem is to use dynamic taint propagation: associate additional tainted information to each source string, and check if the tainted source annotations reach the sink data.
-In other words, we need to add more structure to the data; instead of doing it dynamically, we can statically distinguish between different types of strings, as a strongly-typed programming language could do [^6]. This is exactly the proposal behind Trusted Types: to define a safe DOM API that **only** manipulates strings with specific types (see types as tags), and have the browser's JavaScript compiler validating those types before the code is executed. Since non-typed string assignments to safe DOM functions receiving typed arguments will lead to a compilation error, only typed data generated by safe DOM sanitizers will be allowed. This also has an important advantage of greatly reducing the focus of a security analysis: instead of tracking dynamic flows of information across all the code, only the code producing typed data can introduce vulnerabilities.
+In other words, we need to add more structure to the data; instead of doing it dynamically, we can statically distinguish between different types of strings, as a strongly-typed programming language could do [^6]. This is exactly the proposal behind Trusted Types [^7]: to define a safe DOM API that **only** manipulates strings with specific types (see types as tags), and have the browser's JavaScript compiler validating those types before the code is executed. Since non-typed string assignments to safe DOM functions receiving typed arguments will lead to a compilation error, only typed data generated by safe DOM sanitizers will be allowed. This also has an important advantage of greatly reducing the focus of a security analysis: instead of tracking dynamic flows of information across all the code, only the code producing typed data can introduce vulnerabilities.
 
 [^6]: Examples of static typing disciplines for more secure web-development include [Pysa](https://pyre-check.org/docs/pysa-basics/) for Python, [Jif](https://www.cs.cornell.edu/jif/) for Java, or the Haskell-like functional [Ur](http://www.impredicative.com/ur/) language.
+
+[^7]: Another proposal is Mozzilla's [eslint plugin](https://github.com/mozilla/eslint-plugin-no-unsanitized) that statically analyses JavaScript code and restricts assignments to dangerous page elements such as `innerHTML`. The idea is that each assigned value should be either a literal or sanitized HTML, by using a sanitizer such as [DOMPurify](https://github.com/cure53/DOMPurify/). This plugin, however, only considers direct assignments and does not perform a more extensive taint analysis. Moreover, it would not help in detecting our DOM-based XSS vulnerability since the `innerHTML` assignment does not occur in the JavaScript file generated from [frontend/src/app/search-result/search-result.component.ts](https://github.com/juice-shop/juice-shop/blob/master/frontend/src/app/search-result/search-result.component.ts), but inside an Angular template in file [frontend/src/app/search-result/search-result.component.html](https://github.com/juice-shop/juice-shop/blob/master/frontend/src/app/search-result/search-result.component.html).
 
 We can try out Trusted Types with our DOM-based challenge:
 1. Open the page `http://localhost:3000/#/search?q=<iframe src="javascript:alert(`xss`)">` with Chrome; you shall see a `XSS` popup.
