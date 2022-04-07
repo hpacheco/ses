@@ -161,6 +161,7 @@ A natural direction and an important asset during the development of a secure we
 For Juice Shop, we can test two existing OpenAPI specifications:
 * a complete specification of the hidden API for B2B orders, available [here](https://github.com/juice-shop/juice-shop/blob/master/swagger.yml);
 * an incomplete specification of a small subset of the Juice Shop client API, found [here](https://github.com/apox64/RestSec/blob/master/restsec-samples/src/main/resources/docs_swagger/swagger-juiceshop.json).
+
 You can inspect them using the online [Swagger Editor](https://editor.swagger.io/).
 
 #### [Schemathesis](https://github.com/schemathesis/schemathesis)
@@ -563,12 +564,12 @@ Tip: check for a vulnerable library dependency.
 Cross Site Request Forgery (CSRF) is another common web vulnerability much like XSS.
 While XSS concerns itself with injecting code into the web page, e.g. via HTTP responses, CSRF concerns the forging of illegal HTTP requests; a CSRF attack is typically done implicitly, e.g., when loading another web page from a different domain by clicking a link.
 
-Manually explore the Juice Shop web page <http://localhost:3000/#> with ZAP, then login with a registered user and change its profile username to `new`. ZAP will intercept a `POST` request to <http://localhost:3000/profile? username=new>. You may notice that the HTTP request includes a `Cookie` field which is used for that authenticated user. Let's make a few experiments in ZAP:
+Manually explore the Juice Shop web page <http://localhost:3000/#> with ZAP, then login with a registered user and change its profile username to `new`. ZAP will intercept a `POST` request to <http://localhost:3000/profile?username=new>. You may notice that the HTTP request includes a `Cookie` field which is used for that authenticated user. Let's make a few experiments in ZAP:
 * Try re-sending the same `POST` request with a different username. Using the same cookie allows us to replay the request. If you reload the profile web page in the browser, you shall see the new username.
 * Try re-sending the same `POST` request with another username, this time deleting the `Cookie` field. You shall get an error response due to insuficient permissions.
 
 We have seen that we can successfully issue HTTP requests in place of an authenticated user if we have his cookie.
-However, user sessions (including cookies) and automatically managed by the web browser. If we, for instance, open a new tab and visit <http://localhost:3000>, the cookie of the authenticated user will be automatically sent upon further HTTP requests. Therefore, our application may be vulnerable web page if we open a in the same browser session.
+However, user sessions (including cookies) are automatically managed by the web browser. If we, for instance, open a new tab and visit <http://localhost:3000>, the cookie of the authenticated user will be automatically sent upon further HTTP requests. Therefore, our application may be vulnerable if we open another web page in the same browser session.
 
 For the **CSRF** challenge, we need to change a logged-in user's username via the <http://htmledit.squarefree.com> online HTML editor.
 Go to <http://htmledit.squarefree.com>, and enter the following HTML code:

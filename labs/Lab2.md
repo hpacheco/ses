@@ -61,8 +61,12 @@ But how certain can we be about the effectiveness of the fuzzer? Since it is ess
 KLEE is a symbolic execution tool which can significantly beat the coverage of developer’s own hand-written test suites.
 KLEE is able to automatically generated high-coverage test inputs that perform better than the poor performance of manual and random testing approaches. It does so by forking symbolic variables on program branches, to make sure that if generates inputs to check every possible program path. In practice, KLEE will not have 100% program coverage: evaluating all program executions is a computationally expensive and undecidable problem, and hence, like all symbolic execution techniques, KLEE needs to compromise on a maximum path depth.
 
-The KLEE tool is a white-box testing instrument that runs on LLVM bitcode.
+The KLEE tool is a white-box testing instrument that runs on LLVM bitcode [^5].
 To try KLEE on the wisdom program, we have to modify it to identify which variables KLEE should treat as symbolic.
+
+[^5]: Many other symbolic execution tools exist for non-LLVM languages. A few examples:
+* [Java Pathfinder](https://github.com/javapathfinder) is a highly extensible system to verify executable Java bytecode programs that can serve as a Java alternative to KLEE. It features extensions for symbolic execution of Java bytecode such as [SymbolicPathFinder](https://github.com/SymbolicPathFinder/jpf-symbc).
+* [angr](https://docs.angr.io/) is a binary analysis platform that supports dynamic symbolic execution of both Java programs and Android applications.
 
 ### Wisdom example
 
@@ -336,10 +340,12 @@ Even though it does not offer an not automated script, SymCC may also be combine
 The testing methodologies that we have seen so far focus on traditional safety properties such as undefined behavior or memory errors.
 These do not permit to directly capture security properties such as information leakage, as we have seen before in Lab 1.
 
-Even if less usual when it comes to existing tools, we can naturally combine automated testing with security analysis techniques such as taint analysis.
+Even if less usual when it comes to existing tools, we can naturally combine automated testing with security analysis techniques such as taint analysis [^3].
 One such example is KLEE-taint, a (slightly outdated [^2]) fork of KLEE that dynamically propagates taint annotations alongside symbolic variables during symbolic execution. You can find more information in the [GitHub repository](https://github.com/feliam/klee-taint) and in the original [paper](https://cs.famaf.unc.edu.ar/~rcorin/kleecrypto/). 
 
 [^2]: KLEE-taint appears to be a no longer supported extension to an older version of KLEE; the changes are minimal so, in principle, it would be easily portable to recent versions. More modern similar tools exist, e.g. [Jaint](https://tillschallau.de/wp-content/uploads/2021/05/jaint.pdf) for symbolic execution of Java programs; we could not however find its source code.
+
+[^3]: Symbolic execution can also be extended for testing that a program satisfies a general security property. [ENCoVer](http://www.cse.chalmers.se/~musard/files/encover.html) is an example of such an academic prototype, developed as an extension to Java Pathfinder.
 
 Consider the command injection example from before, minimally adapted to run with KLEE-taint in [os_cmd_injection_basic-bad-klee.c](../c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-klee.c).
 The most relevant are the two following annotations:
