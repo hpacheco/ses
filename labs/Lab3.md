@@ -6,7 +6,7 @@ Web applications are extremely vulnerable in the sense that they mix a multitude
 
 Instead of focusing on exploitation, we will study how various existing analysis tools can help developers in detecting and fixing web vulnerabilities:
 * SAST: As for low-level C programs, various vulnerability scanners such as [SonarCloud](https://sonarcloud.io/) and [LGTM](https://lgtm.com/) also have good support for analysis the source code of web applications written in various languages (HTTP/PHP/JS/TS/Java/etc).
-* DAST: In particular for web applications, vulnerability assessment tools such as [BurpSuite Community Edition](https://portswigger.net/burp/communitydownload) and [OWASP Zed Attack Proxy](https://owasp.org/www-project-zap/) can be used to navigating web sites, analyse HTTP requests/responses and perform automatic dynamic scans for vulnerabilities.
+* DAST: In particular for web applications, vulnerability assessment tools such as [BurpSuite Community Edition](https://portswigger.net/burp/communitydownload) and [OWASP Zed Attack Proxy](https://owasp.org/www-project-zap/) can be used to navigate web sites, analyse HTTP requests/responses and perform automatic dynamic scans for vulnerabilities.
 
 There exists a myriad of vulnerable web applications, e.g. from the [OWASP Vulnerable Web Applications Directory (VWAD)](https://owasp.org/www-project-vulnerable-web-applications-directory/), that have been developed for demonstrating common web vulnerabilities and how to exploit them.
 One of the most modern and complete among such pedagogical web applications is the [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/).
@@ -169,7 +169,7 @@ You can inspect them using the online [Swagger Editor](https://editor.swagger.io
 Schemathesis is a tool that uses property-based testing for checking the conformance of an implemented API against a specification.
 Property-based testing is a more lightweight fuzzing-like technique that consists of generating random inputs - in this case API requests - oriented to the testing of a specific output property - in this case conformance of API responses w.r.t. to an OpenAPI specification.
 
-In fact, a great deal of the Juice Shop vulnerabilities that we will explore in the challenges below are related to care-free API implementations: accepting more request parameters than expected, retrieving more response parameters than expected, leaking internal state alongside non-gracefully-handled error messages, etc.
+In fact, a great deal of the Juice Shop vulnerabilities that we will explore in the challenges below are related to care-free API implementations: accepting more request parameters than expected, retrieving more response parameters than expected, leaking internal state alongside non-gracefully-handled error messages, etc. 
 You can quickly try out schemathesis as follows; make sure that Juice Shop is running. In the [vm](../vm) folder:
 ```ShellSession
 $ git pull
@@ -177,7 +177,7 @@ $ sh install-schemathesis.sh
 $ cd juice-shop
 $ schemathesis run swagger-juiceshop.json --checks all --base-url http://localhost:3000
 ```
-The tool will try generate various random requests that satisfy the request schema, and check if it receives 5xx server errors or responses that do not satisfy the response schema. The output may vary, depending on the randomness, but you shall some failing tests.
+The tool will try generate various random requests that satisfy the request schema, and check if it receives 5xx server errors or responses that do not satisfy the response schema. The output may vary (depending on the randomness) but you shall see some failing tests.
 
 OpenAPI also supports the specification of necessary security, such as authentication, that should be required to perform certain operations.
 For Juice Shop, that is the case of the B2B order interface. Log in into the Juice Shop in your browser, and inspected requests/responses for the header `Authorization: Bearer <TOKEN>`. You can then test the B2B interface with your secret `<TOKEN>` as follows:

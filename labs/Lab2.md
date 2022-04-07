@@ -42,7 +42,7 @@ $ python3 fuzz.py ./wisdom-alt
 
 The fuzzer will quickly find a bug, i.e., record a crash. Why did the program crash? You can replicate the same behavior by running the program manually. You can also edit [fuzz.py](../c/misc/wisdom/fuzz.py) to change the input data, the seed or have radamsa generate different inputs.
 
-As you may perceive, it turns out that the bug occurs an invalid menu option (that is not 1 or 2) is passed to the interactive program.
+As you may perceive, it turns out that the bug occurs in an invalid menu option (that is not 1 or 2) is passed to the interactive program.
 The file [wisdom-alt2.c](../c/misc/wisdom/wisdom-alt2.c) contains an additional guard to ignore invalid options; this change fixis the previous bug. You may run the second wisdom program as before:
 <details>
 <summary>Result</summary>
@@ -54,7 +54,7 @@ $ python3 fuzz.py ./wisdom-alt2
 </details>
 
 This time, the fuzzer will not find a sequence of interactive inputs that crashes the program.
-But how certain can we be about the effectiveness of the fuzzer? Since it is essentially generating random inputs, hoping to find a crashing execution may come down to mere chance. As an experiment, [fuzz2.py](../c/misc/wisdom/fuzz.py) changes the input fuzzing file from [inputs/1](../c/misc/wisdom/inputs/1) to [inputs/2](../c/misc/wisdom/inputs/2). Re-run the fuzzer; it will now find a crashing execution, why? You will notice that finding a crash depends on the input length.
+But how certain can we be about the effectiveness of the fuzzer? Since it is essentially generating random inputs, hoping to find a crashing execution may come down to mere chance. As an experiment, [fuzz2.py](../c/misc/wisdom/fuzz2.py) changes the input fuzzing file from [inputs/1](../c/misc/wisdom/inputs/1) to [inputs/2](../c/misc/wisdom/inputs/2). Re-run the fuzzer; it will now find a crashing execution, why? You will notice that finding a crash depends on the input length.
 
 ## [KLEE](https://klee.github.io/)
 
@@ -343,7 +343,7 @@ These do not permit to directly capture security properties such as information 
 Even if less usual when it comes to existing tools, we can naturally combine automated testing with security analysis techniques such as taint analysis [^3].
 One such example is KLEE-taint, a (slightly outdated [^2]) fork of KLEE that dynamically propagates taint annotations alongside symbolic variables during symbolic execution. You can find more information in the [GitHub repository](https://github.com/feliam/klee-taint) and in the original [paper](https://cs.famaf.unc.edu.ar/~rcorin/kleecrypto/). 
 
-[^2]: KLEE-taint appears to be a no longer supported extension to an older version of KLEE; the changes are minimal so, in principle, it would be easily portable to recent versions. More modern similar tools exist, e.g. [Jaint](https://tillschallau.de/wp-content/uploads/2021/05/jaint.pdf) for symbolic execution of Java programs; we could not however find its source code.
+[^2]: KLEE-taint appears to be a no longer supported extension to an older version of KLEE; the changes are minimal so, in principle, it would be easily portable to recent versions. More modern similar tools exist, e.g. [Jaint](https://tillschallau.de/wp-content/uploads/2021/05/jaint.pdf) for dynamic taint analysis and symbolic execution of Java programs; we could not however find its source code.
 
 [^3]: Symbolic execution can also be extended for testing that a program satisfies a general security property. [ENCoVer](http://www.cse.chalmers.se/~musard/files/encover.html) is an example of such an academic prototype, developed as an extension to Java Pathfinder.
 
@@ -414,12 +414,13 @@ Since most of these tools are not yet very user-friendly, we refrain from provid
 
 The goal of this lab is to experiment with the automated testing tools described above. We will detect and fix the vulnerabilities found in example C programs from the [c/SARD-testsuite-100](../c/SARD-testsuite-100) testsuite. 
 1. Study and try out the tools described above.
-2. Choose one vulnerable program from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse. It is not mandatory to choose examples from this dataset; you may also choose examples of vulnerable C programs from other resources such as, e.g., another [SARD dataset](https://samate.nist.gov/SARD/testsuite.php) or the [US-CERT dataset](https://www.cisa.gov/uscert/bsi/articles/tools/source-code-analysis/source-code-analysis-tools---example-programs). Alternatively, you may wish to try out a more realistic example from, e.g., Google's FuzzBench [benchmarks](https://github.com/google/fuzzbench/tree/master/benchmarks).
-4. Test your program with some of the above tools.
+2. Choose one vulnerable program from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse. To make it interesting, your chosen vulnerable program should only crash or lead to a security vulnerability for some inputs, but not for all inputs. It is not mandatory to choose examples from this dataset; you may also choose examples of vulnerable C programs from other resources such as, e.g., another [SARD dataset](https://samate.nist.gov/SARD/testsuite.php) or the [US-CERT dataset](https://www.cisa.gov/uscert/bsi/articles/tools/source-code-analysis/source-code-analysis-tools---example-programs). Alternatively, you may wish to try out a more realistic example from, e.g., Google's FuzzBench [benchmarks](https://github.com/google/fuzzbench/tree/master/benchmarks).
+4. Test your program with some of the above tools. You should try at least one fuzzing tool and one symbolic execution tool.
 5. **In your group's GitHub repository, write a small report to the markdown file `Lab2.md`.**
 6. The report shall discuss:
    * were you able to find the vulnerability? with which tools? why do you think that is the case?
    * how did you adapt the example code and/or the tool parameters?
+   * what have you experimentally learned about the tradeoffs between fuzzing and symbolic execution?
 
 
 
