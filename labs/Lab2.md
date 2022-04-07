@@ -61,12 +61,12 @@ But how certain can we be about the effectiveness of the fuzzer? Since it is ess
 KLEE is a symbolic execution tool which can significantly beat the coverage of developer’s own hand-written test suites.
 KLEE is able to automatically generated high-coverage test inputs that perform better than the poor performance of manual and random testing approaches. It does so by forking symbolic variables on program branches, to make sure that if generates inputs to check every possible program path. In practice, KLEE will not have 100% program coverage: evaluating all program executions is a computationally expensive and undecidable problem, and hence, like all symbolic execution techniques, KLEE needs to compromise on a maximum path depth.
 
-The KLEE tool is a white-box testing instrument that runs on LLVM bitcode [^5].
-To try KLEE on the wisdom program, we have to modify it to identify which variables KLEE should treat as symbolic.
-
-[^5]: Many other symbolic execution tools exist for non-LLVM languages. A few examples:
+The KLEE tool is a white-box testing instrument that runs on LLVM bitcode.
+Many other symbolic execution tools exist for non-LLVM languages. A few examples for reference:
 * [Java Pathfinder](https://github.com/javapathfinder) is a highly extensible system to verify executable Java bytecode programs that can serve as a Java alternative to KLEE. It features extensions for symbolic execution of Java bytecode such as [SymbolicPathFinder](https://github.com/SymbolicPathFinder/jpf-symbc).
 * [angr](https://docs.angr.io/) is a binary analysis platform that supports dynamic symbolic execution of both Java programs and Android applications.
+
+To try KLEE on the wisdom program, we have to modify it to identify which variables KLEE should treat as symbolic.
 
 ### Wisdom example
 
