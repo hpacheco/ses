@@ -164,6 +164,8 @@ For Juice Shop, we can test two existing OpenAPI specifications:
 
 You can inspect them using the online [Swagger Editor](https://editor.swagger.io/).
 
+*The following API testing tools will not be very useful for finding Juice Shop vulnerabilities. Since (1) it is easier to generate code from the API specification than infer a specification from the API code and (2) the quality of the testing depends very much on the preciseness and completeness of the API specification, they are most effective if adopted from the start. They are presented below because they may prove to be valuable tools to integrate the design and implementation processes of your project.*
+
 #### [Schemathesis](https://github.com/schemathesis/schemathesis)
 
 Schemathesis is a tool that uses property-based testing for checking the conformance of an implemented API against a specification.
@@ -455,7 +457,7 @@ Successful XSS attacks in ZAP are signaled by the yellow star-like `Reflected` s
 
 You may try fuzzing the frontend url <http://localhost:3000/#/search?q=searchValue>. Unfortunately, it will also not succeed in finding an attack, because the search result listing is handled by the client-side JavaScript code. Analysing this and other DOM-based XSS vulnerabilities is in fact challenging, as much of the juice shop functionality is developed using [Angular](https://angular.io/) with complex dynamic Javascript code on the client side.
 
-As a rule of thumb, **ZAP and other similar web vulnerability scanners (such as [wfuzz](https://www.kali.org/tools/wfuzz), [w3af](http://w3af.org/) , [XSSStrike](https://github.com/s0md3v/XSStrike) or [XSpear](https://github.com/hahwul/XSpear)) only detect reflected XSS vulnerabilities**, by analysing HTTP requests and finding portions of text reflected in the HTTP responses. Finding stored XSS vulnerabilities is harder as they depend on the logic of the application and may only reveal themselves after many (often seemingly unrelated) requests.
+As a rule of thumb, **ZAP and other similar web vulnerability scanners (such as [wfuzz](https://www.kali.org/tools/wfuzz), [w3af](http://w3af.org/), [XSSStrike](https://github.com/s0md3v/XSStrike) or [XSpear](https://github.com/hahwul/XSpear)) only detect reflected XSS vulnerabilities**, by analysing HTTP requests and finding portions of text reflected in the HTTP responses. Finding stored XSS vulnerabilities is harder as they depend on the logic of the application and may only reveal themselves after many (often seemingly unrelated) requests.
 
 ##### Dynamic taint analysis for JavaScript
 
@@ -463,9 +465,9 @@ Finding DOM-based XSS vulnerabilities requires analysing the data flow inside th
 However, statically analysing the data flows of highly-dynamic modern applications quickly become unfeasible, as in fact happens for juice shop that relies heavily on Angular [^5].
 The most common approach for finding DOM-based XSS vulnerabilities in the large is therefore to perform dynamic taint analysis of JavaScript, where user inputs are the dangerous sources and DOM rendering functions such as innerHTML or document.write and sensitive sinks; taint propagation is then used to check if data originating from the sources may be flow to the sinks.
 
-Performing taint analysis of JavaScript is an established research topic, and there exist numerous tools and approaches which mostly rely on instrumenting a JS runtime such as node.js (e.g.  [Augur](https://github.com/nuprl/augur)) or a particular browser (e.g. [Mystique](https://mystique.csc.ncsu.edu/about)). Unfortunately, these tools are often academic, heavy on resources (e.g., compiling a specifically patched Chrome) and quite complicated to setup.
+As a toy demonstration [^8], consider [Tainting Testing Tool](https://github.com/ollseg/ttt-ext), a simple Chrome extension to assist in finding DOM-based XSS vulnerabilities that injects specific strings into sources (e.g., form inputs, request arguments, page location or cookies) and insert JavaScript hooks that search for those strings in output sinks (e.g., `eval()` or `innerHTML`).
 
-As a toy demonstration, consider [Tainting Testing Tool](https://github.com/ollseg/ttt-ext), a simple Chrome extension to assist in finding DOM-based XSS vulnerabilities that injects specific strings into sources (e.g., form inputs, request arguments, page location or cookies) and insert JavaScript hooks that search for those strings in output sinks (e.g., `eval()` or `innerHTML`).
+[^8]: Performing taint analysis of JavaScript is an established research topic, and there exist numerous tools and approaches which mostly rely on instrumenting a JS runtime such as node.js (e.g.  [Augur](https://github.com/nuprl/augur)) or a particular browser (e.g. [Mystique](https://mystique.csc.ncsu.edu/about)). Unfortunately, these tools are often academic, heavy on resources (e.g., compiling a specifically patched Chrome) and quite complicated to setup.
 
 Install Google Chrome and the extension (`Extensions > Manage Extensions > Load unpacked > select the folder of the ttt-ext`).
 Then open the `Developer Tools` and load the product search page <http://localhost:3000/#/search?q=searchValue> in Chrome.
@@ -524,7 +526,7 @@ We can try out Trusted Types with our DOM-based challenge:
 #### Other XSS challenges
 
 Juice Shop features a couple other XSS injection challenges.
-**Try to solve by yourself two other challenges from the ones described below.**
+**Try to solve by yourself one other challenge from the ones described below.**
     
 ##### Reflected XSS challenge
 
@@ -582,11 +584,11 @@ Go to <http://htmledit.squarefree.com>, and enter the following HTML code:
 ```
 The rationalle behind this code is explained in more detail in the [OWASP WSTG CSRF page](https://owasp.org/www-project-web-security-testing-guide/v41/4-Web_Application_Security_Testing/06-Session_Management_Testing/05-Testing_for_Cross_Site_Request_Forgery). The form is issuing a `POST` request; we can hide it with CSS styling, and make it run automatically on page load using JavaScript.
 
-**Note:** To prevent CSRF, most modern browsers, such as Chrome or Firefox, will block HTTP requests from different origins. To succeed in your attack, try a lightweight browser such as midori, that can be installed with `sudo apt install midori`.
+**Note:** To prevent CSRF, most modern browsers, such as Chrome or Firefox, will block HTTP requests from different origins. To avoid this behavior, you may use a lightweight browser such as midori, that can be installed with `sudo apt install midori`. Although Chrome and Firefox will disallow you from seeing the response, the request will be sent and processed by the server as normal, which shall be sufficient for your attack.
 
-There are many anti-CSRF countermeasures, one of which is browser-side rejection to load pages from different domains as done by recent versions of Firefox or Chrome.
+There are many anti-CSRF countermeasures, including stricter server-sive content policies.
 The most common application-side countermeasure to avoid CSRF attacks is to add a unique server-side secret token to each HTTP request.
-Check the result of the  automated code scanners and run a ZAP analysis on the edit profile page: both shall warn you about the lack of anti-CSRF tokens in the edit profile page.
+Check the result of the automated code scanners and run a ZAP analysis on the edit profile page: both shall warn you about the lack of anti-CSRF tokens in the edit profile page.
 
 #### Other Broken Access Control challenges
 
@@ -615,6 +617,17 @@ In contrast, Server-side Request Forgery (SSRF) is a web security vulnerability 
 Juice Shop features a **SSRF** challenge. To try to solve it, log in and go to your user's profile page. You can upload a profile picture or provide a image URL; in the second case, the server will itself download the image. A successful solution to the challenge requires accessing a specific local page within the <http://localhost:3000> local application page; the needed URL and parameters are hidden in Juice Shop's source code.
 
 This is an artificial challenge, in the sense that we have to access a very specific URL. In general, however, having the server accessing arbitrary user-provided URLs is dangerous; this is also hinted at by the logs of the automated source code analysis tools. How could you avoid SSRF vulnerabilities in your application?
+
+##### Unsigned JWT challenge (Extra)
+
+One of the most common ways to authenticate users in a web application is to use [Json Web Tokens (JWTs)](https://jwt.io/introduction).
+JWT-based authentication also helps in mitigating CSRF-related vulnerabilities.
+A JWT token is a `base64url`-encoded string `<header>.<payload>.<signature>`, with the `<header>` denoting the type of token and signing algorithm, the `<payload>` consistent on arbitrary data about the entity, and the `<signature>` guarantees that the `<payload>` data was signed by the server (possessing a secret key).
+
+The **Unsigned JWT** challenge explores a serious vulnerability in the way that JWT tokens are verified in the Juice Shop application, that allows an attacker to forge unsigned tokens with arbitrary `<payload>` data.
+For solving the challenge you are asked to forge a JWT token for a non-existent user with email `jwtn3d@juice-sh.op`. Attempt to send a GET request with your forged unsigned token to <http://localhost:3000/api/Complaints>, which requires a JWT-authenticated user.
+
+Tip: Have a look in the [snyk report](https://hpacheco.github.io/ses/labs/lab3/snyk_report.html). 
 
 ### Advanced Injection (Extra)
 
@@ -650,6 +663,56 @@ The **Local File Read** challenge highlights the possibility of data injection i
 
 Tip: Search for a vulnerability with the `hbs` template engine.
 
+### [XS-Leaks](https://xsleaks.dev/) (Extra)
+
+Cross-site Leaks (XS-Leaks) are a recent new class of web vulnerabilities derived from side-channel attacks that are are very challenging for secure web application development.
+Moreover, web browsers are not immune to recent CPU side channel attacks such as Meltdown and Spectre, see for instance [here](https://developer.chrome.com/blog/meltdown-spectre/).
+An open knowledge base to discover, study and share XS-Leaks has been [promoted by Google](https://security.googleblog.com/2020/12/fostering-research-on-new-web-security.html).
+
+XS-Leaks can be seen as an evolved form of CSRF: beyond executing actions in place of users of other web sites, they allow malicious web sites to infer information about those users.
+The rationale is the same as for CSRF: a website from any origin can freely send HTTP requests to any other origin but, depending on the origin policy, may not be able to read the responses to such requests; however, some information about the response, such as error codes, its size or elapsed time, are still revealed to a malicious website.
+
+One natural protection against XS-Leaks is for the browser to implement some sort of [site isolation](https://www.chromium.org/Home/chromium-security/site-isolation/) policy. More specific [isolation policies](https://xsleaks.dev/docs/defenses/isolation-policies/) may also be supported via specific HTTP headers.
+For examples and more information, you may check the XS-Leaks [web site](https://xsleaks.dev/) or the W3C [Post-Spectre secure web development](https://www.w3.org/TR/post-spectre-webdev/) recommendations.
+
+#### Finding if a user is logged in
+
+Juice Shop has no specific challenge directly related to XS-Leaks.
+For the sake of an example, remember the user profile page which is available only for authenticated users and located at <http://localhost:3000/profile>. The relevant credentials are stored in the cookies. Experiment sending a GET request, e.g. using the browser development toolkit with the cookies of the latest request:
+* If you are logged in as any user, the server will reply with a `200 OK` response whose body contains the HTML code of the user's profile page;
+* If you are not logged in, the server will reply with a `500 Internal Server Error` response.
+
+Therefore, the error code allows discerning if some user is logged in or not, which can be used to construct an [error-based XS-Leak attack](https://xsleaks.dev/docs/attacks/error-events/).
+A typical error-based XS-Leak attack can be constructed with the following JavaScript snippet.
+
+```JavaScript
+<script>
+function checkError(url) {
+  let script = document.createElement('script')
+  script.src = url
+  script.onload = () => console.log(e)
+  script.onerror = (e) => console.log(e)
+  document.body.appendChild(script)
+}
+checkError('http://localhost:3000/profile')
+</script>
+```
+
+Open another tab in your browser with <http://htmledit.squarefree.com/> and paste the above code, which will run the script.
+In general, whenever a request issued by a different site uses the available cookies for <http://localhost:3000>, which contain sensitive user data, the browser will prevent the page from seeing the response. Our script tries to avoid that as it is indirectly looking at the error code via the `onload` and `onerror` events.
+In this case, however, the browser will block the request (always trigering `onerror`), with an error message like:
+```
+The resource from “http://localhost:3000/profile” was blocked due to MIME type (“text/html”) mismatch (X-Content-Type-Options: nosniff).
+```
+
+In other words, the browser refuses to load the response (of type `text/html`) as a script, as prescribed by the HTTP header `X-Content-Type-Options: nosniff`.
+
+The Juice Shop application is protected using the [helmet](https://helmetjs.github.io/) library that sets various defensive HTTP headers, including `nosniff`, that put in place various isolation policies. As an experiment, you may disable this feature as follows:
+1. Move into the [vm/juice-shop](../vm/juice-shop) folder.
+2. Edit the [server.ts](../vm/juice-shop/server.ts) file and comment the line with `app.use(helmet.noSniff())`;
+3. Rebuild and rerun Juice Shop with `npm install && npm start`;
+4. This time, loading the script from a different site will be able to discriminate if a user is logged in or not.
+
 ## Tasks
 
 **In your group's GitHub repository, create the markdown file `Lab3.md` to write a small report for this lab.**
@@ -659,13 +722,13 @@ Your report file shall cover the following:
     - one from **Login Bender** or **Login Jim**
     - one from **Database Schema** or **User Credentials**
     - **GDPR Data Erasure**
-    - two from **Reflected XSS**, **API-only XSS**, **Client-side XSS Protection** or **Server-side XSS Protection**
+    - one from **Reflected XSS**, **API-only XSS**, **Client-side XSS Protection** or **Server-side XSS Protection**
     - one from **Forged Review**, **Forged Feedback**, **Manipulate Basket** or **View Basket**
 * Describe the general vulnerability class associated with each group of challenges, including relevant CWEs and typical mitigation and fixing strategies.
 * Describe the specific vulnerabilities that allowed the attacks:
     - which lines of which code files were responsible for the vulnerabilities?
     - how can the code that led to these vulnerabilities be fixed? 
-    - were the vulnerabilities detected by the automated analysers? why do you think that is the case?
+    - were the vulnerabilities detected by the automated (static or dynamic) analysers? why do you think that is the case?
     - you may patch the code and rerun the analyses. would the analysers no longer report the fixed code as vulnerabilities? why do you think that is the case?
 
 
