@@ -44,9 +44,9 @@ You can try it out at <http://localhost/mutillidae/>.
 In the first run, you will need to setup the DB; check [this link](https://miloserdov.org/?p=87) for further information.
 You may also need to set a root mysql password; check [this link](https://miloserdov.org/?p=5873).
 
-Another important difference is that Juice Shop relies intensively on JavaScript for both client and server code, while Mutillidae II is mostly implemented in PHP.
-Note that, in general, most security analysis tools and techniques perform better on static PHP code when compared to dynamic JavaScript content, due to the its more predictable static structure.
-Therefore, it may prove slightly more challenging for the tools (and ourselves) to identify some vulnerabilities in Juice Shop when compared to similar vulnerabilities in Mutillidae II.
+*Another important difference is that Juice Shop relies intensively on JavaScript for both client and server code, while Mutillidae II is mostly implemented in PHP.
+Note that, in general, most security analysis tools and techniques perform better on static PHP code when compared to dynamic JavaScript content, due to its more predictable static structure.
+Therefore, it may prove slightly more challenging for the tools (and ourselves) to identify some vulnerabilities in Juice Shop when compared to similar vulnerabilities in Mutillidae II.*
 
 ## Threat Modelling
 
@@ -602,9 +602,6 @@ Try to solve some of them by yourself. You can find various hints in the [guide]
 
 Of the above, only the **Forged Review** and the **Product Tampering** feature associated coding challenges. However, the vulnerabilities are similar across all challenges. You can solve the existing code challenges for more information.
 For these Broken Access Control challenges, unlike for CSRF, the analysis tools won't hint at the vulnerability. Discuss why do you think that is the case.
-
-Even though this challenge does not feature a coding challenge, we can make it so: find the code files and lines responsible for the bug and propose a solution.
-Check the logs of the automated tools and the [source code](https://github.com/juice-shop/juice-shop) for hints.
 
 Tip for **Manipulate Basket**: You can sometimes update multiple entries in the same HTTP request.
 Tip for **Product Tampering**: You can try to fabricate `PUT` requests from known `GET` requests.

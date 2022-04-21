@@ -408,7 +408,7 @@ For a more rigorous security analysis approach, it is well known that it is poss
 Using the same rationale, it is possible to generalize automated testing techniques to handle some security properties as *self-composed* safety properties of *self-composed* programs.
 
 Very recent academic tools allow applying traditional fuzzers to support the automated testing of security properties; one such example is ct-fuzz, tailored for automated testing of constant-time security for cryptographic implementations.
-Since most of these tools are not yet very user-friendly, we refrain from providing running examples. If you are interested in learning more check, the ct-fuzz [paper](http://www.cs.utah.edu/~shaobo/ct-fuzz.pdf) and the [GitHub repository](https://github.com/michael-emmi/ct-fuzz).
+Since most of these tools are not yet very user-friendly, we refrain from providing running examples. If you are interested in learning more, check the ct-fuzz [paper](http://www.cs.utah.edu/~shaobo/ct-fuzz.pdf) and the [GitHub repository](https://github.com/michael-emmi/ct-fuzz).
 
 ## Tasks
 
