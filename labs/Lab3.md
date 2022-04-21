@@ -609,6 +609,31 @@ Check the logs of the automated tools and the [source code](https://github.com/j
 Tip for **Manipulate Basket**: You can sometimes update multiple entries in the same HTTP request.
 Tip for **Product Tampering**: You can try to fabricate `PUT` requests from known `GET` requests.
 
+##### Christmas Special challenge (Extra)
+
+The **Christmas Special** challenge is listed as a SQL injection vulnerability: if you break into the database, you can find the hidden information about the `Christmas Super-Surprise-Box (2014 Edition)` item, and use that to order the hidden item. Nonetheless, the core of the vulnerability is a violation of an implicit security policy of the Juice Shop application: *a user shall only be able to order products visible to him/her*.
+
+A possible testing methodology for such a security policy would be to [^10]:
+1. Retrieve a list of all visible product IDs by issuing a GET request to <http://localhost:3000/rest/products/search?q=>.
+2. Log in as any user and get his `BasketId <bid>`.
+3. Generate a random product ID `<pid>` not in the visible list.
+4. Send a POST request to <http://localhost:3000/api/BasketItems> with body `{"BasketId": "<bid>", "ProductId": <pid>, "quantity": 1}`.
+5. If you do not get an error response, then you have found a violation of the application's policy.
+6. Repeat steps 3-5 until you find a violation.
+
+[^10]: You could automate these steps by writing a dedicated random testing procedure and/or using the [OWASP ZAP API](https://www.zaproxy.org/docs/desktop/start/features/api/). In principle, such a testing strategy could also be combined with Schemathesis property-based testing (see the [docs](https://schemathesis.readthedocs.io/en/stable/python.html)) or RESTler fuzzing approaches (see the [docs](https://github.com/microsoft/restler-fuzzer/tree/main/restler/checkers)).
+
+##### GDPR Data Theft challenge (Extra)
+
+The **GDPR Data Theft** challenge is yet another example of a non-trivial sensitive data leakage: due to the way that emails are anonymized in the data export functionality, the order data of two users may be joined and exported together. This violates an implicit security policy: *a user shall only be able to see his own orders*.
+
+A possible testing methodology for such a security policy would be to:
+1. Make sure that at least one existing user has some items in his/her basket.
+2. Register a new user. To make the test more effective, the new username may be a mutation of an existing username.
+3. Visit <http://localhost:3000/#/privacy-security/data-export> and export the data in `JSON` format.
+4. If the response has a non-empty order list, then you have found a violation of the application's policy.
+5. Repeat steps 2-4 until you find a violation. You could disable the captcha verification for testing purposes.
+
 ##### SSRF challenge (Extra)
 
 CSRF is a web security vulnerability that allows an attacker to perform unintended client-side requests. Typically, the attacker can impersonate a legitimate user.
@@ -627,7 +652,7 @@ A JWT token is a `base64url`-encoded string `<header>.<payload>.<signature>`, wi
 The **Unsigned JWT** challenge explores a serious vulnerability in the way that JWT tokens are verified in the Juice Shop application, that allows an attacker to forge unsigned tokens with arbitrary `<payload>` data.
 For solving the challenge you are asked to forge a JWT token for a non-existent user with email `jwtn3d@juice-sh.op`. Attempt to send a GET request with your forged unsigned token to <http://localhost:3000/api/Complaints>, which requires a JWT-authenticated user.
 
-Tip: Have a look in the [snyk report](https://hpacheco.github.io/ses/labs/lab3/snyk_report.html). 
+Tip: Have a look at the [snyk report](https://hpacheco.github.io/ses/labs/lab3/snyk_report.html). 
 
 ### Advanced Injection (Extra)
 
@@ -665,15 +690,19 @@ Tip: Search for a vulnerability with the `hbs` template engine.
 
 ### [XS-Leaks](https://xsleaks.dev/) (Extra)
 
-Cross-site Leaks (XS-Leaks) are a recent new class of web vulnerabilities derived from side-channel attacks that are are very challenging for secure web application development.
+Cross-site Leaks (XS-Leaks) are a recent new class of web vulnerabilities derived from side-channel attacks that are are very challenging for secure web application development [^9].
 Moreover, web browsers are not immune to recent CPU side channel attacks such as Meltdown and Spectre, see for instance [here](https://developer.chrome.com/blog/meltdown-spectre/).
 An open knowledge base to discover, study and share XS-Leaks has been [promoted by Google](https://security.googleblog.com/2020/12/fostering-research-on-new-web-security.html).
 
 XS-Leaks can be seen as an evolved form of CSRF: beyond executing actions in place of users of other web sites, they allow malicious web sites to infer information about those users.
 The rationale is the same as for CSRF: a website from any origin can freely send HTTP requests to any other origin but, depending on the origin policy, may not be able to read the responses to such requests; however, some information about the response, such as error codes, its size or elapsed time, are still revealed to a malicious website.
 
-One natural protection against XS-Leaks is for the browser to implement some sort of [site isolation](https://www.chromium.org/Home/chromium-security/site-isolation/) policy. More specific [isolation policies](https://xsleaks.dev/docs/defenses/isolation-policies/) may also be supported via specific HTTP headers.
+One natural protection against XS-Leaks is for the browser to implement some sort of [site isolation](https://www.chromium.org/Home/chromium-security/site-isolation/) policy. More specific per-request [isolation policies](https://xsleaks.dev/docs/defenses/isolation-policies/) may also be supported via specific HTTP headers.
 For examples and more information, you may check the XS-Leaks [web site](https://xsleaks.dev/) or the W3C [Post-Spectre secure web development](https://www.w3.org/TR/post-spectre-webdev/) recommendations.
+
+[Fetch metadata](https://www.w3.org/TR/fetch-metadata/) request headers are one of the most [recent](https://web.dev/fetch-metadata/) resource isolation policies which allows a web server to implement security logic against XS-Leaks and general cross-site attacks. In particular, a trusted browser sets the value of `Sec-Fetch-Site` to essentially one of `cross-site`, `same-site` or `same-origin`; the server can then use such headers to decide on appropriate security protecting mechanisms, e.g., rejecting all cross-site requests that may involve sensitive data.
+
+[^9]: Automatic detection of XS-Leaks is significantly more complex than identifying classical web vulnerabilities, since it requires comparing the result of HTTP requests against multiple internal application states, and remains a research challenge. [Basta-COSI](https://github.com/SoheilKhodayari/Basta-COSI) is a tool that attempts to find and build XS-Leaks attacks against a web application. [XSinator](https://xsinator.com/) is a tool for testing web browsers against known XS-Leaks.
 
 #### Finding if a user is logged in
 
@@ -700,7 +729,7 @@ checkError('http://localhost:3000/profile')
 
 Open another tab in your browser with <http://htmledit.squarefree.com/> and paste the above code, which will run the script.
 In general, whenever a request issued by a different site uses the available cookies for <http://localhost:3000>, which contain sensitive user data, the browser will prevent the page from seeing the response. Our script tries to avoid that as it is indirectly looking at the error code via the `onload` and `onerror` events.
-In this case, however, the browser will block the request (always trigering `onerror`), with an error message like:
+In this case, however, a modern browser like Firefox or Chrome will block the request (always trigering `onerror`), with an error message like:
 ```
 The resource from “http://localhost:3000/profile” was blocked due to MIME type (“text/html”) mismatch (X-Content-Type-Options: nosniff).
 ```
@@ -709,9 +738,11 @@ In other words, the browser refuses to load the response (of type `text/html`) a
 
 The Juice Shop application is protected using the [helmet](https://helmetjs.github.io/) library that sets various defensive HTTP headers, including `nosniff`, that put in place various isolation policies. As an experiment, you may disable this feature as follows:
 1. Move into the [vm/juice-shop](../vm/juice-shop) folder.
-2. Edit the [server.ts](../vm/juice-shop/server.ts) file and comment the line with `app.use(helmet.noSniff())`;
-3. Rebuild and rerun Juice Shop with `npm install && npm start`;
+2. Edit the [server.ts](../vm/juice-shop/server.ts) file and comment the line with `app.use(helmet.noSniff())`.
+3. Rebuild and rerun Juice Shop with `npm install && npm start`.
 4. This time, loading the script from a different site will be able to discriminate if a user is logged in or not.
+
+If you are using a recent version of Firefox or Chrome, you may also notice the different `Sec-Fetch-*` headers for requests originated by: the user (via the web developer tools), the web site (via navigation), or an external site (via a script originating from <http://htmledit.squarefree.com/>). A more secure instance of Juice Shop could use these headers to prevent the error-based XS-Leak.
 
 ## Tasks
 
