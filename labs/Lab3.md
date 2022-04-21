@@ -621,7 +621,7 @@ A possible testing methodology for such a security policy would be to [^10]:
 5. If you do not get an error response, then you have found a violation of the application's policy.
 6. Repeat steps 3-5 until you find a violation.
 
-[^10]: You could automate these steps by writing a dedicated random testing procedure and/or using the [OWASP ZAP API](https://www.zaproxy.org/docs/desktop/start/features/api/). In principle, such a testing strategy could also be combined with Schemathesis property-based testing (see the [docs](https://schemathesis.readthedocs.io/en/stable/python.html)) or RESTler fuzzing approaches (see the [docs](https://github.com/microsoft/restler-fuzzer/tree/main/restler/checkers)).
+[^10]: You could automate these steps by writing a dedicated random testing procedure and/or using the [OWASP ZAP API](https://www.zaproxy.org/docs/desktop/start/features/api/). In principle, such a testing strategy could also be combined with Schemathesis property-based testing (see the [docs](https://schemathesis.readthedocs.io/en/stable/python.html)) or RESTler fuzzing (see the [docs](https://github.com/microsoft/restler-fuzzer/tree/main/restler/checkers)) approaches.
 
 ##### GDPR Data Theft challenge (Extra)
 
