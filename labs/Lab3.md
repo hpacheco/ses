@@ -625,7 +625,7 @@ A possible testing methodology for such a security policy would be to [^10]:
 
 ##### GDPR Data Theft challenge (Extra)
 
-The **GDPR Data Theft** challenge is yet another example of a non-trivial sensitive data leakage: due to the way that emails are anonymized in the data export functionality, the order data of two users may be joined and exported together. This violates an implicit security policy: *a user shall only be able to see his own orders*.
+The **GDPR Data Theft** challenge is yet another example of a non-trivial sensitive data leakage: due to the way that emails are anonymized in the data export functionality, the order data of two users may be joined and exported together. This violates an implicit security policy: *a user shall only be able to see his/her own orders*.
 
 A possible testing methodology for such a security policy would be to:
 1. Make sure that at least one existing user has some items in his/her basket.
