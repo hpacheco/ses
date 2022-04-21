@@ -616,7 +616,7 @@ The **Christmas Special** challenge is listed as a SQL injection vulnerability: 
 A possible testing methodology for such a security policy would be to [^10]:
 1. Retrieve a list of all visible product IDs by issuing a GET request to <http://localhost:3000/rest/products/search?q=>.
 2. Log in as any user and get his `BasketId <bid>`.
-3. Generate a random product ID `<pid>` not in the visible list.
+3. Generate a random `ProductId <pid>` not in the visible list.
 4. Send a POST request to <http://localhost:3000/api/BasketItems> with body `{"BasketId": "<bid>", "ProductId": <pid>, "quantity": 1}`.
 5. If you do not get an error response, then you have found a violation of the application's policy.
 6. Repeat steps 3-5 until you find a violation.
