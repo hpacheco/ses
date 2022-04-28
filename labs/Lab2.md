@@ -245,7 +245,7 @@ You will see an AFL menu with progress statistics, that will run indefinitely. W
 ### Heartbleed example
 
 We can also see how to detect a real-world bug such as [Heartbleed](https://heartbleed.com/) in a complex library such as [OpenSSL](https://www.openssl.org/).
-Heartbleed is a heap buffer overflow bug in the TLS handshake phase, that is triggered if a Heartbeat message is longer than its expected length. You may read more about the bug in resources such as [this](https://www.synopsys.com/blogs/software-security/heartbleed-bug/)
+Heartbleed is a heap buffer overflow bug in the TLS handshake phase, that is triggered if a Heartbeat message is longer than its expected length. You may read more about the bug in resources such as [this one](https://www.synopsys.com/blogs/software-security/heartbleed-bug/).
 
 Start by pulling a buggy version of OpenSSL 1.0.1f from the official OpenSSL GitHub repository, and compiling it with AFL support; we also compile with Address Sanitizer support to detect memory errors [^1]. Building will take a while:
 ```ShellSession
@@ -269,11 +269,14 @@ You may stop as soon as AFL finds a crash. Inspect the produced crash log.
 [^1]: Address Sanitizer needs a lot of virtual memory, and by default AFL will limit the amount of memory a fuzzed software gets.
 This may make your VM allocate a lot of memory and lead to random crashes; make sure that you are not running anything else important on the system.
 
-## [Driller](https://github.com/shellphish/driller)
+## Other tools :warning: :construction:
 
 There are many other modern grey-box fuzzing techniques that can achieve better results for custom programs, often by combining some form of symbolic execution. Many of the associated tools are experimental, possibly quite complex to configure and use, and can become out-of-date quickly.
 
 **Remark:** For the sake of demonstration, we will look at a few, but be advised that it may be hard to understand their behavior outside of the example programs that we provide. 
+
+
+### [Driller](https://github.com/shellphish/driller)
 
 Driller is a concolic execution tool that explores only the paths that are found interesting by the fuzzer and uses symbolic execution to generate inputs for path branches that a fuzzer cannot satisfy. It uses AFL as a fuzzer and angr, a binary analysis framework, as a symbolic tracer over the executable's control flow graph.
 
@@ -296,7 +299,7 @@ driller@container# shellphuzz -d 1 -c 1 -w out -C --length-extension 4 ./buggy
 ```
 This script will run until AFL finds the first crash. When it does, check the `out/buggy/sync/fuzzer-master/crashes` folder for the crash report.
 
-## [Fuzzolic](https://github.com/season-lab/fuzzolic)
+### [Fuzzolic](https://github.com/season-lab/fuzzolic)
 
 Fuzzolic is a concolic execution fuzzer with an approach similar to driller. It uses QEmu to analyze binaries and generate symbolic queries whose result may help in finding new test cases; such queries are discarded by a fuzzy (approximate) SAT solver.
 Consider an [example.c](https://github.com/season-lab/fuzzolic/blob/master/tests/example/example.c) program which performs a conditional on a particular value. You may easily test this program using a pre-bundled docker container; change into the [vm](../vm) folder:
@@ -312,7 +315,7 @@ Fuzzolic also provides automated support for alternating between fuzzolic and AF
 fuzzolic@container# ./fuzzolic/run_afl_fuzzolic.py --address-reasoning --optimistic-solving --fuzzy -o workdir/ -i tests/example/inputs -- ./tests/example/example
 ```
 
-## [SymCC](https://github.com/eurecom-s3/symcc)
+### [SymCC](https://github.com/eurecom-s3/symcc)
 
 SymCC is a compiler wrapper which embeds symbolic execution into the program during compilation, and an associated run-time support library. In essence, the compiler inserts code that computes symbolic expressions for each value in the program. The actual computation happens through calls to the support library at run time.
 
@@ -335,7 +338,7 @@ It will run indefinitely; stop it after a while and inspect the `results` folder
 
 Even though it does not offer an not automated script, SymCC may also be combined with AFL similarly to fuzzolic; check the [documentation](https://github.com/eurecom-s3/symcc/blob/master/docs/Fuzzing.txt). 
 
-## [KLEE-taint](https://github.com/feliam/klee-taint)
+### [KLEE-taint](https://github.com/feliam/klee-taint)
 
 The testing methodologies that we have seen so far focus on traditional safety properties such as undefined behavior or memory errors.
 These do not permit to directly capture security properties such as information leakage, as we have seen before in Lab 1.
@@ -376,7 +379,7 @@ Program [os_cmd_injection_basic-bad2-klee.c](../c/SARD-testsuite-100/000/149/241
 If you run this program in the same way, KLEE-taint will not find an assertion violation as expected; indeed, taint is propagated at the byte-level as expected.
 
 
-## [KLEE-taint-ct](https://github.com/rishabh246/klee-taint)
+### [KLEE-taint-ct](https://github.com/rishabh246/klee-taint)
 
 Similarly to how TIMECOP operates, KLEE-taint can be easily extended to automatically verify constant-time security properties: if the user marks secret symbolic inputs as tainted, (the symbolic execution of) a program is constant-time if no branch condition is symbolically tainted.
 KLEE-taint-ct, a [simple fork](https://github.com/rishabh246/klee-taint) of KLEE-taint, automates the taint checking of all program branch conditions.
@@ -401,7 +404,7 @@ $ cd examples/taint/path/to/the/folder/of/the/example/
 $ make verify
 ```
 
-## [ct-fuzz](https://github.com/michael-emmi/ct-fuzz)
+### [ct-fuzz](https://github.com/michael-emmi/ct-fuzz)
 
 So far, we have seen how dynamic taint analysis can be naturally combined automated testing techniques such as symbolic execution.
 For a more rigorous security analysis approach, it is well known that it is possible to reduce the analysis of some security properties to the analysis of *self-composed* programs which simulate multiple simultaneous executions of the original program; this is precisely what ct-verif does.

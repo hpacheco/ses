@@ -1491,6 +1491,7 @@ There are several security vulnerability scanners that can automatically analyse
 The main advantage of these tools is that they tend to support various programming languages, require low setup and can be typically integrated into the software development process using continuous integration to periodically check for vulnerabilities.
 
 Although many of these scanners are full-fledged commercial solutions, we list a few that are open-source. The easiest way to try these tools is to set up a public repository and scan it online. For convenience, you may check the pre-computed analysis results for this repository:
+* [Flawfinder](https://dwheeler.com/flawfinder/): for C/C++; needs to be run locally for your project;
 * [Coverity](https://scan.coverity.com/): requires login to view results, you need to set it up for your repository;
 * [LGTM](https://lgtm.com/projects/g/hpacheco/ses/?mode=list): public web interface for [CodeQL](https://codeql.github.com/) analysis results;
 * [SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_ses): public web interface for [SonarQube](https://www.sonarqube.org/) analysis results.
