@@ -23,7 +23,7 @@ Interesting for us, many Juice Shop challenges also feature:
 * a [coding challenge](https://pwning.owasp-juice.shop/part1/challenges.html) that will open a dialog containing the actual code snippet responsible for the security vulnerability behind the challenge and ask the challenger to understand the code and suggest the best fix.
 
 There are various options to deploy an instance of Juice Shop, all listed in the GitHub [page](https://github.com/juice-shop).
-For a quick start, you may [deploy on Heroku](https://github.com/juice-shop/juice-shop#deploy-on-heroku-free-0month-dyno) or create a [Docker container](https://github.com/juice-shop/juice-shop#docker-container). However, For some tasks (and maximum vulnerability!) you will need to install [from sources](https://github.com/juice-shop/juice-shop#from-sources).
+For a quick start, you may [deploy on Heroku](https://github.com/juice-shop/juice-shop#deploy-on-heroku-free-0month-dyno) or create a [Docker container](https://github.com/juice-shop/juice-shop#docker-container). However, for some tasks (and maximum vulnerability!) you will need to install [from sources](https://github.com/juice-shop/juice-shop#from-sources).
 
 Inside the [vm](../vm) folder, you may just type:
 * `make run-docker-juiceshop` to build and run from a Docker container. An instance of Juice Shop will be readily listening at `http://localhost:3000`.
@@ -257,7 +257,7 @@ For the case of Juice Shop, we will be mainly interested in tools that can analy
 Many generic code scanners also work for other languages. As an example, consider the following pre-generated scans over the PHP code of Mutillidae:
 * [SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_mutillidae)
 
-There are also many other static web application analysis tools designed specifically for specific languages languages. We name a few that you may try on your own for your projects:
+There are also many other static web application analysis tools designed for specific languages languages. We name a few that you may try on your own for your projects:
 * [Find Security Bugs](https://github.com/find-sec-bugs/find-sec-bugs/) is a static code analysis tool for Java web applications.
 * [Enlightn](https://github.com/enlightn/enlightn) is a static security analyser for applications developed using the Laravel PHP framework.
 * [Progpilot](https://github.com/designsecurity/progpilot) is a static taint analysis tool for PHP. It supports sanitizers, which allows more control over the taint analysis when compared to automated scanners such as SonarCloud.
@@ -293,7 +293,7 @@ After you have solved the challenge, follow the mitigation link to understand mo
 ### SQL injection
 
 SQL injection (SQLi) is one of the most classical web attacks which may have devastating consequences on web applications suffering from associated vulnerabilities.
-Juice Shop itself as a few challenges related to SQL injection vulnerabilities.
+Juice Shop itself has a few challenges related to SQL injection vulnerabilities.
 
 #### Login Admin challenge
 
@@ -689,7 +689,7 @@ Tip: Search for a vulnerability with the `hbs` template engine.
 
 Cross-site Leaks (XS-Leaks) are a recent new class of web vulnerabilities derived from side-channel attacks that are are very challenging for secure web application development [^9].
 Moreover, web browsers are not immune to recent CPU side channel attacks such as Meltdown and Spectre, see for instance [here](https://developer.chrome.com/blog/meltdown-spectre/).
-An open knowledge base to discover, study and share XS-Leaks has been [promoted by Google](https://security.googleblog.com/2020/12/fostering-research-on-new-web-security.html).
+An open knowledge-base to discover, study and share XS-Leaks has been [promoted by Google](https://security.googleblog.com/2020/12/fostering-research-on-new-web-security.html).
 
 XS-Leaks can be seen as an evolved form of CSRF: beyond executing actions in place of users of other web sites, they allow malicious web sites to infer information about those users.
 The rationale is the same as for CSRF: a website from any origin can freely send HTTP requests to any other origin but, depending on the origin policy, may not be able to read the responses to such requests; however, some information about the response, such as error codes, its size or elapsed time, are still revealed to a malicious website.
