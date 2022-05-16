@@ -169,7 +169,7 @@ You can inspect them using the online [Swagger Editor](https://editor.swagger.io
 #### [Schemathesis](https://github.com/schemathesis/schemathesis)
 
 Schemathesis is a tool that uses property-based testing for checking the conformance of an implemented API against a specification.
-Property-based testing is a more lightweight fuzzing-like technique that consists of generating random inputs - in this case API requests - oriented to the testing of a specific output property - in this case conformance of API responses w.r.t. to an OpenAPI specification.
+Property-based testing is a more lightweight fuzzing-like technique that consists of generating random inputs - in this case API requests - oriented to the testing of a specific output property - in this case conformance of API responses w.r.t. an OpenAPI specification.
 
 In fact, a great deal of the Juice Shop vulnerabilities that we will explore in the challenges below are related to care-free API implementations: accepting more request parameters than expected, retrieving more response parameters than expected, leaking internal state alongside non-gracefully-handled error messages, etc. 
 You can quickly try out schemathesis as follows; make sure that Juice Shop is running. In the [vm](../vm) folder:
@@ -634,7 +634,7 @@ A possible testing methodology for such a security policy would be to:
 ##### SSRF challenge (Extra)
 
 CSRF is a web security vulnerability that allows an attacker to perform unintended client-side requests. Typically, the attacker can impersonate a legitimate user.
-In contrast, Server-side Request Forgery (SSRF) is a web security vulnerability that allows an attacker to induce the server-side application to make requests to an unintended location. For example, a common SSRF attack is when the user provides a URL, such as an image, and the backend server accesses that URL, e.g. to download the image; if the server accesses any provided URL without restraint., if may allow the attacker to circumvent access permissions of the client-side interface.
+In contrast, Server-side Request Forgery (SSRF) is a web security vulnerability that allows an attacker to induce the server-side application to make requests to an unintended location. For example, a common SSRF attack is when the user provides a URL, such as an image, and the backend server accesses that URL, e.g. to download the image; if the server accesses any provided URL without restraint, it may allow the attacker to circumvent access permissions of the client-side interface.
 
 Juice Shop features a **SSRF** challenge. To try to solve it, log in and go to your user's profile page. You can upload a profile picture or provide a image URL; in the second case, the server will itself download the image. A successful solution to the challenge requires accessing a specific local page within the <http://localhost:3000> local application page; the needed URL and parameters are hidden in Juice Shop's source code.
 
