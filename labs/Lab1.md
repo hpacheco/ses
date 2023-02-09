@@ -1,7 +1,7 @@
 
 # Lab 1 - Low-level security
 
-One of the most common source of vulnerabilities, even to this day, remains related to exploits for low-level programming languages such as C or C++.
+One of the most common sources of vulnerabilities, even to this day, remains related to exploits for low-level programming languages such as C or C++.
 As languages that offer the programmers very fine-grained control, C and C++ are very insecure and error-prone, and one of the main sources of problems are related to memory management errors. For instance, many of the [2021 Top 25 CWEs](https://cwe.mitre.org/top25/archive/2021/2021_cwe_top25.html) are due to memory violations, type violations or undefined behavior in C or similar languages. To assist programmers in avoiding to develop code susceptible to many of these violations, secure C coding standards such [SEI CERT](https://wiki.sei.cmu.edu/confluence/display/seccode/SEI+CERT+Coding+Standards) have also been proposed.
 
 Instead of focusing on exploitation and mitigation, we will study how various existing analysis tools can support developers in detecting and fixing vulnerabilities.
