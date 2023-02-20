@@ -179,7 +179,7 @@ $ sh install-schemathesis.sh
 $ cd juice-shop
 $ schemathesis run swagger-juiceshop.json --checks all --base-url http://localhost:3000
 ```
-The tool will try generate various random requests that satisfy the request schema, and check if it receives 5xx server errors or responses that do not satisfy the response schema. The output may vary (depending on the randomness) but you shall see some failing tests.
+The tool will try to generate various random requests that satisfy the request schema, and check if it receives 5xx server errors or responses that do not satisfy the response schema. The output may vary (depending on the randomness) but you shall see some failing tests.
 
 OpenAPI also supports the specification of necessary security, such as authentication, that should be required to perform certain operations.
 For Juice Shop, that is the case of the B2B order interface. Log in into the Juice Shop in your browser, and inspected requests/responses for the header `Authorization: Bearer <TOKEN>`. You can then test the B2B interface with your secret `<TOKEN>` as follows:

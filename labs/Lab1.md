@@ -371,7 +371,7 @@ $ taintgrind-log2dot log > log.dot
 $ dot -Tsvg log.dot -o log.svg
 ```
 
-![lab1/lab1-taintgrind](lab1-taintgrind.svg)
+![lab1-taintgrind](lab1/lab1-taintgrind.svg)
 </details>
 
 [^1]: Note that each 8-byte block is printed in reverse order since `amd64` uses a little endian representation.
@@ -572,6 +572,7 @@ int check(char *arg, char *pass)
 TIMECOP will not find any constant-time violations this time:
 <details>
 <summary>Result</summary>
+
 ```ShellSession
 $ clang pass-loop-good-timecop.c
 $ valgrind ./a.out
@@ -592,7 +593,7 @@ $ valgrind ./a.out
 ```
 </details>
 
-[^2]: This is a simplification, as some CPU instructions may also take variable-time.
+[^2]: This is a simplification, as some CPU instructions may also take variable-time. Current research is also focused on accurately modelling constant-time policies that are robust w.r.t. real-world processor optimizations such as speculative execution, e.g. [this paper](https://goto.ucsd.edu/~gleissen/papers/spectre-semantics.pdf) or [this LLVM extension](https://llvm.org/docs/SpeculativeLoadHardening.html).
 
 ## [Static Program Analysis](https://cacm.acm.org/magazines/2022/1/257444-static-analysis/fulltext)
 
@@ -621,7 +622,7 @@ scan-build: Run 'scan-view /tmp/scan-build-2022-02-11-165808-3759-1' to examine 
 $ scan-view /tmp/scan-build-2022-02-11-165808-3759-1
 ```
 
-![lab1/lab1_scan-view](lab1_scan-view.png)
+![lab1_scan-view](lab1/lab1_scan-view.png)
 </details>
 
 ### [IKOS](https://ti.arc.nasa.gov/opensource/ikos/)
@@ -689,7 +690,7 @@ $ ikos-view output.db
 <details>
 <summary>Result</summary>
 
-![lab1/lab1_ikos-view](lab1_ikos-view.png)
+![lab1_ikos-view](lab1/lab1_ikos-view.png)
 </details>
 
 We can also analyze a similar program [cwe190_ex2_ok.c](../c/misc/cwe190_ex2_ok.c) with a fixed value for `nresp` that does not overflow.
@@ -821,7 +822,7 @@ For instance, we can replicate the above Eva analysis and see the errors as anno
 <details>
 <summary>Result</summary>
 
-![lab1/lab1_frama-c-gui](lab1_frama-c-gui.png)
+![lab1_frama-c-gui](lab1/lab1_frama-c-gui.png)
 </details>
 
 We can also analyze a similar program [cwe190_ex2_ok.c](../c/misc/cwe190_ex2_ok.c) with a fixed value for `nresp` that does not overflow.
@@ -966,7 +967,7 @@ If you can run this example using the Eva taint domain:
 ```ShellSession
 $ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_direct_frama-c.c
 ```
-![lab1/lab1-framac-taintd](lab1-framac-taintd.png)
+![lab1-framac-taintd](lab1/lab1-framac-taintd.png)
 </details>
 
 The result may be slightly surprising, but it highlights that Frama-C's taint analysis only considers direct information flows; the input is never directly assigned to the output of the function, and only indirectly the output by affecting the conditional clauses.
@@ -997,7 +998,7 @@ You can run this example as before:
 ```ShellSession
 $ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_indirect_frama-c.c
 ```
-![lab1/lab1-framac-tainti](lab1-framac-tainti.png)
+![lab1-framac-tainti](lab1/lab1-framac-tainti.png)
 </details>
 The result is as expected: variable `s` is possibly tainted and the second assertion fails.
 
@@ -1019,7 +1020,7 @@ We can run the program as follows:
 ```ShellSession
 $ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-context-valid-pointers c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-frama-c.c
 ```
-![lab1/lab1_framac_cmdi_bad](lab1_framac_cmdi_bad.png)
+![lab1_framac_cmdi_bad](lab1/lab1_framac_cmdi_bad.png)
 </details>
 
 Looking at the output, Frama-C has correctly separated the command's prefix from the command's argument. Thus, the first assertion is true, since we have not tainted the prefix, while the second assertion is false, since we have tainted the argument.
@@ -1043,7 +1044,7 @@ We can run the program as before:
 ```ShellSession
 $ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-context-valid-pointers c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c
 ```
-![lab1/lab1_framac_cmdi_good](lab1_framac_cmdi_good.png)
+![lab1_framac_cmdi_good](lab1/lab1_framac_cmdi_good.png)
 </details>
 
 Given our assumptions, Frama-C is now able to prove that the executed `command` string is not tainted.
