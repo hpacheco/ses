@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 	strncpy(command + catLength, argv[1], commandLength - catLength);
 	
 	dfsan_label command_label;
-	printf("checking taint for %d bytes of command (in 8-byte blocks)\n",ommandLength);
+	printf("checking taint for %d bytes of command (in 8-byte blocks)\n",commandLength);
 	for (int i=0; i < commandLength; ) {
 	  command_label = dfsan_read_label(command+i,8);
 	  printf("%u ",command_label);

@@ -21,7 +21,8 @@ Radamsa is simply a command-line tool that receives a file with some data to mut
 <summary>Result</summary>
 
 ```ShellSession
-$ cd c/misc/wisdom            
+$ cd c/misc/wisdom   
+$ cat inputs/1         
 1aaaaaaaa
 $ radamsa inputs/1 -n 3 -s 564
 4294967295aaaaaaaa

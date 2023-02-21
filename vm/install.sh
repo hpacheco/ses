@@ -10,5 +10,5 @@ sudo apt install -yq clang clang-tools valgrind
 sudo apt install -yq libmysql++-dev libpam0g-dev libmysqlcppconn-dev
 sudo apt install -yq python3-distutils
 sh install-timecop.sh
-sh install-web.sh
 sh install-fuzz.sh
+sh install-web.sh

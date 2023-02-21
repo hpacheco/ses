@@ -456,7 +456,7 @@ zsh: abort      ./a.out
 ```
 </details>
 
-In the working version of Clang 15, there is however an experimental LLVM feature `-dfsan-conditional-callbacks`  that adds conditional support to DataFlowSanitizer. We can try a similar patch to LLVM that is pre-bundled in this [repository](https://github.com/mcopik/clang-dfsan).
+In the working version of Clang 15, there is however an experimental LLVM feature `-dfsan-conditional-callbacks` that adds conditional branch analysis support to DataFlowSanitizer. We can try a similar patch to LLVM that is pre-bundled in this [repository](https://github.com/mcopik/clang-dfsan).
 
 Change into the [vm](../vm) folder and run `make run-dfsan`.
 It will perform the following steps:
