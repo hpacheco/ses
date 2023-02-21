@@ -9,7 +9,7 @@ Instead of focusing on exploitation, we will study how various existing analysis
 * DAST: In particular for web applications, vulnerability assessment tools such as [BurpSuite Community Edition](https://portswigger.net/burp/communitydownload) and [OWASP Zed Attack Proxy](https://owasp.org/www-project-zap/) can be used to navigate web sites, analyse HTTP requests/responses and perform automatic dynamic scans for vulnerabilities.
 
 There exists a myriad of vulnerable web applications, e.g. from the [OWASP Vulnerable Web Applications Directory (VWAD)](https://owasp.org/www-project-vulnerable-web-applications-directory/), that have been developed for demonstrating common web vulnerabilities and how to exploit them.
-One of the most modern and complete among such pedagogical web applications is the [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/).
+One of the most modern and complete among such pedagogical web applications is the [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/). 
 
 Another good resource with detailed information about each type of vulnerability, including how to manually test if your application is vulnerable, is the [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/v41/).
 
@@ -32,7 +32,7 @@ Inside the [vm](../vm) folder, you may just type:
 
 ## Setting up [OWASP Mutillidae II](https://github.com/webpwnized/mutillidae) (Extra)
 
-**For this lab, we will only consider Juice Shop exercises.** Nevertheless, for students interested in a more extensive list of web vulnerabilities or learning more about a particular vulnerability, OWASP Mutillidae II is a good source. It is a vulnerable web site that contains a categorised listing of OWASP vulnerabilities and a series of example vulnerable pages per category. You may also easily find additional information such as tutorials.
+**For this lab, we will only consider Juice Shop exercises.** Nevertheless, for students interested in a more extensive list of web vulnerabilities or learning more about a particular vulnerability, OWASP Mutillidae II is a good source. It is a vulnerable web site that contains a categorised listing of OWASP vulnerabilities and a series of example vulnerable pages per category. You may also easily find additional information such as tutorials. For simple demonstrations of various vulnerabilities, you may also check [Google firing range](https://public-firing-range.appspot.com/).
 
 To install Mutillidae II, cd into the [vm](../vm) folder and run the following commands:
 ```ShellSession
@@ -115,7 +115,7 @@ wget -r http://localhost:3000
 
 In the context of web applications, DAST is a testing methodology that analyses a running application by scanning and performing attacks on the client-side frontend. Since it is independent of the technologies used in the application's server-side backend, it is also termed as a black-box testing methodology [^1].
 
-[^1]: White-box dynamic web application analysis is usually termed Interactive Application Security Testing (IAST).
+[^1]: White-box dynamic web application analysis is sometimes also termed Interactive Application Security Testing (IAST).
 Like traditional dynamic program analysis, IAST tools analyze running web applications by first instrumenting their code to better observe application behavior and data flow.
 Unfortunately, IAST is very much dependent on used technologies since it requires significantly more integration with the host applications, are there are few open-source solutions (aside from hard to set up research prototypes) for us to experiment with. We will therefore focus on DAST.
 
@@ -262,6 +262,7 @@ There are also many other static web application analysis tools designed for spe
 * [Enlightn](https://github.com/enlightn/enlightn) is a static security analyser for applications developed using the Laravel PHP framework.
 * [Progpilot](https://github.com/designsecurity/progpilot) is a static taint analysis tool for PHP. It supports sanitizers, which allows more control over the taint analysis when compared to automated scanners such as SonarCloud.
 * [Psalm](https://github.com/vimeo/psalm) is another security analysis tool for PHP. It supports user-controlled taint analysis much like Progpilot, but claims to perform better PHP type inference, which should reduce false positives significatively.
+* [Python Taint](https://github.com/python-security/pyt) is a static analysis tool for Python web applications. Similar ideas have matured into the more recent Facebook [Pysa](https://developers.facebook.com/blog/post/2021/04/29/eli5-pysa-security-focused-analysis-tool-python/) project.
 
 ## Challenges
 

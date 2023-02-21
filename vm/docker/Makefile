@@ -1,4 +1,9 @@
 
+build-dfsan:
+	rm -rf clang-dfsan
+	git clone https://github.com/mcopik/clang-dfsan
+	cd clang-dfsan && sudo sh build-cfsan.sh
+
 build-ikos:
 	sudo docker build -f ikos.dockerfile . -t hugopacheco/ikos
     

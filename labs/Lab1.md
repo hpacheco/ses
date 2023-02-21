@@ -6,7 +6,7 @@ As languages that offer the programmers very fine-grained control, C and C++ are
 
 Instead of focusing on exploitation and mitigation, we will study how various existing analysis tools can support developers in detecting and fixing vulnerabilities.
 
-In this lab we will use a series of C examples that are part of the [SARD test suite](https://samate.nist.gov/SRD/testsuite.php#sardsuites). Each example comes as a pair of C programs where the first has a flaw and the second demonstrates how to possibly fix the flaw.
+In this lab we will use a series of C examples that are part of the [SARD test suite 100/101 pair](https://samate.nist.gov/SRD/testsuite.php#sardsuites), from the larger [NIST SARD](https://samate.nist.gov/SARD/) project. Each example comes as a pair of C programs where the first (from test suite 100) has a flaw and the second (from test suite 101) demonstrates how to possibly fix the flaw.
 
 ## [Dynamic Program Analysis](https://oaklandsok.github.io/papers/song2019.pdf)
 
@@ -433,7 +433,7 @@ if (system(command) < 0) { ... }
 If we compile and run this program, we can see that two byte blocks of the output are tainted with label 1 (0 is the default non-tainted label).
 
 ```ShellSession
-$ clang-13 -fsanitize=dataflow os_cmd_injection_basic-bad-dfsan.c
+$ clang-14 -fsanitize=dataflow os_cmd_injection_basic-bad-dfsan.c
 $ ./a.out aaaaaaaa                        
 /bin/cat: aaaaaaaa: No such file or directory
 0 1 1
@@ -449,44 +449,33 @@ If we compile and run this program, DataFlowSanitizer will not detect our indire
 <summary>Result</summary>
 
 ```ShellSession
-$ clang-13 -fsanitize=dataflow sign32-dfsan.c
+$ clang-14 -fsanitize=dataflow sign32-dfsan.c
 $ ./a.out                                                    
 a.out: sign32.c:18: int main(int, char **): Assertion `dfsan_has_label(s_label, a_label)' failed.
 zsh: abort      ./a.out
 ```
 </details>
 
-In the working version of Clang 15, there is however an experimental LLVM feature `-dfsan-conditional-callbacks` that adds conditional branch analysis support to DataFlowSanitizer. We can try a similar patch to LLVM that is pre-bundled in this [repository](https://github.com/mcopik/clang-dfsan).
+In the working version of Clang 15 (see the [documentation](https://releases.llvm.org/15.0.0/tools/clang/docs/DataFlowSanitizer.html)), there is however an experimental LLVM feature `-dfsan-conditional-callbacks` that adds conditional branch analysis support to DataFlowSanitizer. We can try a similar patch to LLVM that is pre-bundled in this [repository](https://github.com/mcopik/clang-dfsan).
 
 Change into the [vm](../vm) folder and run `make run-dfsan`.
-It will perform the following steps:
-<details>
-<summary>Result</summary>
+It will launch a shell inside a new docker container for the built docker image. Your home folder will be shared with the container.
+```ShellSession
+$ sudo docker run -v ${HOME}:${HOME} -it mcopik/clang-dfsan:cfsan-9.0
+```
 
-1. Clone the repository and build. This will create a docker image with Clang/LLVM built for indirect control-flow tainting support.
+Inside the container, move into the `examplefolder` directory (change this) and compile it. You may then run the example. If the assertion raises no error, taint was tracked as expected.
 ```ShellSession
-$ git clone https://github.com/mcopik/clang-dfsan
-$ cd clang-dfsan
-$ sudo sh build-cfsan.sh
-````
-2. Launch a shell inside a new docker container for the built docker image. Your home folder (`echo $HOME`) will be shared with the container.
-```ShellSession
-$ sudo docker run -v /home/kali:/home/kali -it mcopik/clang-dfsan:cfsan-9.0
+cfsan@container$ cd examplefolder
+cfsan@container$ clang-cfsan sign32-dfsan.c
+cfsan@container$ ./a.out
+cfsan@container$ 
 ```
-</details>
 
-Inside the container, move into the `examplefolder` directory (change this) and compile it. Exit the container.
-```ShellSession
-docker@container$ cd examplefolder
-docker@container$ clang-cfsan sign32-dfsan.c
-$
-```
-Outside the container, you may run the example. If the assertion raises no error, taint was tracked as expected.
-```ShellSession
-$ cd examplefolder
-$ ./a.out
-$
-```
+#### Other extensions
+
+The Clang/LLVM Data Flow Sanitizer has been used as a core taint analysis engine for many other projects.
+One such example is [PolyTracker](https://blog.trailofbits.com/2019/11/01/two-new-tools-that-tame-the-treachery-of-files/), which allows constructing a taint dependency graph (starting from taint inputs bytes) for the runtime execution of real-world programs such as PDF viewers.
 
 ### [TIMECOP](https://www.post-apocalyptic-crypto.org/timecop/)
 
@@ -1511,7 +1500,7 @@ The main advantage of these tools is that they tend to support various programmi
 Although many of these scanners are full-fledged commercial solutions, we list a few that are open-source. The easiest way to try these tools is to set up a public repository and scan it online. For convenience, you may check the pre-computed analysis results for this repository:
 * [Flawfinder](https://dwheeler.com/flawfinder/): for C/C++; needs to be run locally for your project;
 * [Coverity](https://scan.coverity.com/): requires login to view results, you need to set it up for your repository;
-* [LGTM](https://lgtm.com/projects/g/hpacheco/ses/?mode=list): public web interface for [CodeQL](https://codeql.github.com/) analysis results;
+* [GitHub Code Scanning](https://github.com/hpacheco/ses/security/code-scanning): public web interface for [CodeQL](https://codeql.github.com/) that offers automated code scanning for security vulnerabilities; formerly known as [LGTM](https://lgtm.com);
 * [SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_ses): public web interface for [SonarQube](https://www.sonarqube.org/) analysis results.
 
 ## Tasks
