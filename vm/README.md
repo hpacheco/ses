@@ -21,6 +21,7 @@ You may find a pre-configured Kali Linux Virtual Box image [here](https://drive.
 
 * You may disable the lock screen feature in your VM by changing `Settings > Privacy > Screen Lock`.
 * If you experience network issues inside your VM, try [this](https://stackoverflow.com/a/55072881) solution.
+* If you have difficulties installing packages, you may try to install ot manually from <https://http.kali.org/kali/pool/main/l/linux/>.
 
 
 

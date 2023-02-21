@@ -326,6 +326,13 @@ It is typically used for checking an *integrity* property, by identifying danger
 Taintgrind is a taint-tracking plugin for Valgrind.
 As a binary instrumentation tool, Taintgrind allows marking specific bytes - typically user input data - as tainted and propagates taint at the byte level through memory operations.
 
+Navigate to the [vm](../vm) folder and run `make run-taintgrind`.
+It will launch a taintgrind-powered container :
+```ShellSession
+$ sudo docker run -v ${HOME}:${HOME} -it hugopacheco/taintgrind
+taintgrind@container$
+```
+
 #### Direct flows
 
 Consider for instance the program [os_cmd_injection_basic-bad.c](../c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad.c) that shows the content of a user-supplied file and contains a classical command injection [vulnerability](https://cwe.mitre.org/data/definitions/78.html): the user may append additional bash commands to the input, that will get executed. The most relevant snippet is the following:
@@ -355,8 +362,8 @@ We can now compile the instrumented program and run it with Taintgrind. Note how
 <summary>Result</summary>
 
 ```ShellSession
-$ gcc -g -O0 os_cmd_injection_basic-bad-taintgrind.c
-$ taintgrind ./a.out aaaaaaaa 2> log                                                                           
+taintgrind@container$ gcc -g -O0 os_cmd_injection_basic-bad-taintgrind.c
+taintgrind@container$ taintgrind ./a.out aaaaaaaabbbb 2> log                                                                           
 /usr/local/bin/valgrind --tool=taintgrind ./a.out aaaaaaaa
 00000000 ffffff00 000000ff
 ```
@@ -367,8 +374,8 @@ Taintgrind also generates a detailed log that is being redirected to a file in t
 <summary>Result</summary>
 
 ```ShellSession
-$ taintgrind-log2dot log > log.dot
-$ dot -Tsvg log.dot -o log.svg
+taintgrind@container$ taintgrind-log2dot log > log.dot
+taintgrind@container$ dot -Tsvg log.dot -o log.svg
 ```
 
 ![lab1-taintgrind](lab1/lab1-taintgrind.svg)
@@ -392,8 +399,8 @@ In this function, the value of the output depends on the value of the input vari
 <summary>Result</summary>
 
 ```ShellSession
-$ gcc -g -O0 sign32-taintgrind.c                                                                        
-$ taintgrind ./a.out 2> log                                                                               
+taintgrind@container$ gcc -g -O0 sign32-taintgrind.c                                                                        
+taintgrind@container$ taintgrind ./a.out 2> log                                                                               
 /usr/local/bin/valgrind --tool=taintgrind ./a.out
 00000000
 ```
@@ -625,18 +632,25 @@ $ scan-view /tmp/scan-build-2022-02-11-165808-3759-1
 ![lab1_scan-view](lab1/lab1_scan-view.png)
 </details>
 
-### [IKOS](https://ti.arc.nasa.gov/opensource/ikos/)
+### [IKOS](https://github.com/NASA-SW-VnV/ikos)
 
 IKOS is a static analyzer for C/C++ based on the theory of [Abstract Interpretation](https://en.wikipedia.org/wiki/Abstract_interpretation).
 Its analysis is performed on top of LLVM and allows proving the absence of runtime errors in resulting applications.
 As a static analysis tool that covers all program executions (e.g. for any input), it is not as precise as a dynamic analysis that covers a single program execution (e.g., for a specific input). IKOS performs a sound over-approximation of the behavior of a program, meaning that analysis may fail to prove that a safe program is safe, but proven programs are always safe.
+
+Navigate to the [vm](../vm) folder and run `make run-ikos`.
+It will launch an IKOS-powered container :
+```ShellSession
+$ sudo docker run -v ${HOME}:${HOME} -p8080:8080 -it hugopacheco/ikos
+ikos@container$
+```
 
 Consider the program [cwe190_ex2_bad.c](../c/misc/cwe190_ex2_bad.c) program from before. IKOS will statically detect the signed integer overflow in the `malloc` argument which makes our program unsafe:
 <details>
 <summary>Result</summary>
 
 ```ShellSession
-$ ikos cwe190_ex2_bad.c                                                
+ikos@container$ ikos cwe190_ex2_bad.c                                                
 [*] Compiling cwe190_ex2_bad.c
 [*] Running ikos preprocessor
 [*] Running ikos analyzer
@@ -683,9 +697,9 @@ cwe190_ex2_bad.c:23:1: unreachable: code is dead
 ```
 </details>
 
-You may notice that the `ikos` utility also generates a `output.db` file with a log of the performed analysis, in the folder where it was invoked. You can also graphically inspect this log with the `ikos-view` tool:
+You may notice that the `ikos` utility also generates a `output.db` file with a log of the performed analysis, in the folder where it was invoked. You can also graphically inspect this log with the `ikos-view` tool that will launch a web server on <http://localhost:8080> (visit this web page in your host VM):
 ```ShellSession
-$ ikos-view output.db
+ikos@container$ ikos-view output.db
 ```
 <details>
 <summary>Result</summary>
@@ -700,7 +714,7 @@ IKOS no longer reports the overflow, however, the program is still potentially u
 <summary>Result</summary>
 
 ```ShellSession
-$ ikos cwe190_ex2_ok.c                                               
+ikos@container$ ikos cwe190_ex2_ok.c                                               
 [*] Compiling cwe190_ex2_ok.c
 [*] Running ikos preprocessor
 [*] Running ikos analyzer
@@ -733,13 +747,13 @@ cwe190_ex2_ok.c:24:46: warning: pointer '&response[(int64_t)i]' might be null
 ```
 </details>
 
-We can fix this uncertainty by making to check that the result of `malloc` is not `NULL`, as in [cwe190_ex2_ok.c](../c/misc/cwe190_ex2_ok.c). IKOS now reports that our program is safe:
+We can fix this uncertainty by making sure to check that the result of `malloc` is not `NULL`, as in [cwe190_ex2_ok.c](../c/misc/cwe190_ex2_ok2.c). IKOS now reports that our program is safe:
 
 <details>
 <summary>Result</summary>
 
 ```ShellSession
-$ ikos cwe190_ex2_ok2.c                                                
+ikos@container$ ikos cwe190_ex2_ok2.c                                                
 [*] Compiling cwe190_ex2_ok2.c
 [*] Running ikos preprocessor
 [*] Running ikos analyzer
@@ -773,6 +787,13 @@ No entries.
 
 Frama-C is a source code analysis platform that aims at conducting verification of industrial-size programs written in ISO C99 source code. Frama-C supports the formal verification approach of analyzing a C implementation with respect to a functional specification of the ISO C99 standard, and provides to its users with a collection of [plugins](https://frama-c.com/html/kernel-plugin.html) that perform static and dynamic analysis for safety and security critical software. As an industrial project, some of Frama-C's plugins are [open-sourced](https://git.frama-c.com/pub/frama-c), while others are proprietary.
 
+Navigate to the [vm](../vm) folder and run `make run-framac`.
+It will launch a Frama-C-powered container with X support :
+```ShellSession
+$ sudo docker run -v ${HOME}:${HOME} -it --rm --net=host --env="DISPLAY" -v $HOME/.Xauthority:/root/.Xauthority:ro hugopacheco/framac
+framac@container$
+```
+
 Frama-C's Eva plugin has been developed to statically show the absence of runtime errors on whole programs. It will perform a value analysis that (over-)estimates the set of possible values for each variables.
 Consider the program [cwe190_ex2_bad.c](../c/misc/cwe190_ex2_bad.c) program from before. The Frama-C Eva plugin will statically detect the signed integer overflow in the `malloc` argument:
 
@@ -780,7 +801,7 @@ Consider the program [cwe190_ex2_bad.c](../c/misc/cwe190_ex2_bad.c) program from
 <summary>Result</summary>
 
 ```ShellSession
-$ frama-c -eva cwe190_ex2_bad.c                                        
+framac@container$ frama-c -eva cwe190_ex2_bad.c                                        
 [kernel] Parsing cwe190_ex2_bad.c (with preprocessing)
 [eva] Analyzing a complete application starting at main
 [eva] Computing initial state
@@ -815,7 +836,7 @@ $ frama-c -eva cwe190_ex2_bad.c
 
 Frama-C also offers a GUI that you may simply invoke as:
 ```ShellSession
-$ frama-c-gui cwe190_ex2_bad.c  
+framac@container$ frama-c-gui cwe190_ex2_bad.c  
 ```
 You can graphically configure the analysis plugins in the `Analyses` menu, where all the command-line plugin options are also available.
 For instance, we can replicate the above Eva analysis and see the errors as annotations in the code:
@@ -832,7 +853,7 @@ Eva no longer reports the overflow, however, we get a different out of bounds er
 <summary>Result</summary>
 
 ```ShellSession
-$ frama-c -eva cwe190_ex2_ok.c                                       
+framac@container$ frama-c -eva cwe190_ex2_ok.c                                       
 [kernel] Parsing cwe190_ex2_ok.c (with preprocessing)
 [eva] Analyzing a complete application starting at main
 [eva] Computing initial state
@@ -877,7 +898,7 @@ This error occurs because Eva assumes by default that the `malloc` function may 
 <summary>Result</summary>
 
 ```ShellSession
-$ frama-c -eva -eva-no-alloc-returns-null cwe190_ex2_ok.c            
+framac@container$ frama-c -eva -eva-no-alloc-returns-null cwe190_ex2_ok.c            
 [kernel] Parsing cwe190_ex2_ok.c (with preprocessing)
 [eva] Analyzing a complete application starting at main
 [eva] Computing initial state
@@ -928,7 +949,7 @@ Nonetheless, for demonstrative purposes, consider the CWE 190 example from befor
 
 You may run and test both examples with:
 ```bash
-frama-c-gui -wp -eva -eva-no-alloc-returns-null c/misc/<examplename>.c
+framac@container$ frama-c-gui -wp -eva -eva-no-alloc-returns-null c/misc/<examplename>.c
 ```
 For more information on the concrete proof techniques you may consult the Frama-C [documentation](https://frama-c.com/html/documentation.html).
 You can also have a look at more challenging Frama-C case studies in these repositories:
@@ -965,7 +986,7 @@ If you can run this example using the Eva taint domain:
 <summary>Result</summary>
 
 ```ShellSession
-$ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_direct_frama-c.c
+framac@container$ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_direct_frama-c.c
 ```
 ![lab1-framac-taintd](lab1/lab1-framac-taintd.png)
 </details>
@@ -996,7 +1017,7 @@ You can run this example as before:
 <summary>Result</summary>
 
 ```ShellSession
-$ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_indirect_frama-c.c
+framac@container$ frama-c-gui -wp -eva -eva-domains taint c/misc/sign32_indirect_frama-c.c
 ```
 ![lab1-framac-tainti](lab1/lab1-framac-tainti.png)
 </details>
@@ -1018,7 +1039,7 @@ We can run the program as follows:
 <summary>Result</summary>
 
 ```ShellSession
-$ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-context-valid-pointers c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-frama-c.c
+framac@container$ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-context-valid-pointers c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-frama-c.c
 ```
 ![lab1_framac_cmdi_bad](lab1/lab1_framac_cmdi_bad.png)
 </details>
@@ -1042,7 +1063,7 @@ We can run the program as before:
 <summary>Result</summary>
 
 ```ShellSession
-$ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-context-valid-pointers c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c
+framac@container$ frama-c-gui -wp -eva- eva-domains taint -eva-no-alloc-returns-null -eva-context-valid-pointers c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-frama-c.c
 ```
 ![lab1_framac_cmdi_good](lab1/lab1_framac_cmdi_good.png)
 </details>
@@ -1061,7 +1082,7 @@ $ sudo docker run -v $HOME:$HOME -it smackers/smack
 smack@container$
 ```
 
-To make it feasible to statically explore all possible program paths, SMACK resorts to a bounded model checking technique that it will explore all paths only up to a (typically small) maximum depth.
+To make it feasible to statically explore all possible program paths, SMACK resorts to a bounded model checking technique that will explore all paths only up to a (typically small) maximum depth.
 
 #### Integer overflow
 
@@ -1396,14 +1417,9 @@ Beyond being dynamic vs static tools, the analysis techniques of TIMECOP and ctv
 * ctverif performs a static information flow analysis to verify a so-called non-interference property stating that *for similar public data, but possibly different secret data, the valuations of time-sensitive expressions shall remain the same*. It requires the explicit declaration of public input data, where all remaining data is considered secret.
 
 Navigate to the [vm](../vm) folder and run `make run-ctverif`.
-It will replicate the following steps to set up a Docker container with ctverif:
-1. Build the ctverif docker image:
+It will launch a ctverif-powered container :
 ```ShellSession
-$ sudo docker build -f ctverif.dockerfile . -t ctverif
-```
-2. Launch a ctverif-powered container (replace the path `/home/kali`):
-```ShellSession
-$ sudo docker run -v $HOME:$HOME -it ctverif
+$ sudo docker run -v ${HOME}:${HOME} -it hugopacheco/ctverif
 ctverif@container$
 ```
 
@@ -1472,6 +1488,7 @@ As before, we can turn our program into a constant-time one [pass-loop-good-ctve
 We may run such second program in the same way:
 <details>
 <summary>Result</summary>
+
 ```ShellSession
 ctverif@container# ctverif c/misc/pass-loop-good-ctverif.c --entry-points check --unroll=10
 ctverif version 1.0.1
@@ -1505,8 +1522,8 @@ The goal of this lab is to experiment with the dynamic and static analysis tools
 3. For each chosen vulnerable program `c/SARD-testsuite-100/000/149/i`, find and study the equivalent but more secure program `c/SARD-testsuite-101/000/149/i+1`. If you chose a different dataset, propose a secure version of the vulnerable program.
 4. Was your vulnerability found by the automated scanners? From the error log (or lack thereof), what can you deduct about the scanner's analysis technique?
 5. Based on the above experiments, select a reasonable set of tools for analysing your program.
-6. **In your group's GitHub repository, write a small report to the markdown file `Lab1.md`.**
-7. Write a small report discussing, in general, what was your experience from the perspective of a software developer analysing the security of your code; you are **not** required to experiment with all the tools **nor** acquire advanced understanding of the more technical details of the analysis behind each tool. You shall answer these questions in particular:
+6. **In your group's GitHub repository, write a small report in the markdown file `Lab1.md`.**
+7. Write a small report discussing, in general, what was your experience from the perspective of a software developer analysing the security of your code; you are **not** required to experiment with all the tools **nor** acquire advanced understanding of the more technical details of the analysis behind each tool; nonetheless, you are **expected** to justify your tool selecting and to interpret the tool results obtained with each selected tool. You shall answer these questions in particular:
    * which [CWE](https://cwe.mitre.org/)s are associated with each vulnerability?
    * which tools have you found more suitable for analysing your vulnerabilities and why?
    * how have the chosen tools helped in finding those vulnerabilities?
