@@ -8,6 +8,18 @@ Instead of focusing on exploitation and mitigation, we will study how various ex
 
 In this lab we will use a series of C examples that are part of the [SARD test suite 100/101 pair](https://samate.nist.gov/SRD/testsuite.php#sardsuites), from the larger [NIST SARD](https://samate.nist.gov/SARD/) project. Each example comes as a pair of C programs where the first (from test suite 100) has a flaw and the second (from test suite 101) demonstrates how to possibly fix the flaw.
 
+## Topics & Additional References
+
+Before we start, this lab will cover, by example, a series of program analysis techniques and tools. These topics are likely to be mentioned in the theoretical lectures only in a broad sense and have a short introduction in this lab, which together should be sufficient for our experimentation. For a more in-depth contextualization or more technical detail, you may ask the instructors or check the following references:
+
+* [Program Analysis for	Security](https://crypto.stanford.edu/cs155old/cs155-spring16/lectures/04-program-tools.pdf) from [Computer and Network Security @ Stanford](https://cs155.stanford.edu/)
+* [Dynamic Analysis](http://www.cs.cmu.edu/~ckaestne/17313/2018/20181016-qa-dynamic.pdf) from [Foundations of Software Engineering @ CMU](https://cmu-313.github.io/)
+* [Static Analysis](http://www.cs.cmu.edu/~ckaestne/17313/2018/20181018-qa-static.pdf) from [Foundations of Software Engineering @ CMU](https://cmu-313.github.io/)
+* [Memory Safety](https://inst.eecs.berkeley.edu/~cs161/sp19/lectures/lec03_safety.pdf) from [Computer Security @ Berkeley](https://sp23.cs161.org/)
+* [Taint analysis](https://www.cs.cmu.edu/~ckaestne/15313/2018/20181023-taint-analysis.pdf) from [Foundations of Software Engineering @ CMU](https://cmu-313.github.io/)
+* [Side Channel Attacks](https://cseweb.ucsd.edu/classes/wi22/cse127-a/slides/7-sidechannels.pdf) from [ Intro to Computer Security @ UCSD](https://cseweb.ucsd.edu/classes/wi22/cse127-a/)
+* [Principled Approaches to Constant-Time Cryptography](https://www.cs.uu.nl/docs/vakken/mapa/downloads/ct-lecture.pdf) from [Automatic Program Analysis @ Utrecht]
+
 ## [Dynamic Program Analysis](https://oaklandsok.github.io/papers/song2019.pdf)
 
 Dynamic program analysis is typically used to denote analysis methods that examine an application as it’s running to find vulnerabilities that an attacker could exploit. They therefore focus on dynamically examining - at runtime - a single run of an application.
