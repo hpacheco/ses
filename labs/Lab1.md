@@ -1501,6 +1501,7 @@ Although many of these scanners are full-fledged commercial solutions, we list a
 * [Flawfinder](https://dwheeler.com/flawfinder/): for C/C++; needs to be run locally for your project;
 * [Coverity](https://scan.coverity.com/): requires login to view results, you need to set it up for your repository;
 * [GitHub Code Scanning](https://github.com/hpacheco/ses/security/code-scanning): public web interface for [CodeQL](https://codeql.github.com/) that offers automated code scanning for security vulnerabilities; formerly known as [LGTM](https://lgtm.com);
+* [GitLab](https://docs.gitlab.com/ee/user/application_security/secure_your_application.html): integrated static analysis of source code;
 * [SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_ses): public web interface for [SonarQube](https://www.sonarqube.org/) analysis results.
 
 ## Tasks
@@ -1509,11 +1510,11 @@ The goal of this lab is to experiment with the dynamic and static analysis tools
 1. Study and try out the tools described above.
 2. Choose two vulnerable programs **under different categories** from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse. It is not mandatory to choose examples from this dataset; you may also choose examples of vulnerable C programs from other resources such as, e.g., another [SARD dataset](https://samate.nist.gov/SARD/testsuite.php) or the [US-CERT dataset](https://www.cisa.gov/uscert/bsi/articles/tools/source-code-analysis/source-code-analysis-tools---example-programs).
 3. For each chosen vulnerable program `c/SARD-testsuite-100/000/149/i`, find and study the equivalent but more secure program `c/SARD-testsuite-101/000/149/i+1`. If you chose a different dataset, propose a secure version of the vulnerable program.
-4. Was your vulnerability found by the automated scanners? From the error log (or lack thereof), what can you deduct about the scanner's analysis technique?
-5. Based on the above experiments, select a reasonable set of tools for analysing your program.
-6. **In your group's GitHub repository, write a small report in the markdown file `Lab1.md`.**
-7. Write a small report discussing, in general, what was your experience from the perspective of a software developer analysing the security of your code; you are **not** required to experiment with all the tools **nor** acquire advanced understanding of the more technical details of the analysis behind each tool; nonetheless, you are **expected** to justify your tool selecting and to interpret the tool results obtained with each selected tool. You shall answer these questions in particular:
+4. Based on the above experiments, select a reasonable set of tools for analysing your program.
+5. **In your group's GitHub repository, write a small report in the markdown file `Lab1.md`.**
+6. Write a small report discussing, in general, what was your experience from the perspective of a software developer analysing the security of your code. **Please note that your grade will be decided by the quality of your report**: you are **not** required to experiment with all the tools **nor** acquire advanced understanding of the more technical details of the analysis behind each tool; nonetheless, you are **expected** to justify your tool selection and to interpret the tool results obtained with each selected tool. You shall answer these questions in particular:
    * which [CWE](https://cwe.mitre.org/)s are associated with each vulnerability?
+   * was your vulnerability found by the automated scanners? From the error log (or lack thereof), what can you deduct about the scanner's analysis technique?
    * which tools have you found more suitable for analysing your vulnerabilities and why?
    * how have the chosen tools helped in finding those vulnerabilities?
    * which tool limitations did you encounter and which adjustments to the program or tool parameters have you found necessary?
