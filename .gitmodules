@@ -1,3 +1,6 @@
 [submodule "c/misc/heartbleed/openssl"]
 	path = c/misc/heartbleed/openssl
 	url = https://github.com/openssl/openssl
+[submodule "c/misc/libxml2/libxml2"]
+	path = c/misc/libxml2/libxml2
+	url = https://github.com/GNOME/libxml2
