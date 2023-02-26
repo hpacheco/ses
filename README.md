@@ -1,5 +1,5 @@
 
-This repository contains auxiliary material for the [Segurança em Engenharia de Software](https://sigarra.up.pt/fcup/pt/UCURR_GERAL.FICHA_UC_VIEW?pv_ocorrencia_id=485550) course.
+This repository contains auxiliary material for the [Segurança em Engenharia de Software](https://sigarra.up.pt/fcup/pt/ucurr_geral.ficha_uc_view?pv_ocorrencia_id=507373) course.
 
 # Setup
 
@@ -15,5 +15,5 @@ The different [labs](labs) for the pratical classes:
 # Project
 
 The proposal of the final project of the pratical classes:
-* [Final Project - Secure File-Sharing Server](labs/Project.md)
+* [Final Project - To Be Released](project/Project.md)
 

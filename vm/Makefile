@@ -22,11 +22,7 @@ run-dependency-check:
 	./dependency-check/bin/dependency-check.sh --enableExperimental --scan juice-shop
 
 run-dfsan:
-	rm -rf clang-dfsan
-	git clone https://github.com/mcopik/clang-dfsan
-	cd clang-dfsan && \
-	  sudo sh build-cfsan.sh && \
-	  sudo docker run -v ${HOME}:${HOME} -it mcopik/clang-dfsan:cfsan-9.0
+	sudo docker run -v ${HOME}:${HOME} -it mcopik/clang-dfsan:cfsan-9.0
 
 run-smack:
 	sudo docker run -v ${HOME}:${HOME} -it smackers/smack

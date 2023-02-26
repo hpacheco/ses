@@ -339,6 +339,10 @@ It will run indefinitely; stop it after a while and inspect the `results` folder
 
 Even though it does not offer an not automated script, SymCC may also be combined with AFL similarly to fuzzolic; check the [documentation](https://github.com/eurecom-s3/symcc/blob/master/docs/Fuzzing.txt). 
 
+### [Angora](https://angorafuzzer.github.io/)
+
+Angora is a mutation-based fuzzer that seeks to improve AFL's branch coverage without resorting to symbolic execution. Instead, it relies on dynamic byte-level taint tracking to try to understand how inputs affect branch constraints, and therefore how to mutate inputs to improve branch coverage.
+
 ### [KLEE-taint](https://github.com/feliam/klee-taint)
 
 The testing methodologies that we have seen so far focus on traditional safety properties such as undefined behavior or memory errors.
