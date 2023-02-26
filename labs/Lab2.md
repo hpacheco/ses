@@ -6,15 +6,26 @@ Another essential process of secure software design is that of software testing,
 On top of classical software testing techniques, such as unit testing, various automated testing approaches propose to complement existing software testing efforts by facilitating the writing of tests and improving test coverage.
 
 In this lab we will look at two techniques that, both separately and combined, have proven to be valuable additions for finding serious bugs that have been lying in software for a long time (see [these](https://github.com/google/fuzzer-test-suite) examples):
-* **fuzzing**, a black-box testing technique that consists in *blindly* generating a wide set of random program-independent inputs according to some genetic algorithm;
+* **fuzzing**, a black-box testing technique that consists in generating a large number of random program-independent inputs according to some input-generation algorithm;
 * **symbolic execution**, a white-box testing technique that consists in substituting program inputs by symbolic (undefined) values and partially evaluating the program; an outcome of the program exploration is to generate program-dependent tests for symbolic inputs.
 * **concolic execution** is a software testing technique that combines symbolic execution with concrete execution of particular inputs, e.g. generated using fuzzing.
 
-Fuzzing, symbolic execution and concolic execution are a currently hot research topic, and there are many experimental academic tools being proposed recently. The [FuzzBench](https://google.github.io/fuzzbench/) project is an effort to standardize benchmarks of such tools. You may get a visual picture of the ever-growing list of available techniques and tools in this [survey](https://github.com/SoftSec-KAIST/Fuzzing-Survey).
+Fuzzing, symbolic execution and concolic execution are a currently hot research topic, and there are many recently proposed tools that combine these techniques (to the point that the nomenclature is often ``fuzzy''). The [FuzzBench](https://google.github.io/fuzzbench/) project is an effort to standardize benchmarks of such tools. You may get a visual picture of the ever-growing list of available techniques and tools in this [survey](https://github.com/SoftSec-KAIST/Fuzzing-Survey).
+
+## Topics & Additional References
+
+Before we start, this lab will cover, by example, a series of testing techniques and tools. These topics are only introduced in the theoretical lectures in a broad sense and shortly introduced in this lab, which together should be sufficient for our experimentation. For a more in-depth contextualization or more technical detail, you may ask the instructors or check the following references:
+
+* [Finding vulnerabilities by fuzzing, dynamic and static analysis](https://cs155.stanford.edu/lectures/06-testing.pdf) from [Computer and Network Security @ Stanford](https://cs155.stanford.edu/)
+* [Fuzz Testing](https://cmu-program-analysis.github.io/2021/lecture-slides/17-fuzzing.pdf) from [Program Analysis @ CMU](https://cmu-program-analysis.github.io/2021/)
+* [Symbolic and Concolic Execution](https://www.software-lab.org/teaching/winter2021/pa/lecture_symbolic_execution.pdf) from [Program Analysis @ Stuttgart](https://www.software-lab.org/teaching/winter2021/pa/)
+* [Awesome Fuzzing](https://github.com/secfigo/Awesome-Fuzzing), a compilation of various books and tools.
+* [Awesome Symbolic Execution](https://github.com/ksluckow/awesome-symbolic-execution), a compilation of various lectures and tools.
+
 
 ## [Radamsa](https://gitlab.com/akihe/radamsa)
 
-Radamsa is a black-box fuzzing tool that generates random program inputs by mutating some given input. Radamsa is fully scriptable, and so far has been successful in finding vulnerabilities in various real-world applications.
+Radamsa is a mutation-based fuzzing tool that generates random program inputs by mutating some given input. Radamsa is fully scriptable, and so far has been successful in finding vulnerabilities in various real-world applications.
 
 Radamsa is simply a command-line tool that receives a file with some data to mutate and returns various possible mutations. We can control command-line parameters such as the number of mutations or the *seeds* (randomness) used for generation of mutations, as in the following example:
 <details>
@@ -62,7 +73,7 @@ But how certain can we be about the effectiveness of the fuzzer? Since it is ess
 KLEE is a symbolic execution tool which can significantly beat the coverage of developer’s own hand-written test suites.
 KLEE is able to automatically generated high-coverage test inputs that perform better than the poor performance of manual and random testing approaches. It does so by forking symbolic variables on program branches, to make sure that if generates inputs to check every possible program path. In practice, KLEE will not have 100% program coverage: evaluating all program executions is a computationally expensive and undecidable problem, and hence, like all symbolic execution techniques, KLEE needs to compromise on a maximum path depth.
 
-The KLEE tool is a white-box testing instrument that runs on LLVM bitcode.
+The KLEE tool runs on LLVM bitcode.
 Many other symbolic execution tools exist for non-LLVM languages. A few examples for reference:
 * [Java Pathfinder](https://github.com/javapathfinder) is a highly extensible system to verify executable Java bytecode programs that can serve as a Java alternative to KLEE. It features extensions for symbolic execution of Java bytecode such as [SymbolicPathFinder](https://github.com/SymbolicPathFinder/jpf-symbc).
 * [angr](https://docs.angr.io/) is a binary analysis platform that supports dynamic symbolic execution of both Java programs and Android applications.
@@ -162,7 +173,7 @@ For our erroneous tests, it shall fail. You can also confirm the error.
 
 ### Maze example
 
-In a sense, a symbolic executor is exploring a maze defined by the program's execution space. We can make this analogy a reality by using KLEE to symbolically execute a program that asks its user to solve a maze. Check the [maze.c](../c/misc/maze/maze.c), taken from this blog [post](https://feliam.wordpress.com/2010/10/07/the-symbolic-maze/), that defines a maze-solving procedure.
+In a sense, a symbolic execution tool is exploring a maze defined by the program's execution space. We can make this analogy a reality by using KLEE to symbolically execute a program that asks its user to solve a maze. Check the [maze.c](../c/misc/maze/maze.c), taken from this blog [post](https://feliam.wordpress.com/2010/10/07/the-symbolic-maze/), that defines a maze-solving procedure.
 
 Compile and run the program. We can solve the maze with the following input:
 <details>
@@ -209,7 +220,7 @@ As it turns out, something funny is going on: the found path is not even the len
 
 ## [Blab](https://code.google.com/archive/p/ouspg/wikis/Blab.wiki)
 
-Blab is a small tool for generating data according to grammars. It is intended to be used to generate data which has a known context-free structure, usually in order to be able to test programs or produce interesting sample data for fuzzers.
+Blab is a small tool for generating data according to grammars. It is intended to be used to generate data which has a known context-free structure, usually in order to be able to test programs or produce interesting sample data for fuzzers. Fuzzers that rely on a specification for the input format to generate test cases are often called generation-based fuzzers.
 
 If we try to use a fuzzer like radamsa to solve our maze, it will unlikely succeed since since it does not know that only sequences of `wsad` characters are valid inputs. We can however improve by encoding such an input grammar using blab; check the [fuzz.py](../c/misc/maze/fuzz.py) which automates the search for a maze solution, you can run it as follows.
 
@@ -222,7 +233,7 @@ Did it find a solution? You may try to improve the grammar, the seed or the numb
 
 ## [American Fuzzy Lopp (AFL)](https://github.com/google/AFL)
 
-AFL is a grey-box (not black-box nor white-box) fuzzing tool which symbolically executes programs and takes the constraints of inputs into account to create dynamic tests. The tested program should first be compiled with a utility program to enable control flow tracking. Any behavioural changes as a response to the input can then be detected by the fuzzer. If there is no access to the source code, then blackbox testing is supported as well.
+AFL is a coverage-guided fuzzing tool, often called a grey-box fuzzer, which takes into account the code coverage of tested inputs to understand if it is making progress and to make informed decisions about which inputs to mutate to maximize coverage. In a sense, it is a lightweight form of symbolic execution. The tested program should first be compiled with a utility program to enable control flow tracking. Any behavioural changes as a response to the input can then be detected by the fuzzer. If there is no access to the source code, then blackbox testing is supported as well.
 
 We will try a few examples from this AFL [tutorial](https://github.com/mykter/afl-training).
 
@@ -270,9 +281,35 @@ You may stop as soon as AFL finds a crash. Inspect the produced crash log.
 [^1]: Address Sanitizer needs a lot of virtual memory, and by default AFL will limit the amount of memory a fuzzed software gets.
 This may make your VM allocate a lot of memory and lead to random crashes; make sure that you are not running anything else important on the system.
 
+### libxml2 example
+
+As another example, start by pulling libxml2 version 2.9.2 (with a few known fuzzable vulnerabilities, see [here](https://github.com/google/fuzzer-test-suite/tree/master/libxml2-v2.9.2)) and compile it with ALF support. BUilding will take a while:
+```ShellSession
+$ cd c/misc/libxml2/
+$ git submodule --init --recursive
+$ cd libxml2
+$ CC=afl-clang-fast ./autogen.sh --disable-shared --without-debug --without-ftp --without-http --without-legacy --without-python
+$ AFL_USE_ASAN=1 make -j 4
+```
+
+To fuzz XML files, we define a program that reads a XML file and use the [W3C XML test suite](https://www.w3.org/XML/Test/) a base corpus of inputs. AFL also supports a dictionary with the vocabulary for aiding in generating mutations of the original inputs; we will use [AFL's XML dictionary](https://github.com/google/AFL/blob/master/dictionaries/xml.dict).
+
+```ShellSession
+$ AFL_USE_ASAN=1 afl-clang-fast ./xmlreadAFL.cc -I libxml2/include libxml2/.libs/libxml2.a -lz -lm -o fuzzer
+$ wget https://www.w3.org/XML/Test/xmlts20130923.tar.gz -O - | tar -xz
+$ mkdir output
+$ afl-fuzz -i xmlconf -o output -x xml.dict ./fuzzer @@
+```
+
+AFL will soon find a crash.
+
+## [libFuzzer](https://llvm.org/docs/LibFuzzer.html)
+
+LLVM's libFuzzer is a coverage-guided fuzzing engine that ships with Clang.
+
 ## Other tools :warning: :construction:
 
-There are many other modern grey-box fuzzing techniques that can achieve better results for custom programs, often by combining some form of symbolic execution. Many of the associated tools are experimental, possibly quite complex to configure and use, and can become out-of-date quickly.
+There are many other modern fuzzing techniques that can achieve better results for custom programs, often by combining some form of symbolic execution. Many of the associated tools are experimental, possibly quite complex to configure and use, and can become out-of-date quickly.
 
 **Remark:** For the sake of demonstration, we will look at a few, but be advised that it may be hard to understand their behavior outside of the example programs that we provide. 
 
@@ -409,21 +446,21 @@ $ cd examples/taint/path/to/the/folder/of/the/example/
 $ make verify
 ```
 
+### [dudect](https://www.reparaz.net/oscar/misc/dudect)
+
+It is possible to reduce the analysis of some security properties to the comparison of two program executions (for slightly different inputs). One simple example is [dudect](https://www.reparaz.net/oscar/misc/dudect), a minimal C library that tests cryptographic functions with multiple inputs to find timing variations.
+
 ### [ct-fuzz](https://github.com/michael-emmi/ct-fuzz)
 
-So far, we have seen how dynamic taint analysis can be naturally combined automated testing techniques such as symbolic execution.
-For a more rigorous security analysis approach, it is well known that it is possible to reduce the analysis of some security properties to the analysis of *self-composed* programs which simulate multiple simultaneous executions of the original program; this is precisely what ct-verif does.
-Using the same rationale, it is possible to generalize automated testing techniques to handle some security properties as *self-composed* safety properties of *self-composed* programs.
-
-Very recent academic tools allow applying traditional fuzzers to support the automated testing of security properties; one such example is ct-fuzz, tailored for automated testing of constant-time security for cryptographic implementations.
-Since most of these tools are not yet very user-friendly, we refrain from providing running examples. If you are interested in learning more, check the ct-fuzz [paper](http://www.cs.utah.edu/~shaobo/ct-fuzz.pdf) and the [GitHub repository](https://github.com/michael-emmi/ct-fuzz).
+Constant-time static analysis tools such as ct-verif consider a *self-composed* program that simulates two parallel executions of the original program.
+Using the same rationale, it is possible to use traditional fuzzers to support the automated testing of security properties by comparing the outputs of multiple fuzzed inputs; one such example is ct-fuzz, tailored for automated testing of constant-time security for cryptographic implementations. You may the ct-fuzz [paper](http://www.cs.utah.edu/~shaobo/ct-fuzz.pdf) and the [GitHub repository](https://github.com/michael-emmi/ct-fuzz).
 
 ## Tasks
 
 The goal of this lab is to experiment with the automated testing tools described above. We will detect and fix the vulnerabilities found in example C programs from the [c/SARD-testsuite-100](../c/SARD-testsuite-100) testsuite. 
 1. Study and try out the tools described above.
 2. Choose one vulnerable program from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse. To make it interesting, your chosen vulnerable program should only crash or lead to a security vulnerability for some inputs, but not for all inputs. It is not mandatory to choose examples from this dataset; you may also choose examples of vulnerable C programs from other resources such as, e.g., another [SARD dataset](https://samate.nist.gov/SARD/testsuite.php) or the [US-CERT dataset](https://www.cisa.gov/uscert/bsi/articles/tools/source-code-analysis/source-code-analysis-tools---example-programs). Alternatively, you may wish to try out a more realistic example from, e.g., Google's FuzzBench [benchmarks](https://github.com/google/fuzzbench/tree/master/benchmarks).
-4. Test your program with some of the above tools. You should try at least one fuzzing tool and one symbolic execution tool.
+4. Test your program with some of the above tools. You should try at least one basic black-box fuzzing tool (Radamsa or Blab) and one symbolic execution tool (KLEE); or make sure to explore other grey-box fuzzing tools (AFL and onwards).
 5. **In your group's GitHub repository, write a small report to the markdown file `Lab2.md`.**
 6. The report shall discuss:
    * were you able to find the vulnerability? with which tools? why do you think that is the case?
