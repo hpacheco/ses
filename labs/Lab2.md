@@ -307,6 +307,20 @@ AFL will soon find a crash.
 
 LLVM's libFuzzer is a coverage-guided fuzzing engine that ships with Clang.
 
+```ShellSession
+$ cd c/misc/libxml2/
+$ git submodule --init --recursive
+$ cd libxml2
+$ FUZZ_CXXFLAGS="-g -O2 -fsanitize=fuzzer-no-link,address,undefined"
+$ CXX="clang++ $FUZZ_CXXFLAGS" CC="clang $FUZZ_CXXFLAGS" CCLD="clang++ $FUZZ_CXXFLAGS" ./autogen.sh --disable-shared --without-debug --without-ftp --without-http --without-legacy --without-python
+$ make -j 4
+```
+
+```ShellSession
+$ clang -g -O2 -fsanitize=fuzzer,address,undefined xmlreadLibFuzzer.cc -I libxml2/include libxml2/.libs/libxml2.a -lz -o fuzzer
+$ ./fuzzer xmlconf -dict=xml.dict -max_len=64
+```
+
 ## Other tools :warning: :construction:
 
 There are many other modern fuzzing techniques that can achieve better results for custom programs, often by combining some form of symbolic execution. Many of the associated tools are experimental, possibly quite complex to configure and use, and can become out-of-date quickly.
