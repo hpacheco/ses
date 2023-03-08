@@ -301,11 +301,14 @@ $ mkdir output
 $ afl-fuzz -i xmlconf -o output -x xml.dict ./fuzzer @@
 ```
 
-AFL will soon find a crash.
+AFL will soon find a crash (see [here](https://github.com/google/fuzzer-test-suite/tree/master/libxml2-v2.9.2)).
 
 ## [libFuzzer](https://llvm.org/docs/LibFuzzer.html)
 
 LLVM's libFuzzer is a coverage-guided fuzzing engine that ships with Clang.
+Contrarily fo AFL, that is targeted for fuzzing executables via I/O, libFuzzer is designed for fuzzing libraries via in-memory handlers; a few more technical differences can be consulted [in this article](https://www.moritz.systems/blog/an-introduction-to-llvm-libfuzzer/).
+
+We can recompile our libxml2 example with libFuzzer support as follows:
 
 ```ShellSession
 $ cd c/misc/libxml2/
@@ -316,10 +319,15 @@ $ CXX="clang++ $FUZZ_CXXFLAGS" CC="clang $FUZZ_CXXFLAGS" CCLD="clang++ $FUZZ_CXX
 $ make -j 4
 ```
 
+To fuzz XML files, we use the same XML dictionary and input corpus as we did for AFL:
+
 ```ShellSession
 $ clang -g -O2 -fsanitize=fuzzer,address,undefined xmlreadLibFuzzer.cc -I libxml2/include libxml2/.libs/libxml2.a -lz -o fuzzer
 $ ./fuzzer xmlconf -dict=xml.dict -max_len=64
 ```
+
+The fuzzer will soon find a crash (see [here](https://github.com/google/fuzzer-test-suite/tree/master/libxml2-v2.9.2)), and exit when it finds the first crash.
+Note that libFuzzer will add its generated inputs to the `xmlconf` directory.
 
 ## Other tools :warning: :construction:
 

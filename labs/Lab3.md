@@ -139,8 +139,13 @@ For the case of Juice Shop, an interesting detail is that it comes with a large 
 
 So, a nice idea (originally from this [blog post](https://www.omerlh.info/2018/12/23/hacking-juice-shop-the-devsecops-way/)) to maximize vulnerability coverage would be to include these tests in ZAP scan to automate an otherwise manual search for known vulnerabilities. It turns out that the only thing that we need to do is compile Juice Shop from sources and proxy the E2E tests via ZAP.
 
+Add OWASP ZAP root CA certificate to Chrome
+
 First guarantee that ZAP Proxy is running at http://localhost:8080 (its default port). Then, in the [vm](../vm) folder, type:
 ```ShellSession
+sudo apt install libnss3-tools
+certutil -d sql:$HOME/.pki/nssdb -A -t "C,," -n <certificate nickname> \
+-i <certificate filename>
 $ make build-juiceshop #you may skip this if already built
 $ make e2e-juiceshop
 ```
@@ -190,11 +195,6 @@ $ schemathesis run swagger.yml -H "Authorization: Bearer <TOKEN>" --checks all -
 By default, schemathesis tests each API operation independently. In real applications, API operations may have dependencies, e.g. getting the details of a product may only work for existing products, which may have been listed before.
 In order to improve the precision of the generated tests, schemathesis also supports [stateful testing](https://schemathesis.readthedocs.io/en/stable/stateful.html) by using [OpenAPI links](https://swagger.io/docs/specification/links/), a new feature for describing how the values returned by one operation may be used as input for other operations. 
 
-#### [Dredd](https://dredd.org/)
-
-Dredd is another API testing tool with a focus on specification conformance.
-In comparison with Schemathesis, Dredd is closer to unit testing and focuses more on complex test sequences and software development pipeline integration.
-
 #### [RESTler](https://github.com/microsoft/restler-fuzzer)
 
 RESTler is a API fuzzing tool that searches for 5xx server errors. More interestingly, it also runs additional [stateful checkers](https://github.com/microsoft/restler-fuzzer/blob/main/docs/user-guide/Checkers.md) that search for fixed vulnerabilities in fuzz-generated sequences of operations that may have security implications, such as internal side-effects left by erroneous operations.
@@ -233,6 +233,13 @@ echo "{u'11111111-11111-1111-1111-1111111': {}}"
 echo "Authorization: Bearer <TOKEN>"
 ```
 Repeat the 4 steps with the additional parameters `--token_refresh_interval <large number in seconds> --token_refresh_command token.sh`.
+
+#### [Dredd](https://dredd.org/)
+
+Dredd is another API testing tool with a focus on specification conformance.
+In comparison with Schemathesis, Dredd is closer to unit testing and focuses more on complex test sequences and software development pipeline integration.
+
+#### [Cherrybomb](https://github.com/blst-security/cherrybomb/)
 
 ## Static Application Security Testing (SAST)
 
