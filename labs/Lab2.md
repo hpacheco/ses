@@ -220,7 +220,7 @@ As it turns out, something funny is going on: the found path is not even the len
 
 ## [Blab](https://code.google.com/archive/p/ouspg/wikis/Blab.wiki)
 
-Blab is a small tool for generating data according to grammars. It is intended to be used to generate data which has a known context-free structure, usually in order to be able to test programs or produce interesting sample data for fuzzers. Fuzzers that rely on a specification for the input format to generate test cases are often called generation-based fuzzers.
+Blab is a small tool for generating data according to grammars, and can be seen as a minimal for a generation-based fuzzer. It is intended to be used to generate data which has a known context-free structure, usually in order to be able to test programs or produce interesting sample data for fuzzers. Fuzzers that rely on a specification for the input format to generate test cases are often called generation-based fuzzers.
 
 If we try to use a fuzzer like radamsa to solve our maze, it will unlikely succeed since since it does not know that only sequences of `wsad` characters are valid inputs. We can however improve by encoding such an input grammar using blab; check the [fuzz.py](../c/misc/maze/fuzz.py) which automates the search for a maze solution, you can run it as follows.
 
