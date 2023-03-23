@@ -42,7 +42,7 @@ $ radamsa inputs/1 -n 3 -s 564
 ```
 </details>
 
-Radamsa by itself is not a testing framework. Therefore, in order to run generated test cases against an application, we have to script the testing logic ourselves. We will use a simple example borrowed from this [course](https://www.coursera.org/learn/software-security). Consider an interactive C program [wisdom-alt.c](../c/misc/wisdom/wisdom-alt.c) that has two modes: storing a secret string or displaying a stored secret string. We have written a a Python script [fuzz.py](../c/misc/wisdom/fuzz.py) that connects the output from radamsa to the input of the wisdom program and reads the initial data from the [inputs/1](../c/misc/wisdom/inputs/1) file; it will mutate the input data using different seeds and, in each run, send the mutated data line by line to the interactive wisdom program. You may run this example as follows:
+Radamsa by itself is not a testing framework. Therefore, in order to run generated test cases against an application, we have to script the testing logic ourselves. We will use a simple example borrowed from this [course](https://www.coursera.org/learn/software-security). Consider an interactive C program [wisdom-alt.c](../c/misc/wisdom/wisdom-alt.c) that has two modes: storing a secret string or displaying a stored secret string. We have written a Python script [fuzz.py](../c/misc/wisdom/fuzz.py) that connects the output from radamsa to the input of the wisdom program and reads the initial data from the [inputs/1](../c/misc/wisdom/inputs/1) file; it will mutate the input data using different seeds and, in each run, send the mutated data line by line to the interactive wisdom program. You may run this example as follows:
 <details>
 <summary>Result</summary>
 
@@ -54,8 +54,8 @@ $ python3 fuzz.py ./wisdom-alt
 
 The fuzzer will quickly find a bug, i.e., record a crash. Why did the program crash? You can replicate the same behavior by running the program manually. You can also edit [fuzz.py](../c/misc/wisdom/fuzz.py) to change the input data, the seed or have radamsa generate different inputs.
 
-As you may perceive, it turns out that the bug occurs in an invalid menu option (that is not 1 or 2) is passed to the interactive program.
-The file [wisdom-alt2.c](../c/misc/wisdom/wisdom-alt2.c) contains an additional guard to ignore invalid options; this change fixis the previous bug. You may run the second wisdom program as before:
+As you may perceive, it turns out that the bug occurs when an invalid menu option (that is not 1 or 2) is passed to the interactive program.
+The file [wisdom-alt2.c](../c/misc/wisdom/wisdom-alt2.c) contains an additional guard to ignore invalid options; this change fixes the previous bug. You may run the second wisdom program as before:
 <details>
 <summary>Result</summary>
 
@@ -71,7 +71,7 @@ But how certain can we be about the effectiveness of the fuzzer? Since it is ess
 ## [KLEE](https://klee.github.io/)
 
 KLEE is a symbolic execution tool which can significantly beat the coverage of developer’s own hand-written test suites.
-KLEE is able to automatically generated high-coverage test inputs that perform better than the poor performance of manual and random testing approaches. It does so by forking symbolic variables on program branches, to make sure that if generates inputs to check every possible program path. In practice, KLEE will not have 100% program coverage: evaluating all program executions is a computationally expensive and undecidable problem, and hence, like all symbolic execution techniques, KLEE needs to compromise on a maximum path depth.
+KLEE is able to automatically generate high-coverage test inputs that perform better than the poor performance of manual and random testing approaches. It does so by forking symbolic variables on program branches, to make sure that if generates concrete inputs to check every possible program path. In practice, KLEE will not have 100% program coverage: evaluating all program executions is a computationally expensive and undecidable problem, and hence, like all symbolic execution techniques, KLEE needs to compromise on a maximum path depth.
 
 The KLEE tool runs on LLVM bitcode.
 Many other symbolic execution tools exist for non-LLVM languages. A few examples for reference:
@@ -113,7 +113,7 @@ KLEE: done: generated tests = 132  
 </details>
 
 It should exit shortly and discover the error (an overflow related to the size of the array read from `gets`), printing a stack trace and some information about the current state. It will have created a directory `klee-last` in the current directory that contains further information about the symbolic execution. If you look in there, you will see that it generated some tests, error reports and some statistics.
-The (binary) files ending in `.ktest` in this directory can be formatted intelligibly by using `ktest-tool`. Use the following commands to inspect the symbolic state that the error occurred in:
+The (binary) files ending in `.ktest` in this directory can be formatted intelligibly by using `ktest-tool`. Use the following commands to inspect the concrete state that the error occurred in:
 
 <details>
 <summary>Result</summary>

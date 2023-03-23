@@ -34,6 +34,9 @@ Inside the [vm](../vm) folder, you may just type:
 
 **For this lab, we will only consider Juice Shop exercises.** Nevertheless, for students interested in a more extensive list of web vulnerabilities or learning more about a particular vulnerability, OWASP Mutillidae II is a good source. It is a vulnerable web site that contains a categorised listing of OWASP vulnerabilities and a series of example vulnerable pages per category. You may also easily find additional information such as tutorials. For simple demonstrations of various vulnerabilities, you may also check [Google firing range](https://public-firing-range.appspot.com/).
 
+<details>
+<summary>More details</summary>
+
 To install Mutillidae II, cd into the [vm](../vm) folder and run the following commands:
 ```ShellSession
 git pull
@@ -47,6 +50,7 @@ You may also need to set a root mysql password; check [this link](https://milose
 *Another important difference is that Juice Shop relies intensively on JavaScript for both client and server code, while Mutillidae II is mostly implemented in PHP.
 Note that, in general, most security analysis tools and techniques perform better on static PHP code when compared to dynamic JavaScript content, due to its more predictable static structure.
 Therefore, it may prove slightly more challenging for the tools (and ourselves) to identify some vulnerabilities in Juice Shop when compared to similar vulnerabilities in Mutillidae II.*
+</details>
 
 ## Threat Modelling
 
@@ -61,6 +65,9 @@ The model was created with the [OWASP Threat Dragon](https://owasp.org/www-proje
 ## Dependency scanning
 
 In a real software development life cycle, scanning for vulnerabilities within external libraries is a natural starting point. THis is not only useful information while choosing the right dependencies for your project, but also important during the development and testing of your applications. It wouldn't be very surprising to find a few of them in Juice Shop...
+
+<details>
+<summary>More details</summary>
 
 ### [Snyk](https://snyk.io/)
 
@@ -85,6 +92,8 @@ make run-dependency-check
 ```
 
 A pre-generated report for Juice Shop may be found [here](https://hpacheco.github.io/ses/labs/lab3/dependency-check-report.html).
+
+</details>
 
 ## Server scanning
 
