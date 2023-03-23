@@ -56,11 +56,16 @@ Therefore, it may prove slightly more challenging for the tools (and ourselves) 
 
 In the theoretical classes you have already studied the importance of [threat modelling](https://owasp.org/www-community/Threat_Modeling) for understanding the security of a system.
 
+<details>
+<summary>More details</summary>
+
 The Juice Shop developers have defined a general threat model [here](https://github.com/juice-shop/juice-shop/blob/master/threat-model.json), that provides an overview of the Juice Shop architecture, depicted below.
 
 ![lab3/jshop_threat_model](lab3/jshop_threat_model.png) 
 
 The model was created with the [OWASP Threat Dragon](https://owasp.org/www-project-threat-dragon/) tool. You may load the JSON file into the [online tool](https://www.threatdragon.com/) to visualize or edit the model.
+
+</details>
 
 ## Dependency scanning
 
@@ -100,6 +105,9 @@ A pre-generated report for Juice Shop may be found [here](https://hpacheco.githu
 Before we look at specific web vulnerabilities, let's first make a preliminary recognition of the structure of our web page.
 This is also useful for completing the JuiceShop [score board challenge](https://pwning.owasp-juice.shop/part1/challenges.html), which asks us to find a hidden web page which provides information about available challenges and keeps track of our challenge solving status.
 
+<details>
+<summary>More details</summary>
+
 ### [nikto](https://cirt.net/Nikto2)
 
 Nikto is a web server scanner which performs comprehensive tests against web servers for multiple items, including potentially dangerous files/programs and server configuration or version-specific problems. Nikto is also highly configurable. We can run a basic nikto scan on our web page as follows and obtain a HTML report:
@@ -119,6 +127,8 @@ Hints for finding the hidden score board:
 ```Shell
 wget -r http://localhost:3000
 ```
+
+</details>
 
 ## Dynamic Application Security Testing (DAST)
 
