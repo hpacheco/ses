@@ -306,6 +306,9 @@ In Juice Shop, there are various challenges related to [improper input validatio
 
 #### Zero Stars challenge
 
+<details>
+<summary>More details</summary>
+
 Let's have a look at the **Zero Stars** challenge, which asks us to submit a review with a 0-star rating.
 You may start by writing a review for any product, but surprisingly the review form has no associated rating.
 However, in the Juice Shop's side menu you may notice the `Customer Feedback` page, available at `http://localhost:3000/#/contact`.
@@ -318,10 +321,17 @@ You will notice that the request contains a `rating` field; setting that to `0` 
 We can concoct such an illegitimate request using a simple command line tool such as `wget` or `curl`. 
 * [Recommended] This simple attack is more convenient if we use a web monitoring tool such as OWASP ZAP or Burp Suite. If using ZAP, start a **Manual Explore** with url `http://localhost:3000/#/contact`. This will launch an instance of your browser extended with ZAP Proxy monitors, which will log all your HTTP requests. Submit a customer review, intercept the relevant request, and select the **Open/Resend with Request Editor** option to easily alter and resubmit your request.
 
+</details>
+
 #### Admin Registration challenge
+
+<details>
+<summary>More details</summary>
 
 **Try to solve** the (very similar) **Admin Registration** challenge on your own.
 After you have solved the challenge, follow the mitigation link to understand more about the associated vulnerability and solve the associated coding challenge.
+
+</details>
 
 ### SQL injection
 
@@ -329,6 +339,9 @@ SQL injection (SQLi) is one of the most classical web attacks which may have dev
 Juice Shop itself has a few challenges related to SQL injection vulnerabilities.
 
 #### Login Admin challenge
+
+<details>
+<summary>More details</summary>
 
 Let's start with the **Login Admin** challenge, which asks us login as an existing account with administrator privileges [^2].
 If we navigate to `http://localhost:3000/#/login`, we can try to login by supplying an `email` (let's try `admin`) and a `password` (randomly `123`). We can also track the HTTP request sent to the server which shall look like:
@@ -435,6 +448,8 @@ You will get an output similar to the shown below; successful logins can be dist
 <summary>Screenshots</summary>
 
 ![lab3/wfuzz_sqli.png](lab3/wfuzz_sqli.png)
+
+</details>
 
 </details>
 
