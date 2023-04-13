@@ -466,10 +466,15 @@ After you have solved the challenges, follow the mitigation link to understand m
 
 ##### GDPR Data Erasure challenge
 
+<details>
+<summary>More details</summary>
+
 The **GDPR Data Erasure** is another SQLi-related challenge that requires combining the exploits of the above two classes.
 Nonetheless, its origin goes beyond the SQLi vulnerabilities and can be attributed to a lack of proper GDPR compliance in the data erasure process.
 
 **Try to solve it** by yourself and to trace back the problem to the [source code](https://github.com/juice-shop/juice-shop) responsible for the data erasure process. Can this problem be detected by the automated tools?
+
+</details>
 
 ### Cross-Site Scripting (XSS)
 
@@ -479,6 +484,9 @@ XSS is another very common web vulnerability related to lack of input sanitizati
 * DOM-based XSS, a simpler form than a reflected XSS, where the attack takes place instantaneously in the client-side browser, without server intervention. From a user perspective, it is usually indistinguishable from a reflected XSS attack.
 
 #### Dom XSS challenge
+
+<details>
+<summary>More details</summary>
 
 Juice Shop features a multitude of XSS challenges, the simplest being the **Dom XSS** challenge.
 In this challenge, we are asked to again exploit the search page, this time by inserting not malicious SQL code but malicious HTML code.
@@ -571,6 +579,8 @@ We can try out Trusted Types with our DOM-based challenge:
     * Rebuild Juice Shop.
     * Reload the page; this time, you shall not see the previous error.
     
+</details>
+    
 #### Other XSS challenges
 
 Juice Shop features a couple other XSS injection challenges.
@@ -578,19 +588,32 @@ Juice Shop features a couple other XSS injection challenges.
     
 ##### Reflected XSS challenge
 
+<details>
+<summary>More details</summary>
+
 Try solving the **Reflected XSS** challenge by yourself. You will need to find some form that is vulnerable to XSS attacks. Tip: order some product.
 
 Even though this challenge does feature a coding challenge, we can make it so: find the code files and lines responsible for the bug and propose a solution.
 Check the logs of the automated tools and the [source code](https://github.com/juice-shop/juice-shop) for hints.
 
+</details>
+
 ##### API-only XSS
+
+<details>
+<summary>More details</summary>
 
 The **API-only XSS** challenge is an example of a stored XSS attack, where clients may call API methods that are not available in the web frontend. Hence, a successful attack will require listening to HTTP requests to extract information and sending a malicious HTTP request. Try to solve it by yourself. You can find various hints in the [guide](https://pwning.owasp-juice.shop/part2/xss.html).
 Tip: check the information of a product.
 
 After a successful attack, solve the associated coding challenge: it will refer to a vulnerable code location, even though this exploit is possible due to multiple vulnerabilities. Identify other vulnerable code locations that lead to this vulnerability.
 
+</details>
+
 ##### Client-side XSS Protection challenge
+
+<details>
+<summary>More details</summary>
 
 The **Client-side XSS Protection** challenge is another example of a stored XSS attack.
 This time, the web frontend performs some validation on inputs that is not double-checked before requests are processed by the server. Try to solve it by yourself. You can find various hints in the [guide](https://pwning.owasp-juice.shop/part2/xss.html). Tip: create a new user.
@@ -598,7 +621,12 @@ This time, the web frontend performs some validation on inputs that is not doubl
 Even though this challenge does not feature a coding challenge, we can make it so: find the code files and lines responsible for the bug and propose a solution.
 Check the logs of the automated tools and the [source code](https://github.com/juice-shop/juice-shop) for hints.
 
+</details>
+
 ##### Server-side XSS Protection challenge
+
+<details>
+<summary>More details</summary>
 
 The **Server-side XSS Protection** challenge is another example of a stored XSS attack.
 Try to solve it by yourself. You can find various hints in the [guide](https://pwning.owasp-juice.shop/part2/xss.html).
@@ -606,6 +634,8 @@ Try to solve it by yourself. You can find various hints in the [guide](https://p
 Even though this challenge does not feature a coding challenge, we can make it so: find the code files and lines responsible for the bug and propose a solution.
 Check the logs of the automated tools and the [source code](https://github.com/juice-shop/juice-shop) for hints.
 Tip: check for a vulnerable library dependency.
+
+</details>
 
 ### Broken Access Control
 
