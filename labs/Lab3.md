@@ -143,7 +143,11 @@ Unfortunately, IAST is very much dependent on used technologies since it require
 ZAP is an open-source OWASP-supported DAST tool for web applications.
 ZAP provides automated scanners as well as a set of tools that allow you to find security vulnerabilities manually.
 For further reference consult the [online documentation](https://www.zaproxy.org/docs/).
-It essentially supports the following modes:
+
+<details>
+<summary>More details</summary>
+
+ZAP essentially supports the following modes:
 * *Passive Mode*, where it simply works as a proxy that intercepts all requests and analyzes them for finding vulnerabilites;
 * *Active Mode*, where it actively crawls the visited web pages to search for new vulnerabilities.
 
@@ -156,27 +160,18 @@ Turn on the *Attack Mode* and login into one of the user accounts; you may navig
 
 For the case of Juice Shop, an interesting detail is that it comes with a large set of end-to-end (E2E) tests. The main purpose of E2E testing is to test the end user's experience by simulation real scenarios using the web application's interface. For the case of Juice Shop, E2E tests attempt to exploit the web page to solve each challenge. Juice Shop's E2E tests are written using [Selenium](https://www.selenium.dev/) scripts to emulate user interactions with the browser.
 
-So, a nice idea (originally from this [blog post](https://www.omerlh.info/2018/12/23/hacking-juice-shop-the-devsecops-way/)) to maximize vulnerability coverage would be to include these tests in ZAP scan to automate an otherwise manual search for known vulnerabilities. It turns out that the only thing that we need to do is compile Juice Shop from sources and proxy the E2E tests via ZAP.
+So, a nice idea (originally from this [blog post](https://www.omerlh.info/2018/12/23/hacking-juice-shop-the-devsecops-way/)) to maximize vulnerability coverage would be to include these tests in ZAP scan to automate an otherwise manual search for known vulnerabilities. It turns out that the only thing that we need to do is compile Juice Shop from sources and proxy the E2E tests via ZAP. Since ZAP scans are likely to run for a really long time, a pre-generated report for Juice Shop, covering the E2E tests followed by an *Active Scan* can be found [here](https://hpacheco.github.io/ses/labs/lab3/2022-02-22-ZAP-Report-e2e-active.html).
 
-Add OWASP ZAP root CA certificate to Chrome
-
-First guarantee that ZAP Proxy is running at http://localhost:8080 (its default port). Then, in the [vm](../vm) folder, type:
-```ShellSession
-sudo apt install libnss3-tools
-certutil -d sql:$HOME/.pki/nssdb -A -t "C,," -n <certificate nickname> \
--i <certificate filename>
-$ make build-juiceshop #you may skip this if already built
-$ make e2e-juiceshop
-```
-After a likely slow compilation, a Selenium-controlled Google Chrome instance will open; you shall also see the HTTP requests being tracked in ZAP.
-
-ZAP scans are likely to run for a really long time. A pre-generated report for Juice Shop, covering the E2E tests followed by an *Active Scan* can be found [here](https://hpacheco.github.io/ses/labs/lab3/2022-02-22-ZAP-Report-e2e-active.html).
+</details>
 
 ### API Testing 
 
 A crucial element of a web application is its API, which mediates communication between the backend and the frontend.
 By nature, APIs expose application logic and sensitive information and are a prime target for attackers.
 As an example, the [OWASP API Security](https://owasp.org/www-project-api-security/) project highlights security risks and mitigation strategies for developing secure APIs. For the case of Juice Shop, you may find a mapping between challenges and API Security categories in the [guide](https://pwning.owasp-juice.shop/part1/categories.html).
+
+<details>
+<summary>More details</summary>
 
 The [OpenAPI Specification](https://swagger.io/specification/) defines a standard meta-language for describing the interface of RESTful APIs, which also facilitates the study of their security. There is a large ecosystem of tools to generate server/client code from API specifications of vice-versa infer API specifications from existing application code.
 
@@ -260,6 +255,10 @@ In comparison with Schemathesis, Dredd is closer to unit testing and focuses mor
 
 #### [Cherrybomb](https://github.com/blst-security/cherrybomb/)
 
+Cherrybomb is a tool that permits checking OpenAPI specifications for good secure design practices. It also allows testing conformance of API w.r.t. their specification.
+
+</details>
+
 ## Static Application Security Testing (SAST)
 
 In the context of web applications, SAST is a testing methodology that analyzes source code to find security vulnerabilities.
@@ -272,8 +271,13 @@ The natural down-side of being a static analysis approach is that it is less pre
 
 We have seen before that there exist various commercial and open-source SAST analysis tools that we may use to analyse source code in various language and integrate with our development. Most of these tools are particularly well-versed for analysing web applications.
 
-When solving Juice Shop challenges, Of course you can also cheat a bit and search the web page's [sources](https://github.com/juice-shop) for hints.
-Even better, you may search for vulnerabilities using a SAST vulnerability scanner on the GitHub repository. This won't be necessary for the **Score Board** challenge, but keep the following pre-generated scans over Juice Shop as a reference for future tasks:
+When solving Juice Shop challenges, of course you can also cheat a bit and search the web page's [sources](https://github.com/juice-shop) for hints.
+Even better, you may search for vulnerabilities using a SAST vulnerability scanner on the GitHub repository.
+
+<details>
+<summary>More details</summary>
+
+This won't be necessary for the **Score Board** challenge, but keep the following pre-generated scans over Juice Shop as a reference for future tasks:
 * [SonarCloud](https://sonarcloud.io/project/overview?id=hpacheco_juice-shop)
 * [LGTM](https://lgtm.com/projects/g/juice-shop/juice-shop/?mode=list)
 
@@ -289,6 +293,8 @@ There are also many other static web application analysis tools designed for spe
 * [Progpilot](https://github.com/designsecurity/progpilot) is a static taint analysis tool for PHP. It supports sanitizers, which allows more control over the taint analysis when compared to automated scanners such as SonarCloud.
 * [Psalm](https://github.com/vimeo/psalm) is another security analysis tool for PHP. It supports user-controlled taint analysis much like Progpilot, but claims to perform better PHP type inference, which should reduce false positives significatively.
 * [Python Taint](https://github.com/python-security/pyt) is a static analysis tool for Python web applications. Similar ideas have matured into the more recent Facebook [Pysa](https://developers.facebook.com/blog/post/2021/04/29/eli5-pysa-security-focused-analysis-tool-python/) project.
+
+</details>
 
 ## Challenges
 
