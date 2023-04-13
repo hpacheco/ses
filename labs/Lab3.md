@@ -641,6 +641,9 @@ Tip: check for a vulnerable library dependency.
 
 #### CSRF challenge
 
+<details>
+<summary>More details</summary>
+
 Cross Site Request Forgery (CSRF) is another common web vulnerability much like XSS.
 While XSS concerns itself with injecting code into the web page, e.g. via HTTP responses, CSRF concerns the forging of illegal HTTP requests; a CSRF attack is typically done implicitly, e.g., when loading another web page from a different domain by clicking a link.
 
@@ -668,6 +671,8 @@ There are many anti-CSRF countermeasures, including stricter server-sive content
 The most common application-side countermeasure to avoid CSRF attacks is to add a unique server-side secret token to each HTTP request.
 Check the result of the automated code scanners and run a ZAP analysis on the edit profile page: both shall warn you about the lack of anti-CSRF tokens in the edit profile page.
 
+</details>
+
 #### Other Broken Access Control challenges
 
 Juice Shop features a couple other Broken Access Control challenges.
@@ -686,6 +691,9 @@ Tip for **Product Tampering**: You can try to fabricate `PUT` requests from know
 
 ##### Christmas Special challenge (Extra)
 
+<details>
+<summary>More details</summary>
+
 The **Christmas Special** challenge is listed as a SQL injection vulnerability: if you break into the database, you can find the hidden information about the `Christmas Super-Surprise-Box (2014 Edition)` item, and use that to order the hidden item. Nonetheless, the core of the vulnerability is a violation of an implicit security policy of the Juice Shop application: *a user shall only be able to order products visible to him/her*.
 
 A possible testing methodology for such a security policy would be to [^10]:
@@ -698,7 +706,12 @@ A possible testing methodology for such a security policy would be to [^10]:
 
 [^10]: You could automate these steps by writing a dedicated random testing procedure and/or using the [OWASP ZAP API](https://www.zaproxy.org/docs/desktop/start/features/api/). In principle, such a testing strategy could also be combined with Schemathesis property-based testing (see the [docs](https://schemathesis.readthedocs.io/en/stable/python.html)) or RESTler fuzzing (see the [docs](https://github.com/microsoft/restler-fuzzer/tree/main/restler/checkers)) approaches.
 
+</details>
+
 ##### GDPR Data Theft challenge (Extra)
+
+<details>
+<summary>More details</summary>
 
 The **GDPR Data Theft** challenge is yet another example of a non-trivial sensitive data leakage: due to the way that emails are anonymized in the data export functionality, the order data of two users may be joined and exported together. This violates an implicit security policy: *a user shall only be able to see his/her own orders*.
 
@@ -709,7 +722,12 @@ A possible testing methodology for such a security policy would be to:
 4. If the response has a non-empty order list, then you have found a violation of the application's policy.
 5. Repeat steps 2-4 until you find a violation. You could disable the captcha verification for testing purposes.
 
+</details>
+
 ##### SSRF challenge (Extra)
+
+<details>
+<summary>More details</summary>
 
 CSRF is a web security vulnerability that allows an attacker to perform unintended client-side requests. Typically, the attacker can impersonate a legitimate user.
 In contrast, Server-side Request Forgery (SSRF) is a web security vulnerability that allows an attacker to induce the server-side application to make requests to an unintended location. For example, a common SSRF attack is when the user provides a URL, such as an image, and the backend server accesses that URL, e.g. to download the image; if the server accesses any provided URL without restraint, it may allow the attacker to circumvent access permissions of the client-side interface.
@@ -718,7 +736,12 @@ Juice Shop features a **SSRF** challenge. To try to solve it, log in and go to y
 
 This is an artificial challenge, in the sense that we have to access a very specific URL. In general, however, having the server accessing arbitrary user-provided URLs is dangerous; this is also hinted at by the logs of the automated source code analysis tools. How could you avoid SSRF vulnerabilities in your application?
 
+</details>
+
 ##### Unsigned JWT challenge (Extra)
+
+<details>
+<summary>More details</summary>
 
 One of the most common ways to authenticate users in a web application is to use [Json Web Tokens (JWTs)](https://jwt.io/introduction).
 JWT-based authentication also helps in mitigating CSRF-related vulnerabilities.
@@ -728,6 +751,8 @@ The **Unsigned JWT** challenge explores a serious vulnerability in the way that 
 For solving the challenge you are asked to forge a JWT token for a non-existent user with email `jwtn3d@juice-sh.op`. Attempt to send a GET request with your forged unsigned token to <http://localhost:3000/api/Complaints>, which requires a JWT-authenticated user.
 
 Tip: Have a look at the [snyk report](https://hpacheco.github.io/ses/labs/lab3/snyk_report.html). 
+
+</details>
 
 ### Advanced Injection (Extra)
 
@@ -739,11 +764,19 @@ The information in the [snyk report](https://hpacheco.github.io/ses/labs/lab3/sn
 
 #### Arbitrary File Write challenge
 
+<details>
+<summary>More details</summary>
+
 The goal of the **Arbitrary File Write** challenge is to replace the contents of the file <http://localhost:3000/ftp/legal.md> stored in the server.
 
 Tip: Check the form for submitting a complaint; if you look at the source code you will notice that your file will be uploaded to `uploads/complaints` in the `vm/juice-shop` folder. Check how ZIP archives are handled by the server.
 
+</details>
+
 #### Easter Egg challenge
+
+<details>
+<summary>More details</summary>
 
 The **Easter Egg** challenge is about downloading the <http://localhost:3000/ftp/eastere.gg> from the server.
 It is not listed in the vulnerable components category for the simple reason that the vulnerability is, for demonstration purposes, artificially hardwired in the JavaScript code of the Juice Shop application.
@@ -751,23 +784,38 @@ Nonetheless, this general vulnerability is still very much possible in filepath 
 
 Tip: Check the [OWASP Null Code page](https://owasp.org/www-community/attacks/Embedding_Null_Code) and the respective [OWASP WSTG page](https://owasp.org/www-project-web-security-testing-guide/stable/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.1-Testing_for_Local_File_Inclusion).
 
+</details>
+
 #### Kill Chatbot challenge
+
+<details>
+<summary>More details</summary>
 
 The **Kill Chatbot** challenge highlights the possibility of JavaScript code injection in the `Support Chat` page.
 
 Tip: Check the [Juice Shop source code](https://github.com/juice-shop/juice-shop) to see how it calls the chat bot, and check the [chat bot source code](https://github.com/juice-shop/juicy-chat-bot) to see how it responds to user messages. The chat bot is careful enough to sandbox JavaScript code execution, but it turns out that the real problem does not lie with the external sandboxing library.
 
+</details>
+
 #### Local File Read challenge
+
+<details>
+<summary>More details</summary>
 
 The **Local File Read** challenge highlights the possibility of data injection in the `Request Data Erasure` page, that is constructed using server-side templates. See the server-side template injection (SSTi) [OWASP WSTG page](https://owasp.org/www-project-web-security-testing-guide/v41/4-Web_Application_Security_Testing/07-Input_Validation_Testing/18-Testing_for_Server_Side_Template_Injection).
 
 Tip: Search for a vulnerability with the `hbs` template engine.
+
+</details>
 
 ### [XS-Leaks](https://xsleaks.dev/) (Extra)
 
 Cross-site Leaks (XS-Leaks) are a recent new class of web vulnerabilities derived from side-channel attacks that are are very challenging for secure web application development [^9].
 Moreover, web browsers are not immune to recent CPU side channel attacks such as Meltdown and Spectre, see for instance [here](https://developer.chrome.com/blog/meltdown-spectre/).
 An open knowledge-base to discover, study and share XS-Leaks has been [promoted by Google](https://security.googleblog.com/2020/12/fostering-research-on-new-web-security.html).
+
+<details>
+<summary>More details</summary>
 
 XS-Leaks can be seen as an evolved form of CSRF: beyond executing actions in place of users of other web sites, they allow malicious web sites to infer information about those users.
 The rationale is the same as for CSRF: a website from any origin can freely send HTTP requests to any other origin but, depending on the origin policy, may not be able to read the responses to such requests; however, some information about the response, such as error codes, its size or elapsed time, are still revealed to a malicious website.
@@ -818,6 +866,8 @@ The Juice Shop application is protected using the [helmet](https://helmetjs.gith
 4. This time, loading the script from a different site will be able to discriminate if a user is logged in or not.
 
 If you are using a recent version of Firefox or Chrome, you may also notice the different `Sec-Fetch-*` headers for requests originated by: the user (via the web developer tools), the web site (via navigation), or an external site (via a script originating from <http://htmledit.squarefree.com/>). A more secure instance of Juice Shop could use these headers to prevent the error-based XS-Leak.
+
+</details>
 
 ## Tasks
 
