@@ -23,7 +23,7 @@ Interesting for us, many Juice Shop challenges also feature:
 * a [coding challenge](https://pwning.owasp-juice.shop/part1/challenges.html) that will open a dialog containing the actual code snippet responsible for the security vulnerability behind the challenge and ask the challenger to understand the code and suggest the best fix.
 
 There are various options to deploy an instance of Juice Shop, all listed in the GitHub [page](https://github.com/juice-shop).
-For a quick start, you may [deploy on Heroku](https://github.com/juice-shop/juice-shop#deploy-on-heroku-free-0month-dyno) or create a [Docker container](https://github.com/juice-shop/juice-shop#docker-container). However, for some tasks (and maximum vulnerability!) you will need to install [from sources](https://github.com/juice-shop/juice-shop#from-sources).
+For a quick start, you may create a [Docker container](https://github.com/juice-shop/juice-shop#docker-container). However, for some tasks (and maximum vulnerability!) you will need to install [from sources](https://github.com/juice-shop/juice-shop#from-sources).
 
 Inside the [vm](../vm) folder, you may just type:
 * `make run-docker-juiceshop` to build and run from a Docker container. An instance of Juice Shop will be readily listening at `http://localhost:3000`.
@@ -132,11 +132,7 @@ wget -r http://localhost:3000
 
 ## Dynamic Application Security Testing (DAST)
 
-In the context of web applications, DAST is a testing methodology that analyses a running application by scanning and performing attacks on the client-side frontend. Since it is independent of the technologies used in the application's server-side backend, it is also termed as a black-box testing methodology [^1].
-
-[^1]: White-box dynamic web application analysis is sometimes also termed Interactive Application Security Testing (IAST).
-Like traditional dynamic program analysis, IAST tools analyze running web applications by first instrumenting their code to better observe application behavior and data flow.
-Unfortunately, IAST is very much dependent on used technologies since it requires significantly more integration with the host applications, are there are few open-source solutions (aside from hard to set up research prototypes) for us to experiment with. We will therefore focus on DAST.
+In the context of web applications, DAST is a testing methodology that analyses a running application by scanning and performing attacks on the client-side frontend. Since it is independent of the technologies used in the application's server-side backend, it is also termed as a black-box testing methodology.
 
 ### [OWASP ZAP](https://www.zaproxy.org/)
 
@@ -293,6 +289,24 @@ There are also many other static web application analysis tools designed for spe
 * [Progpilot](https://github.com/designsecurity/progpilot) is a static taint analysis tool for PHP. It supports sanitizers, which allows more control over the taint analysis when compared to automated scanners such as SonarCloud.
 * [Psalm](https://github.com/vimeo/psalm) is another security analysis tool for PHP. It supports user-controlled taint analysis much like Progpilot, but claims to perform better PHP type inference, which should reduce false positives significatively.
 * [Python Taint](https://github.com/python-security/pyt) is a static analysis tool for Python web applications. Similar ideas have matured into the more recent Facebook [Pysa](https://developers.facebook.com/blog/post/2021/04/29/eli5-pysa-security-focused-analysis-tool-python/) project.
+
+</details>
+
+## Interactive Application Security Testing (IAST)
+
+White-box dynamic web application analysis is sometimes also termed Interactive Application Security Testing (IAST).
+Like traditional dynamic program analysis, IAST tools typically analyze running web applications by first instrumenting their code to better observe application behavior and data flow.
+
+<details>
+<summary>More details</summary>
+
+*Unfortunately, IAST is very much dependent on used technologies since it requires significantly more integration with the host applications, are there are few open-source solutions (aside from hard to set up research prototypes) for us to experiment with. We will therefore focus only on DAST and SAST in our analysis of Juice Shop.*
+
+Examples of open-source tools that we can classify as IAST are:
+
+* GitLab [Jsfuzz](https://gitlab.com/gitlab-org/security-products/analyzers/fuzzers/jsfuzz) for fuzz testing of JavaScript code;
+* Code Intelligence [jazzer.js](https://github.com/CodeIntelligenceTesting/jazzer.js) for fuzz testing of JavaScript code, that has integration with Google [OSS-Fuzz](https://google.github.io/oss-fuzz/getting-started/new-project-guide/javascript-lang/);
+* [Gillian](https://gillianplatform.github.io/sphinx/js/symbolic-testing.html) for symbolic testing of JavaScript code.
 
 </details>
 
