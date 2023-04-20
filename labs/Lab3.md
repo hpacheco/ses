@@ -300,13 +300,13 @@ Like traditional dynamic program analysis, IAST tools typically analyze running 
 <details>
 <summary>More details</summary>
 
-*Unfortunately, IAST is very much dependent on used technologies since it requires significantly more integration with the host applications, are there are few open-source solutions (aside from hard to set up research prototypes) for us to experiment with. We will therefore focus only on DAST and SAST in our analysis of Juice Shop.*
-
 Examples of open-source tools that we can classify as IAST are:
 
 * GitLab [Jsfuzz](https://gitlab.com/gitlab-org/security-products/analyzers/fuzzers/jsfuzz) for fuzz testing of JavaScript code;
 * Code Intelligence [jazzer.js](https://github.com/CodeIntelligenceTesting/jazzer.js) for fuzz testing of JavaScript code, that has integration with Google [OSS-Fuzz](https://google.github.io/oss-fuzz/getting-started/new-project-guide/javascript-lang/);
 * [Gillian](https://gillianplatform.github.io/sphinx/js/symbolic-testing.html) for symbolic testing of JavaScript code.
+
+*Unfortunately, IAST is very much dependent on used technologies since it requires significantly more integration with the host applications, are there are few open-source solutions (aside from hard to set up research prototypes) for us to experiment with. We will therefore focus only on DAST and SAST in our analysis of Juice Shop.*
 
 </details>
 
