@@ -58,7 +58,7 @@ You shall also seek to demonstrate that your implementation respects your design
 You shall describe the security analysis methodology that you have employed to validate your implementation and corroborate the overall security of your system. If you adapt existing frameworks, you are expected to detail the security analysis methodology that they may already have in place and to complement them with some additional analyses of your own.
 
 You may check the [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/latest/) for a more detailed description of classical security analyses.
-Also, remember the more advanced security analysis tools and/or techniques that we have seen in the practical labs, and explore which are can be applied to your context. Your analysis may include, e.g.:
+Also, remember the more advanced security analysis tools and/or techniques that we have seen in the practical labs, and explore which can be applied to your context. Your analysis may include, e.g.:
 
 - security guarantees offered by the programming languages;
 - adopted secure software design patterns;
