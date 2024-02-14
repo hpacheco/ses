@@ -19,7 +19,7 @@ sh install.sh
 
 * You may disable the lock screen feature in your VM by changing `Settings > Privacy > Screen Lock`.
 * If you experience network issues inside your VM, try [this](https://stackoverflow.com/a/55072881) solution.
-* If you have difficulties installing packages, you may try to install or manually from <https://http.kali.org/kali/pool/main/l/linux/>.
+* If you have difficulties installing packages, you may try to install them manually from <https://http.kali.org/kali/pool/main/l/linux/>.
 
 
 
