@@ -475,7 +475,7 @@ It is possible to reduce the analysis of some security properties to the compari
 ### [ct-fuzz](https://github.com/michael-emmi/ct-fuzz)
 
 Constant-time static analysis tools such as ct-verif consider a *self-composed* program that simulates two parallel executions of the original program.
-Using the same rationale, it is possible to use traditional fuzzers to support the automated testing of security properties by comparing the outputs of multiple fuzzed inputs; one such example is ct-fuzz, tailored for automated testing of constant-time security for cryptographic implementations. You may the ct-fuzz [paper](http://www.cs.utah.edu/~shaobo/ct-fuzz.pdf) and the [GitHub repository](https://github.com/michael-emmi/ct-fuzz).
+Using the same rationale, it is possible to use traditional fuzzers to support the automated testing of security properties by comparing the outputs of multiple fuzzed inputs; one such example is ct-fuzz, tailored for automated testing of constant-time security for cryptographic implementations. You may read the ct-fuzz [paper](http://www.cs.utah.edu/~shaobo/ct-fuzz.pdf) and the [GitHub repository](https://github.com/michael-emmi/ct-fuzz).
 
 ## Tasks
 
