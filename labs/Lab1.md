@@ -224,7 +224,7 @@ When the input `str` is larger or equal than than `MAXSIZE`, the `strcpy` functi
 <summary>Result</summary>
 
 ```ShellSession
-$ clang-13 -fsanitize=address scpy2-bad.c  
+$ clang -fsanitize=address scpy2-bad.c  
  ./a.out aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa                    
 =================================================================
 ==57960==ERROR: AddressSanitizer: stack-buffer-overflow on address 0xffffcf13cf88 at pc 0x00000047f468 bp 0xffffcf13cf00 sp 0xffffcf13c6e8                
@@ -313,7 +313,7 @@ Since signed integer overflows are undefined behavior in the C standard ([wiki](
 <summary>Result</summary>
 
 ```ShellSession
-$ clang-13 -fsanitize=undefined cwe190_ex2_bad.c
+$ clang -fsanitize=undefined cwe190_ex2_bad.c
 $ ./a.out                                                              1 ⚙
 test.c:17:28: runtime error: signed integer overflow: 1073741824 * 8 cannot be represented in type 'int'
 SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior test.c:17:28 in
