@@ -54,7 +54,7 @@ This program allocates 40 bytes of heap memory for a buffer, to which it comes s
 If we compile and run this program with a slightly larger input, however:
 ```ShellSession
 $ gcc scpy7-bad.c
-$ /a.out aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa             
+$ ./a.out aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa             
 result: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ```
 the program does not crash although `strcpy` is writing past the buffer.
