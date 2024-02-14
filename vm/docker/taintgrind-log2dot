@@ -1,4 +1,4 @@
 #!/bin/bash
 
-echo python3 /usr/local/bin/log2dot.py $@
+#echo python3 /usr/local/bin/log2dot.py $@
 python3 /usr/local/bin/log2dot.py $@
