@@ -4,8 +4,12 @@ For this purpose, we recommend setting up a modern x86_64/amd64 Debian-based vir
 
 # Configuration steps
 
-1. Download the latest Kali Linux 2023.4 (ISO image or VM image) and install it (keep the default software selection) with your favorite virtualization software such as [VirtualBox](https://www.virtualbox.org/). You may also run the virtual machine on the cloud. Most cloud services offer student discounts and sufficient credit for a few hours of experimentation. If in need, the instructors may also be able to offer additional Google Cloud credits.
-2. Clone this repository within your VM:
+1. Download the latest Kali Linux image (2023.4 as of late) ISO image or VM image and install it (keep the default software selection) with your favorite virtualization software such as [VirtualBox](https://www.virtualbox.org/). You may also run the virtual machine on the cloud. Most cloud services offer student discounts and sufficient credit for a few hours of experimentation. If in need, the instructors may also be able to offer additional Google Cloud credits.
+2. As Kali is a rolling distro, make sure to update to the latest version:
+``` bash
+sudo apt update && sudo apt dist-upgrade
+```
+3. Clone this repository within your VM:
 ``` bash
 git clone https://github.com/hpacheco/ses
 ```
