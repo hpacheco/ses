@@ -1,6 +1,6 @@
 
 To successfully run the tasks in the labs you will need to have a few tools installed.
-For this purpose, we recommend setting up a modern x86_64/amd64 Debian-based virtual machine. This is not mandatory: if you are willing to spend the effort, you may attempt to install the tools in your own environment; Docker containers are provided for the tools with a less standard deployment, which should facilitate their usage in any environment.
+For this purpose, we recommend setting up a modern x86_64/amd64 Debian-based virtual machine. This is not mandatory: if you are willing to spend the effort, you may attempt to install the tools in your own environment; Docker containers are provided for the tools with a less standard deployment, which should facilitate their usage in any environment. If you are on a recent M1/M2 Mac, then install the arm64 version of the Debian-based system.
 
 # Configuration steps
 
