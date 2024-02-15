@@ -8,6 +8,15 @@ Instead of focusing on exploitation and mitigation, we will study how various ex
 
 In this lab we will use a series of C examples that are part of the [SARD test suite 100/101 pair](https://samate.nist.gov/SRD/testsuite.php#sardsuites), from the larger [NIST SARD](https://samate.nist.gov/SARD/) project. Each example comes as a pair of C programs where the first (from test suite 100) has a flaw and the second (from test suite 101) demonstrates how to possibly fix the flaw.
 
+## Lab install
+
+To install the tools that will be used in this lab, run:
+```
+cd ses/vm
+git pull
+sh install-low.sh
+```
+
 ## Topics & Additional References
 
 Before we start, this lab will cover, by example, a series of program analysis techniques and tools. These topics are only introduced in the theoretical lectures in a broad sense and shortly introduced in this lab, which together should be sufficient for our experimentation. For a more in-depth contextualization or more technical detail, you may ask the instructors or check the following references:
