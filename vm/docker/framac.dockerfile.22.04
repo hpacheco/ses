@@ -1,0 +1,13 @@
+FROM ubuntu:22.04
+USER root
+
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-get update && apt-get install -yq opam z3 cvc4
+RUN opam init --yes --disable-sandboxing
+RUN apt-get install -yq libgdk-pixbuf2.0-0 gir1.2-gtk-2.0 libglib2.0-dev libgdk-pixbuf2.0-dev libpango1.0-dev libatk1.0-dev  libcairo2-dev libx11-dev libxext-dev libxinerama-dev libxi-dev libxrandr-dev libxcursor-dev libxfixes-dev libxcomposite-dev libxdamage-dev libgtk2.0-dev libgtksourceview-3.0-common libgtksourceview-3.0 libgtksourceview-3.0-1
+RUN apt-get install -yq graphviz libgmp-dev
+RUN opam install --yes frama-c
+RUN eval $(opam env) && why3 config detect && frama-c -wp-detect
+CMD eval $(opam env) && /bin/bash
+
+

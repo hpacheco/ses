@@ -22,10 +22,10 @@ run-dependency-check:
 	./dependency-check/bin/dependency-check.sh --enableExperimental --scan juice-shop
 
 run-dfsan:
-	sudo docker run -v ${HOME}:${HOME} -it mcopik/clang-dfsan:cfsan-9.0
+	sudo docker run -v ${HOME}:${HOME} -it --platform linux/amd64 mcopik/clang-dfsan:cfsan-9.0
 
 run-smack:
-	sudo docker run -v ${HOME}:${HOME} -it smackers/smack
+	sudo docker run -v ${HOME}:${HOME} -it --platform linux/amd64 smackers/smack
 
 run-framac:
 	sudo docker run -v ${HOME}:${HOME} -it --rm --net=host --env="DISPLAY" -v $HOME/.Xauthority:/root/.Xauthority:ro hugopacheco/framac
@@ -34,10 +34,10 @@ run-ikos:
 	sudo docker run -v ${HOME}:${HOME} -p8080:8080 -it hugopacheco/ikos
 
 run-taintgrind:
-	sudo docker run -v ${HOME}:${HOME} -it hugopacheco/taintgrind
+	sudo docker run -v ${HOME}:${HOME} -it --platform linux/amd64 hugopacheco/taintgrind
 
 run-ctverif:
-	sudo docker run -v ${HOME}:${HOME} -it hugopacheco/ctverif
+	sudo docker run -v ${HOME}:${HOME} -it --platform linux/amd64 hugopacheco/ctverif
 
 run-driller:
 	sudo docker run  -v /home/kali:/home/kali -it shellphish/mechaphish

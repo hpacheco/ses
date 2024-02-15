@@ -3,7 +3,7 @@ USER root
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -yq libsqlite3-dev libboost-thread-dev libboost-test-dev libboost-filesystem-dev libtbb-dev binfmt-support git autotools-dev automake cmake g++ clang-14 clang-tools-14 libgmp-dev libz-dev libstdc++6
-RUN apt-get install -yq python3-distutils
+RUN apt-get install -yq python3-distutils python3.10-venv
 RUN git clone https://github.com/NASA-SW-VnV/ikos
 RUN mkdir ikos/build
 RUN cd ikos/build && \
