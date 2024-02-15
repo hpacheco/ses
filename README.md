@@ -1,5 +1,5 @@
 
-This repository contains auxiliary material for the [Segurança em Engenharia de Software](https://sigarra.up.pt/fcup/pt/ucurr_geral.ficha_uc_view?pv_ocorrencia_id=507373) course.
+This repository contains auxiliary material for the [Segurança em Engenharia de Software]([https://sigarra.up.pt/fcup/pt/ucurr_geral.ficha_uc_view?pv_ocorrencia_id=507373](https://sigarra.up.pt/fcup/pt/UCURR_GERAL.FICHA_UC_VIEW?pv_ocorrencia_id=527975)) course.
 
 # Setup
 
