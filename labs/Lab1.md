@@ -1516,7 +1516,8 @@ Although many of these scanners are full-fledged commercial solutions, we list a
 * [GitHub Code Scanning](https://github.com/hpacheco/ses/security/code-scanning): public web interface for [CodeQL](https://codeql.github.com/) that offers automated code scanning for security vulnerabilities; formerly known as [LGTM](https://lgtm.com);
 * [GitLab](https://docs.gitlab.com/ee/user/application_security/secure_your_application.html): integrated static analysis of source code;
 * [SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_ses): public web interface for [SonarQube](https://www.sonarqube.org/) analysis results;
-* [Snyk Code Checker](https://snyk.io/code-checker/), a free version of the commercial [Snyk Code](https://snyk.io/product/snyk-code/).
+* [Snyk Code Checker](https://snyk.io/code-checker/), a free version of the commercial [Snyk Code](https://snyk.io/product/snyk-code/);
+* [SemGrep](https://semgrep.dev/), a lightweight rule-based statick analyser.
 
 ## Tasks
 
