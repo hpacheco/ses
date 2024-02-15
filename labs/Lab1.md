@@ -10,7 +10,7 @@ In this lab we will use a series of C examples that are part of the [SARD test s
 
 ## Lab install
 
-To install the tools that will be used in this lab, run:
+To install the specific tools that will be used in this lab, run:
 ```
 cd ses/vm
 git pull
