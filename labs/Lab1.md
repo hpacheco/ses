@@ -445,7 +445,7 @@ if (system(command) < 0) { ... }
 If we compile and run this program, we can see that two byte blocks of the output are tainted with label 1 (0 is the default non-tainted label).
 
 ```ShellSession
-$ clang-14 -fsanitize=dataflow os_cmd_injection_basic-bad-dfsan.c
+$ clang -fsanitize=dataflow os_cmd_injection_basic-bad-dfsan.c
 $ ./a.out aaaaaaaa                        
 /bin/cat: aaaaaaaa: No such file or directory
 0 1 1
