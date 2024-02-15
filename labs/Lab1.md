@@ -1510,7 +1510,7 @@ This time, ctverif detects no constant-time violation. Note that, to guarantee t
 There are several security vulnerability scanners that can automatically analyse a codebase for known vulnerabilities.
 The main advantage of these tools is that they tend to support various programming languages, require low setup and can be typically integrated into the software development process using continuous integration to periodically check for vulnerabilities.
 
-Although many of these scanners are full-fledged commercial solutions, we list a few that are open-source. The easiest way to try these tools is to set up a public repository and scan it online. For convenience, you may check the pre-computed analysis results for this repository:
+Although many of these scanners are full-fledged commercial solutions, we list a few that have free-to-use versions. The easiest way to try these tools is to set up a public repository and scan it online. For convenience, you may check the pre-computed analysis results for this repository:
 * [Flawfinder](https://dwheeler.com/flawfinder/): for C/C++; needs to be run locally for your project;
 * [Coverity](https://scan.coverity.com/): requires login to view results, you need to set it up for your repository;
 * [GitHub Code Scanning](https://github.com/hpacheco/ses/security/code-scanning): public web interface for [CodeQL](https://codeql.github.com/) that offers automated code scanning for security vulnerabilities; formerly known as [LGTM](https://lgtm.com);
