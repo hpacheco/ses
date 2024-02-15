@@ -461,7 +461,7 @@ If we compile and run this program, DataFlowSanitizer will not detect our indire
 <summary>Result</summary>
 
 ```ShellSession
-$ clang-14 -fsanitize=dataflow sign32-dfsan.c
+$ clang -fsanitize=dataflow sign32-dfsan.c
 $ ./a.out                                                    
 a.out: sign32.c:18: int main(int, char **): Assertion `dfsan_has_label(s_label, a_label)' failed.
 zsh: abort      ./a.out
