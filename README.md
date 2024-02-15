@@ -15,5 +15,5 @@ The different [labs](labs) for the pratical classes:
 # Project
 
 The proposal of the final project of the pratical classes:
-* [Final Project - Secure Blog Hosting](project/Project.md)
+* [Final Project - TBD](project/Project.md)
 
