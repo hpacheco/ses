@@ -1,6 +1,6 @@
 
 To successfully run the tasks in the labs you will need to have a few tools installed.
-For this purpose, we recommend setting up a modern x86_64/amd64 Debian-based virtual machine. This is not mandatory: if you are willing to spend the effort, you may attempt to install the tools in your own environment; Docker containers are provided for the tools with a less standard deployment, which should facilitate their usage in any environment. If you are on a recent M1/M2 Mac, then install the arm64 version of the Debian-based system; some Docker containers will only be available for x86, and will run slower or even experience unexpected errors when emulated on arm64.
+For this purpose, we recommend setting up a modern x86_64/amd64 Debian-based virtual machine. This is not mandatory: if you are willing to spend the effort, you may attempt to install the tools in your own environment; Docker containers are provided for the tools with a less standard deployment, which should facilitate their usage in any environment. If you are on a recent M1/M2 Mac, then install the arm64 version of the Debian-based system. Some Docker containers will only be available for x86, and will run slower or even experience unexpected errors when emulated on arm64; the default x86 emulation will be done by QEMU; if you use Parallels Desktop on a Mac, you may also configure the VM to use your host's Rosetta emulation.
 
 # Configuration steps
 
