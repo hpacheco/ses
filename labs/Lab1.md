@@ -18,7 +18,8 @@ Before we start, this lab will cover, by example, a series of program analysis t
 * [Memory Safety](https://inst.eecs.berkeley.edu/~cs161/sp19/lectures/lec03_safety.pdf) from [Computer Security @ Berkeley](https://sp23.cs161.org/)
 * [Taint analysis](https://www.cs.cmu.edu/~ckaestne/15313/2018/20181023-taint-analysis.pdf) from [Foundations of Software Engineering @ CMU](https://cmu-313.github.io/)
 * [Side Channel Attacks](https://cseweb.ucsd.edu/classes/wi22/cse127-a/slides/7-sidechannels.pdf) from [ Intro to Computer Security @ UCSD](https://cseweb.ucsd.edu/classes/wi22/cse127-a/)
-* [Principled Approaches to Constant-Time Cryptography](https://www.cs.uu.nl/docs/vakken/mapa/downloads/ct-lecture.pdf) from [Automatic Program Analysis @ Utrecht](https://www.cs.uu.nl/docs/vakken/mapa/)
+* [Slides](https://www.iaik.tugraz.at/teaching/materials/scs/slides/) from [Side-Channel Security @ UT Graz](https://www.iaik.tugraz.at/teaching/materials/scs/)
+* [Constant-time Programming](https://cseweb.ucsd.edu/~dstefan/cse130-winter18/lectures/week10/) from [Programming Languages: Principles and Paradigms @ UCSD](https://cseweb.ucsd.edu/~dstefan/cse130-winter18/)
 
 ## [Dynamic Program Analysis](https://oaklandsok.github.io/papers/song2019.pdf)
 
@@ -54,7 +55,7 @@ This program allocates 40 bytes of heap memory for a buffer, to which it comes s
 If we compile and run this program with a slightly larger input, however:
 ```ShellSession
 $ gcc scpy7-bad.c
-$ /a.out aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa             
+$ ./a.out aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa             
 result: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 ```
 the program does not crash although `strcpy` is writing past the buffer.
@@ -224,7 +225,7 @@ When the input `str` is larger or equal than than `MAXSIZE`, the `strcpy` functi
 <summary>Result</summary>
 
 ```ShellSession
-$ clang-13 -fsanitize=address scpy2-bad.c  
+$ clang -fsanitize=address scpy2-bad.c  
  ./a.out aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa                    
 =================================================================
 ==57960==ERROR: AddressSanitizer: stack-buffer-overflow on address 0xffffcf13cf88 at pc 0x00000047f468 bp 0xffffcf13cf00 sp 0xffffcf13c6e8                
@@ -313,7 +314,7 @@ Since signed integer overflows are undefined behavior in the C standard ([wiki](
 <summary>Result</summary>
 
 ```ShellSession
-$ clang-13 -fsanitize=undefined cwe190_ex2_bad.c
+$ clang -fsanitize=undefined cwe190_ex2_bad.c
 $ ./a.out                                                              1 ⚙
 test.c:17:28: runtime error: signed integer overflow: 1073741824 * 8 cannot be represented in type 'int'
 SUMMARY: UndefinedBehaviorSanitizer: undefined-behavior test.c:17:28 in
@@ -445,7 +446,7 @@ if (system(command) < 0) { ... }
 If we compile and run this program, we can see that two byte blocks of the output are tainted with label 1 (0 is the default non-tainted label).
 
 ```ShellSession
-$ clang-14 -fsanitize=dataflow os_cmd_injection_basic-bad-dfsan.c
+$ clang -fsanitize=dataflow os_cmd_injection_basic-bad-dfsan.c
 $ ./a.out aaaaaaaa                        
 /bin/cat: aaaaaaaa: No such file or directory
 0 1 1
@@ -461,14 +462,14 @@ If we compile and run this program, DataFlowSanitizer will not detect our indire
 <summary>Result</summary>
 
 ```ShellSession
-$ clang-14 -fsanitize=dataflow sign32-dfsan.c
+$ clang -fsanitize=dataflow sign32-dfsan.c
 $ ./a.out                                                    
 a.out: sign32.c:18: int main(int, char **): Assertion `dfsan_has_label(s_label, a_label)' failed.
 zsh: abort      ./a.out
 ```
 </details>
 
-In the working version of Clang 15 (see the [documentation](https://releases.llvm.org/15.0.0/tools/clang/docs/DataFlowSanitizer.html)), there is however an experimental LLVM feature `-dfsan-conditional-callbacks` that adds conditional branch analysis support to DataFlowSanitizer. We can try a similar patch to LLVM that is pre-bundled in this [repository](https://github.com/mcopik/clang-dfsan).
+In the working version of Clang 15 (see the [documentation](https://releases.llvm.org/15.0.0/tools/clang/docs/DataFlowSanitizer.html)), there is however an experimental LLVM feature `-dfsan-conditional-callbacks` that adds conditional branch analysis support to DataFlowSanitizer. We can try a similar patch to LLVM that is pre-bundled in this [repository](https://github.com/mcopik/clang-dfsan) and described in this [post](https://mcopik.github.io/blog/2020/dataflow/).
 
 Change into the [vm](../vm) folder and run `make run-dfsan`.
 It will launch a shell inside a new docker container for the built docker image. Your home folder will be shared with the container.
@@ -618,7 +619,7 @@ Running `scan-build` on this example will generate a report that signals the cal
 <summary>Result</summary>
 
 ```ShellSession
-$ scan-build-13 --show-description -enable-checker security gcc -c scpy7-bad.c
+$ scan-build --show-description -enable-checker security gcc -c scpy7-bad.c
 scan-build: Using '/usr/lib/llvm-13/bin/clang' for static analysis
 scpy7-bad.c:41:2: warning: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119 [security.insecureAPI.strcpy]
         strcpy(buf, str);                               /* FLAW */
@@ -1509,12 +1510,14 @@ This time, ctverif detects no constant-time violation. Note that, to guarantee t
 There are several security vulnerability scanners that can automatically analyse a codebase for known vulnerabilities.
 The main advantage of these tools is that they tend to support various programming languages, require low setup and can be typically integrated into the software development process using continuous integration to periodically check for vulnerabilities.
 
-Although many of these scanners are full-fledged commercial solutions, we list a few that are open-source. The easiest way to try these tools is to set up a public repository and scan it online. For convenience, you may check the pre-computed analysis results for this repository:
+Although many of these scanners are full-fledged commercial solutions, we list a few that have free-to-use versions. The easiest way to try these tools is to set up a public repository and scan it online. For convenience, you may check the pre-computed analysis results for this repository:
 * [Flawfinder](https://dwheeler.com/flawfinder/): for C/C++; needs to be run locally for your project;
 * [Coverity](https://scan.coverity.com/): requires login to view results, you need to set it up for your repository;
 * [GitHub Code Scanning](https://github.com/hpacheco/ses/security/code-scanning): public web interface for [CodeQL](https://codeql.github.com/) that offers automated code scanning for security vulnerabilities; formerly known as [LGTM](https://lgtm.com);
 * [GitLab](https://docs.gitlab.com/ee/user/application_security/secure_your_application.html): integrated static analysis of source code;
-* [SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_ses): public web interface for [SonarQube](https://www.sonarqube.org/) analysis results.
+* [SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_ses): public web interface for [SonarQube](https://www.sonarqube.org/) analysis results;
+* [Snyk Code Checker](https://snyk.io/code-checker/), a free version of the commercial [Snyk Code](https://snyk.io/product/snyk-code/);
+* [SemGrep](https://semgrep.dev/), a lightweight rule-based statick analyser.
 
 ## Tasks
 
