@@ -618,7 +618,7 @@ Running `scan-build` on this example will generate a report that signals the cal
 <summary>Result</summary>
 
 ```ShellSession
-$ scan-build-13 --show-description -enable-checker security gcc -c scpy7-bad.c
+$ scan-build --show-description -enable-checker security gcc -c scpy7-bad.c
 scan-build: Using '/usr/lib/llvm-13/bin/clang' for static analysis
 scpy7-bad.c:41:2: warning: Call to function 'strcpy' is insecure as it does not provide bounding of the memory buffer. Replace unbounded copy functions with analogous functions that support length arguments such as 'strlcpy'. CWE-119 [security.insecureAPI.strcpy]
         strcpy(buf, str);                               /* FLAW */
