@@ -1562,7 +1562,7 @@ Found 3 issues
           Null Dereference(NULL_DEREFERENCE): 1
     Integer Overflow L1(INTEGER_OVERFLOW_L1): 1
   Inferbo Alloc Is Big(INFERBO_ALLOC_IS_BIG): 1
-'''
+```
 </details>
 
 ### [Security vulnerability scanners](https://www.nist.gov/itl/ssd/software-quality-group/source-code-security-analyzers)
