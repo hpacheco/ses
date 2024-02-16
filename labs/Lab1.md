@@ -1513,6 +1513,58 @@ This time, ctverif detects no constant-time violation. Note that, to guarantee t
 
 [^3]: Verifying the non-interference property is more challenging in practice but also more precise: information may flow from secret data to particular expression without it affecting the valuations of those expressions. This difference in precision becomes more evident when the program is allowed to reveal some secret information, e.g., it is natural for a password checker to reveal the return value stating if the user-introduced password was correct; this detail is however not relevant for our example. If interested, check the ctverif [paper](https://www.usenix.org/system/files/conference/usenixsecurity16/sec16_paper_almeida.pdf) for more information.
 
+### [infer](http://fbinfer.com/)
+
+Facebook infer is a tool that implements various static analyses on top of clang, and can be seen as a more advanced variant of scan-build. For a complete list of all the supported anslyses/checkers, see the [documentation](https://fbinfer.com/docs/all-issue-types).
+
+Navigate to the [vm](../vm) folder and run `make run-infer'. It will launch an infer-powered container:
+
+Consider the [cwe190_ex2_bad.c](../c/misc/cwe190_ex2_bad.c) example from before. Running it with the default checkers plus buffer overrun, infer will find a few issues:
+<details>
+<summary>Result</summary>
+	
+```ShellSession
+infer@container# infer run --bufferoverrun -- clang -c cwe190_ex2_bad.c 
+Capturing in make/cc mode...
+Found 1 source file to analyze in /home/home/ses/c/misc/infer-out
+1/1 [############################################################] 100% 75.942ms
+
+cwe190_ex2_bad.c:20: error: Inferbo Alloc Is Big
+  Length: 8589934592.
+  18.   nresp = packet_get_int();
+  19.   if (nresp > 0) {
+  20.     response = malloc(nresp* (int) sizeof(char*));
+                     ^
+  21.     for (i = 0; i < nresp; i++) response[i] = packet_get_string(NULL);
+  22.   }
+
+cwe190_ex2_bad.c:20: error: Integer Overflow L1
+  (1073741824 x 8):signed32.
+  18.   nresp = packet_get_int();
+  19.   if (nresp > 0) {
+  20.     response = malloc(nresp* (int) sizeof(char*));
+                     ^
+  21.     for (i = 0; i < nresp; i++) response[i] = packet_get_string(NULL);
+  22.   }
+
+cwe190_ex2_bad.c:21: error: Null Dereference
+  pointer `response` last assigned on line 20 could be null and is dereferenced at line 21, column 33.
+  19.   if (nresp > 0) {
+  20.     response = malloc(nresp* (int) sizeof(char*));
+  21.     for (i = 0; i < nresp; i++) response[i] = packet_get_string(NULL);
+                                      ^
+  22.   }
+  23. }
+
+
+Found 3 issues
+                  Issue Type(ISSUED_TYPE_ID): #
+          Null Dereference(NULL_DEREFERENCE): 1
+    Integer Overflow L1(INTEGER_OVERFLOW_L1): 1
+  Inferbo Alloc Is Big(INFERBO_ALLOC_IS_BIG): 1
+'''
+</details>
+
 ### [Security vulnerability scanners](https://www.nist.gov/itl/ssd/software-quality-group/source-code-security-analyzers)
 
 There are several security vulnerability scanners that can automatically analyse a codebase for known vulnerabilities.
