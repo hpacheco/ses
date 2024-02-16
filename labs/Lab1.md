@@ -342,7 +342,7 @@ SUMMARY: UndefinedBehaviorSanitizer: SEGV (/home/parallels/Desktop/SARD-testsuit
 ### [Taintgrind](https://github.com/wmkhoo/taintgrind)
 
 The purpose of taint analysis, a powerful method for discovering security violations, is to track information flow from sources to sinks within a program.
-It is typically used for checking an *integrity* property, by identifying dangerous flows from untrusted inputs (sources) into sensitive destinations (sinks).
+It is typically used for checking an *integrity* property, by identifying dangerous flows from untrusted inputs (sources) into sensitive destinations (sinks); as we will see later, sources are often allowed to reach sinks as long as they pass through validators or sanitizers that enforce security constraints.
 
 Taintgrind is a taint-tracking plugin for Valgrind.
 As a binary instrumentation tool, Taintgrind allows marking specific bytes - typically user input data - as tainted and propagates taint at the byte level through memory operations.
