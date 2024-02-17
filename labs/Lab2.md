@@ -477,6 +477,10 @@ It is possible to reduce the analysis of some security properties to the compari
 Constant-time static analysis tools such as ct-verif consider a *self-composed* program that simulates two parallel executions of the original program.
 Using the same rationale, it is possible to use traditional fuzzers to support the automated testing of security properties by comparing the outputs of multiple fuzzed inputs; one such example is ct-fuzz, tailored for automated testing of constant-time security for cryptographic implementations. You may read the ct-fuzz [paper](http://www.cs.utah.edu/~shaobo/ct-fuzz.pdf) and the [GitHub repository](https://github.com/michael-emmi/ct-fuzz).
 
+### [DifFuzz](https://github.com/isstac/diffuzz)
+
+The approaches behind dudect and ct-fuzz have been developed specifically for cryptographic code. A more recent research direction, called _differential fuzzing_, considers the adaptation of general-purpose fuzzers for side-channel analysis. One such example is DifFuzz, which is built on top of AFL and employs resource-guided heuristics to automatically find inputs that attempt to maximize the difference in time/resource consumption between different program executions.
+
 ## Tasks
 
 The goal of this lab is to experiment with the automated testing tools described above. We will detect and fix the vulnerabilities found in example C programs from the [c/SARD-testsuite-100](../c/SARD-testsuite-100) testsuite. 
