@@ -1519,7 +1519,7 @@ Facebook infer is a tool that implements various static analyses on top of clang
 
 Navigate to the [vm](../vm) folder and run `make run-infer'. It will launch an infer-powered container:
 
-Consider the [cwe190_ex2_bad.c](../c/misc/cwe190_ex2_bad.c) example from before. Running it with the default checkers plus buffer overrun, infer will find a few issues:
+Remember the [cwe190_ex2_bad.c](../c/misc/cwe190_ex2_bad.c) example. Running it with the default checkers plus the buffer overrun checker, infer will find a few issues:
 <details>
 <summary>Result</summary>
 	
