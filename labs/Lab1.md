@@ -1519,6 +1519,8 @@ Facebook infer is a tool that implements various static analyses on top of clang
 
 Navigate to the [vm](../vm) folder and run `make run-infer'. It will launch an infer-powered container:
 
+#### Memory errors
+
 Remember the [cwe190_ex2_bad.c](../c/misc/cwe190_ex2_bad.c) example. Running it with the default checkers plus the buffer overrun checker, infer will find a few issues:
 <details>
 <summary>Result</summary>
@@ -1564,6 +1566,42 @@ Found 3 issues
   Inferbo Alloc Is Big(INFERBO_ALLOC_IS_BIG): 1
 ```
 </details>
+
+#### Taint analysis
+
+Among its various analyses, infer also features a static taint analysis of C source code, named [quandary](https://fbinfer.com/docs/checker-quandary).
+
+```ShellSession
+infer@container# infer --quandary-only -g -- clang -c os_cmd_injection_basic-bad-infer.c 
+Logs in /home/kali/Desktop/ses/c/SARD-testsuite-100/000/149/241/infer-out/logs
+Capturing in make/cc mode...
+Found 1 source file to analyze in /home/kali/Desktop/ses/c/SARD-testsuite-100/000/149/241/infer-out
+2/2 [#########################################################] 100% 42.6ms
+
+os_cmd_injection_basic-bad-infer.c:53: error: Shell Injection
+  Other(taint()) at line 23, column 2 ~> ShellExec(system()) at line 53, column 6.                                                                        
+  51. 
+  52.   //taint(command);
+  53.   if (system(command) < 0)                                            /* FLAW */
+           ^
+  54.   {
+  55.           printf("Error running command %s\n", command);
+
+
+Found 1 issue
+        Issue Type(ISSUED_TYPE_ID): #
+  Shell Injection(SHELL_INJECTION): 1
+```
+
+```ShellSession
+infer@container# infer --quandary-only -g -- clang -c os_cmd_injection_basic-good-infer.c 
+Logs in /home/kali/Desktop/ses/c/SARD-testsuite-101/000/149/242/infer-out/logs
+Capturing in make/cc mode...
+Found 1 source file to analyze in /home/kali/Desktop/ses/c/SARD-testsuite-101/000/149/242/infer-out
+3/3 [#########################################################] 100% 66.2ms
+
+  No issues found
+```
 
 ### [Security vulnerability scanners](https://www.nist.gov/itl/ssd/software-quality-group/source-code-security-analyzers)
 

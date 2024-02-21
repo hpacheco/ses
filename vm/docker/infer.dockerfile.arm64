@@ -1,0 +1,5 @@
+FROM ubuntu:22.04
+
+RUN apt update && apt install -yq wget git opam pkg-config clang build-essential autotools-dev autoconf libgmp-dev libsqlite3-dev zlib1g-dev cmake curl sqlite3 sudo
+RUN wget -qO /usr/local/bin/ninja https://github.com/userdocs/qbt-ninja-build/releases/download/v1.12.0/ninja-aarch64 && chmod a+x /usr/local/bin/ninja
+RUN git clone --depth 1 https://github.com/facebook/infer && cd infer && yes | ./build-infer.sh clang && sudo make install && cd .. && rm -rf infer

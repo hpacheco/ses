@@ -13,8 +13,11 @@ build-framac:
 build-taintgrind:
 	sudo docker build -f taintgrind.dockerfile . -t hugopacheco/taintgrind
 
-build-infer:
-	sudo docker build -f infer.dockerfile . -t hugopacheco/infer
+build-infer-amd64:
+	sudo docker build -f infer.dockerfile.amd64 . -t hugopacheco/infer
+	
+build-infer-arm64:
+	sudo docker build -f infer.dockerfile.arm64 . -t hugopacheco/infer
 
 build-ctverif:
 	sudo docker build -f ctverif.dockerfile . -t hugopacheco/ctverif

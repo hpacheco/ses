@@ -25,7 +25,7 @@ run-dfsan:
 	sudo docker run -v ${HOME}:${HOME} -it --platform linux/amd64 mcopik/clang-dfsan:cfsan-9.0
 
 run-infer:
-	sudo docker run -v ${HOME}:${HOME} -it --platform linux/amd64 hugopacheco/infer
+	sudo docker run -v ${HOME}:${HOME} -it hugopacheco/infer
 
 run-smack:
 	sudo docker run -v ${HOME}:${HOME} -it --platform linux/amd64 smackers/smack

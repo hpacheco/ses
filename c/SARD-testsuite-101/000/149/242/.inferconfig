@@ -1,0 +1,19 @@
+{
+  "force-delete-results-dir": true,
+  "quandary-sources": [
+    {
+      "procedure": "taint",
+      "kind": "Other",
+      "index": "0"
+    }
+  ],
+  "quandary-sinks": [
+  ],
+  "quandary-sanitizers": [
+    {
+      "procedure": "purify"
+    }
+  ],
+  "quandary-endpoints": [
+  ]
+}
