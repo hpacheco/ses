@@ -1517,7 +1517,7 @@ This time, ctverif detects no constant-time violation. Note that, to guarantee t
 
 Facebook infer is a tool that implements various static analyses on top of clang, and can be seen as a more advanced variant of scan-build. For a complete list of all the supported anslyses/checkers, see the [documentation](https://fbinfer.com/docs/all-issue-types).
 
-Navigate to the [vm](../vm) folder and run `make run-infer'. It will launch an infer-powered container:
+Navigate to the [vm](../vm) folder and run `make run-infer`. It will launch an infer-powered container:
 
 #### Memory errors
 
@@ -1569,7 +1569,12 @@ Found 3 issues
 
 #### Taint analysis
 
-Among its various analyses, infer also features a static taint analysis of C source code, named [quandary](https://fbinfer.com/docs/checker-quandary).
+Among its various analyses, infer also features a static taint analysis of C source code, named [quandary](https://fbinfer.com/docs/checker-quandary). In particular, it will perform a coarse-grained analysis at the level of program variables, in the sense that, unlike Frama-C, it does not attempt to model in full detail the C memory model and only considers direct flows.
+
+Consider the  command injection example from before, adapted in [os_cmd_injection_basic-bad-infer.c](../c/SARD-testsuite-100/000/149/241/os_cmd_injection_basic-bad-infer.c). To use infer for taint analysis, we can configure taint sources and taint sinks, as shown in auxiliary file [.inferconfig](../c/SARD-testsuite-100/000/149/241/.inferconfig): we are defining that a special function `taint` marks its first argument as tainted; by default, infer will mark a few critical functions as taint sinks.
+We can run this example as shown below:
+<details>
+<summary>Result</summary>
 
 ```ShellSession
 infer@container# infer --quandary-only -g -- clang -c os_cmd_injection_basic-bad-infer.c 
@@ -1578,20 +1583,22 @@ Capturing in make/cc mode...
 Found 1 source file to analyze in /home/kali/Desktop/ses/c/SARD-testsuite-100/000/149/241/infer-out
 2/2 [#########################################################] 100% 42.6ms
 
-os_cmd_injection_basic-bad-infer.c:53: error: Shell Injection
-  Other(taint()) at line 23, column 2 ~> ShellExec(system()) at line 53, column 6.                                                                        
+os_cmd_injection_basic-bad-infer.c:52: error: Shell Injection
+  Other(taint()) at line 23, column 2 ~> ShellExec(system()) at line 52, column 6.                                                                        
   51. 
-  52.   //taint(command);
-  53.   if (system(command) < 0)                                            /* FLAW */
+  52.   if (system(command) < 0)                                            /* FLAW */
            ^
-  54.   {
-  55.           printf("Error running command %s\n", command);
+  53.   {
+  54.           printf("Error running command %s\n", command);
 
 
 Found 1 issue
         Issue Type(ISSUED_TYPE_ID): #
   Shell Injection(SHELL_INJECTION): 1
 ```
+
+Note that we adapted the source code to taint the `argv` parameter to function `main`. The error message illustrates that the function `system` is indeed considered a taint sink. You may also note that we needed to perform a minimal adaptation of the source code, by replacing `command + catLength` for the equivalent `command[catLength]` during the construction of the `command` array passed to `system`; this is likely because infer is considering `command + catLength` as new memory, and exemplifies how the subtle C memory model may not be fully captured.
+</details>
 
 ```ShellSession
 infer@container# infer --quandary-only -g -- clang -c os_cmd_injection_basic-good-infer.c 
