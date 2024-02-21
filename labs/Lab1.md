@@ -1600,6 +1600,10 @@ Found 1 issue
 Note that we adapted the source code to taint the `argv` parameter to function `main`. The error message illustrates that the function `system` is indeed considered a taint sink. You may also note that we needed to perform a minimal adaptation of the source code, by replacing `command + catLength` for the equivalent `command[catLength]` during the construction of the `command` array passed to `system`; this is likely because infer is considering `command + catLength` as new memory, and exemplifies how the subtle C memory model may not be fully captured.
 </details>
 
+Moreover, infer supports the configuration of taint sanitizers, that remove taint from its arguments and return untainted data.
+Consider the adapted good version of our command injection example in [os_cmd_injection_basic-bad-infer.c](../c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-infer.c), with configuration file [.inferconfig](../c/SARD-testsuite-101/000/149/242/.inferconfig):
+<details>
+<summary>Result</summary>
 ```ShellSession
 infer@container# infer --quandary-only -g -- clang -c os_cmd_injection_basic-good-infer.c 
 Logs in /home/kali/Desktop/ses/c/SARD-testsuite-101/000/149/242/infer-out/logs
@@ -1609,6 +1613,9 @@ Found 1 source file to analyze in /home/kali/Desktop/ses/c/SARD-testsuite-101/00
 
   No issues found
 ```
+
+This time, infer will report no taint error. You may note that the C implementation of `purify` changes the argument array in-place and returns void. To make it suitable for infer, we had to make it return the untainted array, even though it is indeed the same memory, as infer only considers the output variables of sanitizers as untainted.
+</details>
 
 ### [Security vulnerability scanners](https://www.nist.gov/itl/ssd/software-quality-group/source-code-security-analyzers)
 
