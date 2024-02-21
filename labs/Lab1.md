@@ -1604,6 +1604,7 @@ Moreover, infer supports the configuration of taint sanitizers, that remove tain
 Consider the adapted good version of our command injection example in [os_cmd_injection_basic-bad-infer.c](../c/SARD-testsuite-101/000/149/242/os_cmd_injection_basic-good-infer.c), with configuration file [.inferconfig](../c/SARD-testsuite-101/000/149/242/.inferconfig):
 <details>
 <summary>Result</summary>
+
 ```ShellSession
 infer@container# infer --quandary-only -g -- clang -c os_cmd_injection_basic-good-infer.c 
 Logs in /home/kali/Desktop/ses/c/SARD-testsuite-101/000/149/242/infer-out/logs
