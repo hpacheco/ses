@@ -49,7 +49,6 @@ int main(int argc, char **argv)
 	strncpy(command, cat, catLength);
 	strncpy(command[catLength], argv[1], commandLength - catLength);
 
-	//taint(command);
 	if (system(command) < 0)							/* FLAW */
 	{
 		printf("Error running command %s\n", command);
