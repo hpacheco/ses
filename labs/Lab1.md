@@ -1515,7 +1515,7 @@ This time, ctverif detects no constant-time violation. Note that, to guarantee t
 
 ### [infer](http://fbinfer.com/)
 
-Facebook infer is a tool that implements various static analyses on top of clang, and can be seen as a more advanced variant of scan-build. For a complete list of all the supported anslyses/checkers, see the [documentation](https://fbinfer.com/docs/all-issue-types).
+Facebook infer is a tool that implements various static analyses on top of clang, and can be seen as a more advanced variant of scan-build. For a complete list of all the supported analyses/checkers, see the [documentation](https://fbinfer.com/docs/all-issue-types).
 
 Navigate to the [vm](../vm) folder and run `make run-infer`. It will launch an infer-powered container:
 
