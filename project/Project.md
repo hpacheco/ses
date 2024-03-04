@@ -41,8 +41,7 @@ You shall design and build your learning platform according to the following gen
     * Courses can be private (with a list of enrolled students) or public (accessible to anyone);
     * Only enrolled students shall be able to access and post questions on private courses.
 
-You are **not** required to provide more advanced functionality, but if you wish to do so remember to clearly consider and document its security requirements. If you choose to adapt an existing framework, 
-
+You are **not** required to provide more advanced functionality, but if you wish to do so remember to clearly consider and document its security requirements. If you choose to adapt an existing framework, and it is not directly possible to match the outlined requirements, remember to discuss that in your final report.
 ## Design
 
 Your team shall design the software components needed for the learning platform, coupled with the security mechanisms to satisfy the requirements outlined above.
