@@ -58,7 +58,7 @@ You can use any technology and programming language for the server/client code t
 Beyond familiarity with technology or ease of deployment, your choice shall take into consideration the reliability and the security guarantees offered by each technology. Secure and reliable software procurement is also a job of security developers and teams. 
 
 You are not limited in any way in the existing frameworks that you can use. In fact, you are encouraged to reuse and adapt popular open-source LMS frameworks for your context (to the extent of your interest in exploring other projects). You may also opt to implement a simple prototype *from scratch*. Note that the least source code you develop, and the largest the *trusted* code base you reuse, the more important it is to demonstrate that you understand the configurations of the software components that you reuse, how they fulfil your requirements and which are their security implications. 
-As a starting point for exploring existing open-source projects, you may consider the following non-exclusive nor curated lists:
+As a starting point for exploring existing open-source projects, you may consider the following non-exclusive nor curated list:
 
 * [Masteriyo](https://masteriyo.com/)
 * [Canvas](https://www.instructure.com/canvas)
