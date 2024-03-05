@@ -283,7 +283,7 @@ This may make your VM allocate a lot of memory and lead to random crashes; make 
 
 ### libxml2 example
 
-As another example, start by pulling libxml2 version 2.9.2 (with a few known fuzzable vulnerabilities, see [here](https://github.com/google/fuzzer-test-suite/tree/master/libxml2-v2.9.2)) and compile it with ALF support. BUilding will take a while:
+As another example, start by pulling libxml2 version 2.9.2 (with a few known fuzzable vulnerabilities, see [here](https://github.com/google/fuzzer-test-suite/tree/master/libxml2-v2.9.2)) and compile it with ALF support. Building will take a while:
 ```ShellSession
 $ cd c/misc/libxml2/
 $ git submodule --init --recursive
