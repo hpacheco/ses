@@ -10,7 +10,7 @@ In this lab we will look at two techniques that, both separately and combined, h
 * **symbolic execution**, a white-box testing technique that consists in substituting program inputs by symbolic (undefined) values and partially evaluating the program; an outcome of the program exploration is to generate program-dependent tests for symbolic inputs.
 * **concolic execution** is a software testing technique that combines symbolic execution with concrete execution of particular inputs, e.g. generated using fuzzing.
 
-Fuzzing, symbolic execution and concolic execution are a currently hot research topic, and there are many recently proposed tools that combine these techniques (to the point that the nomenclature is often ``fuzzy''). The [FuzzBench](https://google.github.io/fuzzbench/) project is an effort to standardize benchmarks of such tools. You may get a visual picture of the ever-growing list of available techniques and tools in this [survey](https://github.com/SoftSec-KAIST/Fuzzing-Survey).
+Fuzzing, symbolic execution and concolic execution are a currently hot research topic, and there are many recently proposed tools that combine these techniques (to the point that the nomenclature is often "fuzzy"). The [FuzzBench](https://google.github.io/fuzzbench/) project is an effort to standardize benchmarks of such tools. You may get a visual picture of the ever-growing list of available techniques and tools in this [survey](https://github.com/SoftSec-KAIST/Fuzzing-Survey).
 
 ## Topics & Additional References
 
