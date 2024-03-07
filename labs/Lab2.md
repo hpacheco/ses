@@ -10,7 +10,7 @@ In this lab we will look at two techniques that, both separately and combined, h
 * **symbolic execution**, a white-box testing technique that consists in substituting program inputs by symbolic (undefined) values and partially evaluating the program; an outcome of the program exploration is to generate program-dependent tests for symbolic inputs.
 * **concolic execution** is a software testing technique that combines symbolic execution with concrete execution of particular inputs, e.g. generated using fuzzing.
 
-Fuzzing, symbolic execution and concolic execution are a currently hot research topic, and there are many recently proposed tools that combine these techniques (to the point that the nomenclature is often ``fuzzy''). The [FuzzBench](https://google.github.io/fuzzbench/) project is an effort to standardize benchmarks of such tools. You may get a visual picture of the ever-growing list of available techniques and tools in this [survey](https://github.com/SoftSec-KAIST/Fuzzing-Survey).
+Fuzzing, symbolic execution and concolic execution are a currently hot research topic, and there are many recently proposed tools that combine these techniques (to the point that the nomenclature is often "fuzzy"). The [FuzzBench](https://google.github.io/fuzzbench/) project is an effort to standardize benchmarks of such tools. You may get a visual picture of the ever-growing list of available techniques and tools in this [survey](https://github.com/SoftSec-KAIST/Fuzzing-Survey).
 
 ## Topics & Additional References
 
@@ -283,7 +283,7 @@ This may make your VM allocate a lot of memory and lead to random crashes; make 
 
 ### libxml2 example
 
-As another example, start by pulling libxml2 version 2.9.2 (with a few known fuzzable vulnerabilities, see [here](https://github.com/google/fuzzer-test-suite/tree/master/libxml2-v2.9.2)) and compile it with ALF support. BUilding will take a while:
+As another example, start by pulling libxml2 version 2.9.2 (with a few known fuzzable vulnerabilities, see [here](https://github.com/google/fuzzer-test-suite/tree/master/libxml2-v2.9.2)) and compile it with ALF support. Building will take a while:
 ```ShellSession
 $ cd c/misc/libxml2/
 $ git submodule --init --recursive
@@ -485,7 +485,7 @@ The approaches behind dudect and ct-fuzz have been developed specifically for cr
 
 The goal of this lab is to experiment with the automated testing tools described above. We will detect and fix the vulnerabilities found in example C programs from the [c/SARD-testsuite-100](../c/SARD-testsuite-100) testsuite. 
 1. Study and try out the tools described above.
-2. Choose one vulnerable program from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse. To make it interesting, your chosen vulnerable program should only crash or lead to a security vulnerability for some inputs, but not for all inputs. It is not mandatory to choose examples from this dataset; you may also choose examples of vulnerable C programs from other resources such as, e.g., another [SARD dataset](https://samate.nist.gov/SARD/testsuite.php) or the [US-CERT dataset](https://www.cisa.gov/uscert/bsi/articles/tools/source-code-analysis/source-code-analysis-tools---example-programs). Alternatively, you may wish to try out a more realistic example from, e.g., Google's FuzzBench [benchmarks](https://github.com/google/fuzzbench/tree/master/benchmarks).
+2. Choose one vulnerable program from [c/SARD-testsuite-100](../c/SARD-testsuite-100) to analyse. To make it interesting, your chosen vulnerable program should only crash or lead to a security vulnerability for some inputs, but not for all inputs. It is not mandatory to choose examples from this dataset; you may also choose examples of vulnerable C programs from other resources such as the datasets illustrated in [Lab 1](Lab1.md). You may also wish to try out a more realistic example from, e.g., Google's FuzzBench [benchmarks](https://github.com/google/fuzzbench/tree/master/benchmarks).
 4. Test your program with some of the above tools. You should try at least one basic black-box fuzzing tool (Radamsa or Blab) and one symbolic execution tool (KLEE); or make sure to explore other grey-box fuzzing tools (AFL and onwards).
 5. **In your group's GitHub repository, write a small report to the markdown file `Lab2.md`.**
 6. The report shall discuss:

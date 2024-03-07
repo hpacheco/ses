@@ -15,5 +15,5 @@ The different [labs](labs) for the pratical classes:
 # Project
 
 The proposal of the final project of the pratical classes:
-* [Final Project - TBD](project/Project.md)
+* [Final Project - Secure Learning Platform](project/Project.md)
 
