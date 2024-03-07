@@ -31,7 +31,7 @@ run-smack:
 	sudo docker run -v ${HOME}:${HOME} -it --platform linux/amd64 smackers/smack
 
 run-framac:
-	sudo docker run -v ${HOME}:${HOME} -it --rm --net=host --env="DISPLAY" -v $HOME/.Xauthority:/root/.Xauthority:ro hugopacheco/framac
+	sudo docker run -v ${HOME}:${HOME} -it --rm --net=host --env="DISPLAY" -v ${HOME}/.Xauthority:/root/.Xauthority:ro hugopacheco/framac
 
 run-ikos:
 	sudo docker run -v ${HOME}:${HOME} -p8080:8080 -it hugopacheco/ikos
