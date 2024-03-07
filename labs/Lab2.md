@@ -210,7 +210,7 @@ Compile the symbolic program for KLEE and run it.
 $ make run-klee
 klee@container# cd path/to/c/misc/maze/
 klee@container# clang -I /home/klee/klee_src/include/ -emit-llvm -c -g -O0 -Xclang -disable-O0-optnone maze-klee.c
-klee@container# klee --libc=uclibc maze-klee.bc
+klee@container# klee maze-klee.bc
 ```
 </details>
 
