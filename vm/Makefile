@@ -52,8 +52,8 @@ run-symcc:
 	sudo docker run -v /home/kali:/home/kali -it --rm hugopacheco/symcc
 
 run-klee:
-	sudo docker pull klee/klee:2.1
-	sudo docker run --rm -v ${HOME}:${HOME} -ti --ulimit='stack=-1:-1' klee/klee:2.1
+	sudo docker pull klee/klee:3.0
+	sudo docker run --rm -v ${HOME}:${HOME} -ti --platform linux/amd64 --ulimit='stack=-1:-1' klee/klee:3.0
 
 run-klee-taint:
 	sudo docker run -v /home/kali:/home/kali -it hugopacheco/klee-taint
