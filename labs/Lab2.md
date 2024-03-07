@@ -112,7 +112,8 @@ KLEE: done: generated tests = 132  
 ```
 </details>
 
-It should exit shortly and discover the error (an overflow related to the size of the array read from `gets`), printing a stack trace and some information about the current state. It will have created a directory `klee-last` in the current directory that contains further information about the symbolic execution. If you look in there, you will see that it generated some tests, error reports and some statistics.
+The `--libc` flag tells KLEE to replace standard `libc` functions by a symbolically-compiled `uclibc` implementation; it is natural to get some warning related to this.
+KLEE shall run shortly and discover the error (an overflow related to the size of the array read from `gets`), printing a stack trace and some information about the current state. It will have created a directory `klee-last` in the current directory that contains further information about the symbolic execution. If you look in there, you will see that it generated some tests, error reports and some statistics.
 The (binary) files ending in `.ktest` in this directory can be formatted intelligibly by using `ktest-tool`. Use the following commands to inspect the concrete state that the error occurred in:
 
 <details>
