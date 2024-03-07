@@ -96,7 +96,7 @@ We will use a pre-configured docker container. Inside the [vm](../vm) folder, op
 $ make run-klee
 klee@container# cd path/to/c/misc/wisdom/
 klee@container# clang -I /home/klee/klee_src/include/ -emit-llvm -c -g -O0 -Xclang -disable-O0-optnone wisdom-alt-klee.c
-klee@container# klee wisdom-alt-klee.bc
+klee@container# klee --libc=uclibc wisdom-alt-klee.bc
 Hello there                               
 1. Receive wisdom
 2. Add wisdom
@@ -209,7 +209,7 @@ Compile the symbolic program for KLEE and run it.
 $ make run-klee
 klee@container# cd path/to/c/misc/maze/
 klee@container# clang -I /home/klee/klee_src/include/ -emit-llvm -c -g -O0 -Xclang -disable-O0-optnone maze-klee.c
-klee@container# klee maze-klee.bc
+klee@container# klee --libc=uclibc maze-klee.bc
 ```
 </details>
 
