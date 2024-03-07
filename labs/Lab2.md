@@ -200,8 +200,8 @@ Your solution <             ssssddddwwaawwddddssssddwwww>
 ```
 </details>
 
-The file [maze-klee.c](../c/misc/maze/maze-klee.c) is a slightly modified version of it with symbolic inputs. We also introduce a KLEE-specific assertion when the maze is solved, to make it easier to distinguish when KLEE finds a solution.
-Compile the symbolic program for KLEE and run it.
+The file [maze-klee.c](../c/misc/maze/maze-klee.c) is a slightly modified version: we introduce a KLEE-specific assertion when the maze is solved, to make it easier to distinguish when KLEE finds a solution.
+Compile the symbolic program for KLEE and run it. This time, we make the input a symbolic string with size 30 using command-line arguments.
 
 <details>
 <summary>Result</summary>
@@ -210,7 +210,7 @@ Compile the symbolic program for KLEE and run it.
 $ make run-klee
 klee@container# cd path/to/c/misc/maze/
 klee@container# clang -I /home/klee/klee_src/include/ -emit-llvm -c -g -O0 -Xclang -disable-O0-optnone maze-klee.c
-klee@container# klee maze-klee.bc
+klee@container# klee -posix-runtime maze-klee.bc -sym-stdin 30
 ```
 </details>
 
