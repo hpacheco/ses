@@ -46,10 +46,13 @@ run-driller:
 	sudo docker run  -v /home/kali:/home/kali -it shellphish/mechaphish
 
 run-fuzzolic:
-	sudo docker run -v /home/kali:/home/kali -u 0 -ti --rm ercoppa/fuzzolic-runner-v1
+	sudo docker run -v /home/kali:/home/kali -u 0 -ti --platform linux/amd64 --rm ercoppa/fuzzolic-runner-v1
 
 run-symcc:
 	sudo docker run -v /home/kali:/home/kali -it --rm hugopacheco/symcc
+    
+run-angora:
+	sudo docker run -v /home/kali:/home/kali -it --platform linux/amd64 --rm zjuchenyuan/angora
 
 run-klee:
 	sudo docker pull klee/klee:2.1
