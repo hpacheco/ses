@@ -69,8 +69,8 @@ main (int argc, char *argv[])
 //Draw the maze
     draw ();    
 //Read the directions 'program' to execute...
-    //read(0,program,ITERS);
-    klee_make_symbolic(program,ITERS,"program");
+    read(0,program,ITERS);
+    //klee_make_symbolic(program,ITERS,"program");
 
 //Iterate and run 'program'
 	while(i < ITERS)

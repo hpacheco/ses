@@ -31,7 +31,7 @@ run-smack:
 	sudo docker run -v ${HOME}:${HOME} -it --platform linux/amd64 smackers/smack
 
 run-framac:
-	sudo docker run -v ${HOME}:${HOME} -it --rm --net=host --env="DISPLAY" -v $HOME/.Xauthority:/root/.Xauthority:ro hugopacheco/framac
+	sudo docker run -v ${HOME}:${HOME} -it --rm --net=host --env="DISPLAY" -v ${HOME}/.Xauthority:/root/.Xauthority:ro hugopacheco/framac
 
 run-ikos:
 	sudo docker run -v ${HOME}:${HOME} -p8080:8080 -it hugopacheco/ikos
@@ -55,8 +55,8 @@ run-angora:
 	sudo docker run -v /home/kali:/home/kali -it --platform linux/amd64 --rm zjuchenyuan/angora
 
 run-klee:
-	sudo docker pull klee/klee:2.1
-	sudo docker run --rm -v ${HOME}:${HOME} -ti --ulimit='stack=-1:-1' klee/klee:2.1
+	sudo docker pull klee/klee:3.0
+	sudo docker run --rm -v ${HOME}:${HOME} -ti --platform linux/amd64 --ulimit='stack=-1:-1' klee/klee:3.0
 
 run-klee-taint:
 	sudo docker run -v /home/kali:/home/kali -it hugopacheco/klee-taint
