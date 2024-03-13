@@ -421,7 +421,7 @@ $ make run-angora
 angora@container# cd tests
 angora@container# ./test.sh mini
 ```
-This will compile and run the [mini.c](https://github.com/AngoraFuzzer/Angora/blob/master/tests/mini/mini.c) example that you may find in `tests/mini/mini.c`; this example is very similar to the [buggy.c](../c/misc/buggy.c) example that we have seen before. You may inspect the output, including the found errors, in the folder `tests/output`. To fuzz your own program, the simplest way is to place it in a new subfolder under `tests` and running it as above; since Angora is a mutation-based fuzzer, the above test script will look for input seed files in folder `tests/input`.
+This will compile and run the [mini.c](https://github.com/AngoraFuzzer/Angora/blob/master/tests/mini/mini.c) example that you may find in `tests/mini/mini.c` inside the container; this example is very similar to the [buggy.c](../c/misc/buggy.c) example that we have seen before. You may inspect the output, including the found errors, in the folder `tests/output`. To fuzz your own program, the simplest way is to place it in a new subfolder under `tests` and running it as above; since Angora is a mutation-based fuzzer, the above test script will look for input seed files in folder `tests/input`.
 
 ### [KLEE-taint](https://github.com/feliam/klee-taint)
 
@@ -500,7 +500,7 @@ Using the same rationale, it is possible to use traditional fuzzers to support t
 
 ### [DifFuzz](https://github.com/isstac/diffuzz)
 
-The approaches behind dudect and ct-fuzz have been developed specifically for cryptographic code. A more recent research direction, called _differential fuzzing_, considers the adaptation of general-purpose fuzzers for side-channel analysis. One such example is DifFuzz, which is built on top of AFL and employs resource-guided heuristics to automatically find inputs that attempt to maximize the difference in time/resource consumption between different program executions.
+The approaches behind dudect and ct-fuzz have been developed specifically for cryptographic code. A more recent research direction, called _differential fuzzing_, considers the adaptation of general-purpose fuzzers for side-channel analysis. One such example is DifFuzz, from Java programs, which is built on top of AFL and employs resource-guided heuristics to automatically find inputs that attempt to maximize the difference in time/resource consumption between different program executions.
 
 ## Tasks
 
