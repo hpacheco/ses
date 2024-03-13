@@ -50,6 +50,9 @@ run-fuzzolic:
 
 run-symcc:
 	sudo docker run -v /home/kali:/home/kali -it --platform linux/amd64 --rm hugopacheco/symcc
+    
+run-angora:
+	sudo docker run -v /home/kali:/home/kali -it --platform linux/amd64 --rm zjuchenyuan/angora
 
 run-klee:
 	sudo docker pull klee/klee:3.0

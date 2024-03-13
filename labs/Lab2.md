@@ -12,6 +12,15 @@ In this lab we will look at two techniques that, both separately and combined, h
 
 Fuzzing, symbolic execution and concolic execution are a currently hot research topic, and there are many recently proposed tools that combine these techniques (to the point that the nomenclature is often "fuzzy"). The [FuzzBench](https://google.github.io/fuzzbench/) project is an effort to standardize benchmarks of such tools. You may get a visual picture of the ever-growing list of available techniques and tools in this [survey](https://github.com/SoftSec-KAIST/Fuzzing-Survey).
 
+## Lab install
+
+To install the specific tools that will be used in this lab, run:
+```
+cd ses/vm
+git pull
+sh install-fuzz.sh
+```
+
 ## Topics & Additional References
 
 Before we start, this lab will cover, by example, a series of testing techniques and tools. These topics are only introduced in the theoretical lectures in a broad sense and shortly introduced in this lab, which together should be sufficient for our experimentation. For a more in-depth contextualization or more technical detail, you may ask the instructors or check the following references:
@@ -200,8 +209,8 @@ Your solution <             ssssddddwwaawwddddssssddwwww>
 ```
 </details>
 
-The file [maze-klee.c](../c/misc/maze/maze-klee.c) is a slightly modified version of it with symbolic inputs. We also introduce a KLEE-specific assertion when the maze is solved, to make it easier to distinguish when KLEE finds a solution.
-Compile the symbolic program for KLEE and run it.
+The file [maze-klee.c](../c/misc/maze/maze-klee.c) is a slightly modified version: we introduce a KLEE-specific assertion when the maze is solved, to make it easier to distinguish when KLEE finds a solution.
+Compile the symbolic program for KLEE and run it. This time, we make the input a symbolic string with size 30 using command-line arguments.
 
 <details>
 <summary>Result</summary>
@@ -210,7 +219,7 @@ Compile the symbolic program for KLEE and run it.
 $ make run-klee
 klee@container# cd path/to/c/misc/maze/
 klee@container# clang -I /home/klee/klee_src/include/ -emit-llvm -c -g -O0 -Xclang -disable-O0-optnone maze-klee.c
-klee@container# klee maze-klee.bc
+klee@container# klee -posix-runtime maze-klee.bc -sym-stdin 30
 ```
 </details>
 
@@ -336,6 +345,8 @@ There are many other modern fuzzing techniques that can achieve better results f
 
 **Remark:** For the sake of demonstration, we will look at a few, but be advised that it may be hard to understand their behavior outside of the example programs that we provide. 
 
+The list of fuzzers presented here is merely demonstrative. For a slightly more complete picture, from 2021, the [UNIFUZZ](https://github.com/unifuzz/overview) project has made an effort to real world examples that you may alternatively explore.
+
 
 ### [Driller](https://github.com/shellphish/driller)
 
@@ -401,7 +412,16 @@ Even though it does not offer an not automated script, SymCC may also be combine
 
 ### [Angora](https://angorafuzzer.github.io/)
 
-Angora is a mutation-based fuzzer that seeks to improve AFL's branch coverage without resorting to symbolic execution. Instead, it relies on dynamic byte-level taint tracking to try to understand how inputs affect branch constraints, and therefore how to mutate inputs to improve branch coverage.
+Angora is a mutation-based fuzzer that seeks to improve AFL's branch coverage without resorting to symbolic execution. Instead, it relies on dynamic byte-level taint tracking to try to understand how inputs affect branch constraints, and therefore how to mutate inputs to improve branch coverage. 
+
+You may build a docker container to try Angora. Inside the [vm](../vm) folder, just try running:
+```ShellSession
+$ echo core | sudo tee /proc/sys/kernel/core_pattern
+$ make run-angora
+angora@container# cd tests
+angora@container# ./test.sh mini
+```
+This will compile and run the [mini.c](https://github.com/AngoraFuzzer/Angora/blob/master/tests/mini/mini.c) example that you may find in `tests/mini/mini.c`; this example is very similar to the [buggy.c](../c/misc/buggy.c) example that we have seen before. You may inspect the output, including the found errors, in the folder `tests/output`. To fuzz your own program, the simplest way is to place it in a new subfolder under `tests` and running it as above; since Angora is a mutation-based fuzzer, the above test script will look for input seed files in folder `tests/input`.
 
 ### [KLEE-taint](https://github.com/feliam/klee-taint)
 
