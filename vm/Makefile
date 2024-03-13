@@ -63,3 +63,6 @@ run-klee-taint:
 
 run-klee-taint-ct:
 	sudo docker run -v /home/kali:/home/kali -it --platform linux/amd64 hugopacheco/klee-taint-ct
+	
+run-binsec:
+	sudo docker run -v /home/kali:/home/kali -it --platform linux/amd64 binsec/binsec
