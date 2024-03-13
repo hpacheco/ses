@@ -498,6 +498,93 @@ It is possible to reduce the analysis of some security properties to the compari
 Constant-time static analysis tools such as ct-verif consider a *self-composed* program that simulates two parallel executions of the original program.
 Using the same rationale, it is possible to use traditional fuzzers to support the automated testing of security properties by comparing the outputs of multiple fuzzed inputs; one such example is ct-fuzz, tailored for automated testing of constant-time security for cryptographic implementations. You may read the ct-fuzz [paper](http://www.cs.utah.edu/~shaobo/ct-fuzz.pdf) and the [GitHub repository](https://github.com/michael-emmi/ct-fuzz).
 
+### [BinSec/Rel](https://github.com/binsec/rel)
+
+sudo apt update
+sudo apt install gcc gcc-multilib
+
+$ gcc -g -m32 -static pass-loop-bad-binsec.c -o pass-loop-bad-binsec
+$ binsec -sse -checkct -sse-script pass-loop-bad-binsec.cfg -checkct-stats-file pass-loop-bad-binsec.toml pass-loop-bad-binsec
+[sse:info] TTY: press [space] to switch between log and monitor modes.
+[checkct:result] Instruction 0x08049d2a has control flow leak (0.093s)
+[sse:info] Empty path worklist: halting ...
+[sse:info] SMT queries
+             Preprocessing simplifications
+               total          379
+               sat            0
+               unsat          359
+               constant enum  20
+             
+             Satisfiability queries
+               total          20
+               sat            18
+               unsat          2
+               unknown        0
+               time           0.04
+               average        0.00
+             
+           Exploration
+             total paths                      18
+             completed/cut paths              18
+             pending paths                    0
+             stale paths                      0
+             failed assertions                0
+             branching points                 39
+             max path depth                   169
+             visited instructions (unrolled)  373
+             visited instructions (static)    54
+             
+           
+[checkct:result] Program status is : insecure (0.119)
+[checkct:info] 18 visited paths covering 54 instructions
+[checkct:info] 30 / 31 control flow checks pass
+[checkct:info] 383 / 383 memory access checks pass
+
+n = ["0x00000009"]
+["CT report"."Insecurity models".0x08049d2a.secret1]
+arg = ["0x0000000000000000000000003a70c9ef"]
+pass = ["0x00000000000000000000000007c5275b"]
+["CT report"."Insecurity models".0x08049d2a.secret2]
+arg = ["0xffffffffffffffffffffffffffffffff"]
+pass = ["0xffffffffffffffffffffffffffffffff"]
+
+
+$ gcc -g -m32 -static pass-loop-good-binsec.c -o pass-loop-good-binsec
+$ binsec -sse -checkct -sse-script pass-loop-bad-binsec.cfg -checkct-stats-file pass-loop-good-binsec.toml pass-loop-good-binsec
+[sse:info] TTY: press [space] to switch between log and monitor modes.
+[sse:info] Empty path worklist: halting ...
+[sse:info] SMT queries
+             Preprocessing simplifications
+               total          244
+               sat            0
+               unsat          233
+               constant enum  11
+             
+             Satisfiability queries
+               total          11
+               sat            9
+               unsat          2
+               unknown        0
+               time           0.03
+               average        0.00
+             
+           Exploration
+             total paths                      9
+             completed/cut paths              9
+             pending paths                    0
+             stale paths                      0
+             failed assertions                0
+             branching points                 21
+             max path depth                   185
+             visited instructions (unrolled)  257
+             visited instructions (static)    54
+             
+           
+[checkct:result] Program status is : secure (0.112)
+[checkct:info] 9 visited paths covering 54 instructions
+[checkct:info] 21 / 21 control flow checks pass
+[checkct:info] 258 / 258 memory access checks pass
+
 ### [DifFuzz](https://github.com/isstac/diffuzz)
 
 The approaches behind dudect and ct-fuzz have been developed specifically for cryptographic code. A more recent research direction, called _differential fuzzing_, considers the adaptation of general-purpose fuzzers for side-channel analysis. One such example is DifFuzz, from Java programs, which is built on top of AFL and employs resource-guided heuristics to automatically find inputs that attempt to maximize the difference in time/resource consumption between different program executions.
