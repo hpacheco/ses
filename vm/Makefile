@@ -43,20 +43,26 @@ run-ctverif:
 	sudo docker run -v ${HOME}:${HOME} -it --platform linux/amd64 hugopacheco/ctverif
 
 run-driller:
-	sudo docker run  -v /home/kali:/home/kali -it shellphish/mechaphish
+	sudo docker run  -v /home/kali:/home/kali -it --platform linux/amd64 shellphish/mechaphish
 
 run-fuzzolic:
-	sudo docker run -v /home/kali:/home/kali -u 0 -ti --rm ercoppa/fuzzolic-runner-v1
+	sudo docker run -v /home/kali:/home/kali -u 0 -ti --platform linux/amd64 --rm ercoppa/fuzzolic-runner-v1
 
 run-symcc:
-	sudo docker run -v /home/kali:/home/kali -it --rm hugopacheco/symcc
+	sudo docker run -v /home/kali:/home/kali -it --platform linux/amd64 --rm hugopacheco/symcc
+    
+run-angora:
+	sudo docker run -v /home/kali:/home/kali -it --platform linux/amd64 --rm zjuchenyuan/angora
 
 run-klee:
 	sudo docker pull klee/klee:3.0
 	sudo docker run --rm -v ${HOME}:${HOME} -ti --platform linux/amd64 --ulimit='stack=-1:-1' klee/klee:3.0
 
 run-klee-taint:
-	sudo docker run -v /home/kali:/home/kali -it hugopacheco/klee-taint
+	sudo docker run -v /home/kali:/home/kali -it --platform linux/amd64 hugopacheco/klee-taint
 
 run-klee-taint-ct:
-	sudo docker run -v /home/kali:/home/kali -it hugopacheco/klee-taint-ct
+	sudo docker run -v /home/kali:/home/kali -it --platform linux/amd64 hugopacheco/klee-taint-ct
+	
+run-binsec:
+	sudo docker run -v /home/kali:/home/kali -it --platform linux/amd64 binsec/binsec

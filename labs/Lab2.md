@@ -12,6 +12,15 @@ In this lab we will look at two techniques that, both separately and combined, h
 
 Fuzzing, symbolic execution and concolic execution are a currently hot research topic, and there are many recently proposed tools that combine these techniques (to the point that the nomenclature is often "fuzzy"). The [FuzzBench](https://google.github.io/fuzzbench/) project is an effort to standardize benchmarks of such tools. You may get a visual picture of the ever-growing list of available techniques and tools in this [survey](https://github.com/SoftSec-KAIST/Fuzzing-Survey).
 
+## Lab install
+
+To install the specific tools that will be used in this lab, run:
+```
+cd ses/vm
+git pull
+sh install-fuzz.sh
+```
+
 ## Topics & Additional References
 
 Before we start, this lab will cover, by example, a series of testing techniques and tools. These topics are only introduced in the theoretical lectures in a broad sense and shortly introduced in this lab, which together should be sufficient for our experimentation. For a more in-depth contextualization or more technical detail, you may ask the instructors or check the following references:
@@ -336,6 +345,8 @@ There are many other modern fuzzing techniques that can achieve better results f
 
 **Remark:** For the sake of demonstration, we will look at a few, but be advised that it may be hard to understand their behavior outside of the example programs that we provide. 
 
+The list of fuzzers presented here is merely demonstrative. For a slightly more complete picture, from 2021, the [UNIFUZZ](https://github.com/unifuzz/overview) project has made an effort to real world examples that you may alternatively explore.
+
 
 ### [Driller](https://github.com/shellphish/driller)
 
@@ -401,7 +412,16 @@ Even though it does not offer an not automated script, SymCC may also be combine
 
 ### [Angora](https://angorafuzzer.github.io/)
 
-Angora is a mutation-based fuzzer that seeks to improve AFL's branch coverage without resorting to symbolic execution. Instead, it relies on dynamic byte-level taint tracking to try to understand how inputs affect branch constraints, and therefore how to mutate inputs to improve branch coverage.
+Angora is a mutation-based fuzzer that seeks to improve AFL's branch coverage without resorting to symbolic execution. Instead, it relies on dynamic byte-level taint tracking to try to understand how inputs affect branch constraints, and therefore how to mutate inputs to improve branch coverage. 
+
+You may build a docker container to try Angora. Inside the [vm](../vm) folder, just try running:
+```ShellSession
+$ echo core | sudo tee /proc/sys/kernel/core_pattern
+$ make run-angora
+angora@container# cd tests
+angora@container# ./test.sh mini
+```
+This will compile and run the [mini.c](https://github.com/AngoraFuzzer/Angora/blob/master/tests/mini/mini.c) example that you may find in `tests/mini/mini.c`; this example is very similar to the [buggy.c](../c/misc/buggy.c) example that we have seen before. You may inspect the output, including the found errors, in the folder `tests/output`. To fuzz your own program, the simplest way is to place it in a new subfolder under `tests` and running it as above; since Angora is a mutation-based fuzzer, the above test script will look for input seed files in folder `tests/input`.
 
 ### [KLEE-taint](https://github.com/feliam/klee-taint)
 
@@ -477,6 +497,93 @@ It is possible to reduce the analysis of some security properties to the compari
 
 Constant-time static analysis tools such as ct-verif consider a *self-composed* program that simulates two parallel executions of the original program.
 Using the same rationale, it is possible to use traditional fuzzers to support the automated testing of security properties by comparing the outputs of multiple fuzzed inputs; one such example is ct-fuzz, tailored for automated testing of constant-time security for cryptographic implementations. You may read the ct-fuzz [paper](http://www.cs.utah.edu/~shaobo/ct-fuzz.pdf) and the [GitHub repository](https://github.com/michael-emmi/ct-fuzz).
+
+### [BinSec/Rel](https://github.com/binsec/rel)
+
+sudo apt update
+sudo apt install gcc gcc-multilib
+
+$ gcc -g -m32 -static pass-loop-bad-binsec.c -o pass-loop-bad-binsec
+$ binsec -sse -checkct -sse-script pass-loop-bad-binsec.cfg -checkct-stats-file pass-loop-bad-binsec.toml pass-loop-bad-binsec
+[sse:info] TTY: press [space] to switch between log and monitor modes.
+[checkct:result] Instruction 0x08049d2a has control flow leak (0.093s)
+[sse:info] Empty path worklist: halting ...
+[sse:info] SMT queries
+             Preprocessing simplifications
+               total          379
+               sat            0
+               unsat          359
+               constant enum  20
+             
+             Satisfiability queries
+               total          20
+               sat            18
+               unsat          2
+               unknown        0
+               time           0.04
+               average        0.00
+             
+           Exploration
+             total paths                      18
+             completed/cut paths              18
+             pending paths                    0
+             stale paths                      0
+             failed assertions                0
+             branching points                 39
+             max path depth                   169
+             visited instructions (unrolled)  373
+             visited instructions (static)    54
+             
+           
+[checkct:result] Program status is : insecure (0.119)
+[checkct:info] 18 visited paths covering 54 instructions
+[checkct:info] 30 / 31 control flow checks pass
+[checkct:info] 383 / 383 memory access checks pass
+
+n = ["0x00000009"]
+["CT report"."Insecurity models".0x08049d2a.secret1]
+arg = ["0x0000000000000000000000003a70c9ef"]
+pass = ["0x00000000000000000000000007c5275b"]
+["CT report"."Insecurity models".0x08049d2a.secret2]
+arg = ["0xffffffffffffffffffffffffffffffff"]
+pass = ["0xffffffffffffffffffffffffffffffff"]
+
+
+$ gcc -g -m32 -static pass-loop-good-binsec.c -o pass-loop-good-binsec
+$ binsec -sse -checkct -sse-script pass-loop-bad-binsec.cfg -checkct-stats-file pass-loop-good-binsec.toml pass-loop-good-binsec
+[sse:info] TTY: press [space] to switch between log and monitor modes.
+[sse:info] Empty path worklist: halting ...
+[sse:info] SMT queries
+             Preprocessing simplifications
+               total          244
+               sat            0
+               unsat          233
+               constant enum  11
+             
+             Satisfiability queries
+               total          11
+               sat            9
+               unsat          2
+               unknown        0
+               time           0.03
+               average        0.00
+             
+           Exploration
+             total paths                      9
+             completed/cut paths              9
+             pending paths                    0
+             stale paths                      0
+             failed assertions                0
+             branching points                 21
+             max path depth                   185
+             visited instructions (unrolled)  257
+             visited instructions (static)    54
+             
+           
+[checkct:result] Program status is : secure (0.112)
+[checkct:info] 9 visited paths covering 54 instructions
+[checkct:info] 21 / 21 control flow checks pass
+[checkct:info] 258 / 258 memory access checks pass
 
 ### [DifFuzz](https://github.com/isstac/diffuzz)
 
