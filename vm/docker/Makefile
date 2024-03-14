@@ -36,3 +36,6 @@ build-klee-taint:
 build-klee-taint-ct:
 	git clone https://github.com/hpacheco/klee-taint-ct
 	cd klee-taint-ct && sudo docker build -f Dockerfile . -t hugopacheco/klee-taint-ct
+
+build-symsan:
+	sudo docker build -f symsan.dockerfile . -t hugopacheco/symsan
