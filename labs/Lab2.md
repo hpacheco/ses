@@ -500,11 +500,22 @@ Using the same rationale, it is possible to use traditional fuzzers to support t
 
 ### [BinSec/Rel](https://github.com/binsec/rel)
 
-sudo apt update
-sudo apt install gcc gcc-multilib
+We have seen extensions of KLEE (a symbolic execution tool) that combine dynamic taint analysis to support the analysis of security properties, including general information flow and constant-time security.
+Nonetheless, symbolic execution by itself can be generalized to verify security properties, such as constant-time, that fall under the class of _relational properties_, that is, properties that can be expressed over multiple executions of the same program.
 
-$ gcc -g -m32 -static pass-loop-bad-binsec.c -o pass-loop-bad-binsec
-$ binsec -sse -checkct -sse-script pass-loop-bad-binsec.cfg -checkct-stats-file pass-loop-bad-binsec.toml pass-loop-bad-binsec
+[BinSec](https://binsec.github.io/) is a binary-level security analysis tool that employs symbolic execution among other techniques. [BinSec/Rel](https://github.com/binsec/rel) is a [plugin](https://github.com/binsec/binsec/blob/master/doc/sse/relse.md) that provides support checking for constant-time security using relational symbolic execution, that is, symbolically executing two executions of the same program such that their results must be the same for different secret symbolic inputs.
+
+Remember the password checking example from before, adapted in program [pass-loop-bad-binsec.c](../c/misc/pass-loop-bad-binsec.c). 
+Inside the [vm](../vm) folder, we can compile our program to a binary and run it inside a BinSec docker container as follows:
+
+<details>
+<summary>Result</summary>
+```ShellSession
+$ make run-binsec
+binsec@container# cd /path/to/ses/c/misc/
+binsec@container# sudo apt update && sudo apt install gcc gcc-multilib
+binsec@container# gcc -g -m32 -static pass-loop-bad-binsec.c -o pass-loop-bad-binsec
+binsec@container# binsec -sse -checkct -sse-script pass-loop-binsec.cfg -checkct-stats-file pass-loop-bad-binsec.toml pass-loop-bad-binsec
 [sse:info] TTY: press [space] to switch between log and monitor modes.
 [checkct:result] Instruction 0x08049d2a has control flow leak (0.093s)
 [sse:info] Empty path worklist: halting ...
@@ -539,7 +550,15 @@ $ binsec -sse -checkct -sse-script pass-loop-bad-binsec.cfg -checkct-stats-file 
 [checkct:info] 18 visited paths covering 54 instructions
 [checkct:info] 30 / 31 control flow checks pass
 [checkct:info] 383 / 383 memory access checks pass
+```
+</details>
 
+Note that the [pass-loop-binsec.cfg](../c/misc/pass-loop-binsec.cfg) file includes a configuration which declares which symbolic variables are to be treated as secret or public inputs. In this example, BinSec will report that the program is insecure, and present symbolic inputs that testify that the program is not constant-time, i.e., different secret inputs may yield different public outputs.
+The found counter-example will be detailed in file `pass-loop-bad-binsec.toml`, which will include sample instantiations for symbolic variables similar to the ones below:
+
+<details>
+<summary>Result</summary>
+```ShellSession
 n = ["0x00000009"]
 ["CT report"."Insecurity models".0x08049d2a.secret1]
 arg = ["0x0000000000000000000000003a70c9ef"]
@@ -547,10 +566,16 @@ pass = ["0x00000000000000000000000007c5275b"]
 ["CT report"."Insecurity models".0x08049d2a.secret2]
 arg = ["0xffffffffffffffffffffffffffffffff"]
 pass = ["0xffffffffffffffffffffffffffffffff"]
+```
+</details>
 
+Then try the constant-time program [pass-loop-good-binsec.c](../c/misc/pass-loop-good-binsec.c); this time, BinSec shall report that the program is secure:
 
-$ gcc -g -m32 -static pass-loop-good-binsec.c -o pass-loop-good-binsec
-$ binsec -sse -checkct -sse-script pass-loop-bad-binsec.cfg -checkct-stats-file pass-loop-good-binsec.toml pass-loop-good-binsec
+<details>
+<summary>Result</summary>
+```ShellSession
+binsec@container# gcc -g -m32 -static pass-loop-good-binsec.c -o pass-loop-good-binsec
+binsec@container# binsec -sse -checkct -sse-script pass-loop-binsec.cfg -checkct-stats-file pass-loop-good-binsec.toml pass-loop-good-binsec
 [sse:info] TTY: press [space] to switch between log and monitor modes.
 [sse:info] Empty path worklist: halting ...
 [sse:info] SMT queries
@@ -584,6 +609,8 @@ $ binsec -sse -checkct -sse-script pass-loop-bad-binsec.cfg -checkct-stats-file 
 [checkct:info] 9 visited paths covering 54 instructions
 [checkct:info] 21 / 21 control flow checks pass
 [checkct:info] 258 / 258 memory access checks pass
+```
+</details>
 
 ### [DifFuzz](https://github.com/isstac/diffuzz)
 
