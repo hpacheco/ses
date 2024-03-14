@@ -501,7 +501,7 @@ Using the same rationale, it is possible to use traditional fuzzers to support t
 ### [BinSec/Rel](https://github.com/binsec/rel)
 
 We have seen extensions of KLEE (a symbolic execution tool) that combine dynamic taint analysis to support the analysis of security properties, including general information flow and constant-time security.
-Nonetheless, symbolic execution by itself can be generalized to verify security properties, such as constant-time, that fall under the class of _relational properties_, that is, properties that can be expressed over multiple executions of the same program.
+Nonetheless, symbolic execution by itself can be generalized to verify security properties, such as constant-time, that fall under the class of _relational properties_, that is, properties that can be expressed over multiple executions of the same program. This multiplication of the symbolic state is often more expensive, but also more precise than performing symbolic taint analysis.
 
 [BinSec](https://binsec.github.io/) is a binary-level security analysis tool that employs symbolic execution among other techniques. [BinSec/Rel](https://github.com/binsec/rel) is a [plugin](https://github.com/binsec/binsec/blob/master/doc/sse/relse.md) that provides support checking for constant-time security using relational symbolic execution, that is, symbolically executing two executions of the same program such that their results must be the same for different secret symbolic inputs.
 
@@ -554,7 +554,7 @@ binsec@container# binsec -sse -checkct -sse-script pass-loop-binsec.cfg -checkct
 ```
 </details>
 
-Note that the [pass-loop-binsec.cfg](../c/misc/pass-loop-binsec.cfg) file includes a configuration which declares which symbolic variables are to be treated as secret or public inputs. In this example, BinSec will report that the program is insecure, and present symbolic inputs that testify that the program is not constant-time, i.e., different secret inputs may yield different public outputs.
+Note that the [pass-loop-binsec.cfg](../c/misc/pass-loop-binsec.cfg) file includes a configuration which declares global C variables to be treated as secret or public symbolic inputs. In this example, BinSec will report that the program is insecure, and present symbolic inputs that testify that the program is not constant-time, i.e., different secret inputs may yield different public outputs.
 The found counter-example will be detailed in file `pass-loop-bad-binsec.toml`, which will include sample instantiations for symbolic variables similar to the ones below:
 
 <details>
