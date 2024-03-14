@@ -510,6 +510,7 @@ Inside the [vm](../vm) folder, we can compile our program to a binary and run it
 
 <details>
 <summary>Result</summary>
+
 ```ShellSession
 $ make run-binsec
 binsec@container# cd /path/to/ses/c/misc/
@@ -558,6 +559,7 @@ The found counter-example will be detailed in file `pass-loop-bad-binsec.toml`, 
 
 <details>
 <summary>Result</summary>
+
 ```ShellSession
 n = ["0x00000009"]
 ["CT report"."Insecurity models".0x08049d2a.secret1]
@@ -573,6 +575,7 @@ Then try the constant-time program [pass-loop-good-binsec.c](../c/misc/pass-loop
 
 <details>
 <summary>Result</summary>
+
 ```ShellSession
 binsec@container# gcc -g -m32 -static pass-loop-good-binsec.c -o pass-loop-good-binsec
 binsec@container# binsec -sse -checkct -sse-script pass-loop-binsec.cfg -checkct-stats-file pass-loop-good-binsec.toml pass-loop-good-binsec
