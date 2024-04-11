@@ -621,7 +621,7 @@ Static program analysis is typically used to denote analysis methods that examin
 The scan-build utility is a static analysis tool provided by LLVM for detecting programming errors in C/C++ programs.
 
 Consider the [scpy7-bad.c](../c/SARD-testsuite-100/000/149/079/scpy7-bad.c) C program from before that has a buffer overflow vulnerability.
-Running `scan-build` on this example will generate a report that signals the call to `strcpy` as unsafe with a contextualization of the associated CWE; you can also graphically visualize the report. Note that this happens for **any** usage of `strcpy', even if there is no actual vulnerability.
+Running `scan-build` on this example will generate a report that signals the call to `strcpy` as unsafe with a contextualization of the associated CWE; you can also graphically visualize the report. Note that this happens for **any** usage of `strcpy`, even if there is no actual vulnerability.
 
 <details>
 <summary>Result</summary>
