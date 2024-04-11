@@ -13,6 +13,15 @@ One of the most modern and complete among such pedagogical web applications is t
 
 Another good resource with detailed information about each type of vulnerability, including how to manually test if your application is vulnerable, is the [OWASP Web Security Testing Guide](https://owasp.org/www-project-web-security-testing-guide/v41/).
 
+## Lab install
+
+To install the specific tools that will be used in this lab, run:
+```
+cd ses/vm
+git pull
+sh install-web.sh
+```
+
 ## Setting up the [OWASP Juice Shop](https://owasp.org/www-project-juice-shop/)
 
 In this lab we will be looking into solving a few Juice Shop challenges. You will find a lot of information in the Juice Shop [companion guide](https://pwning.owasp-juice.shop/). 
@@ -29,28 +38,6 @@ Inside the [vm](../vm) folder, you may just type:
 * `make run-docker-juiceshop` to build and run from a Docker container. An instance of Juice Shop will be readily listening at `http://localhost:3000`.
 * `make build-juiceshop` to build from sources.
 * `make run-juiceshop` to run from built sources. An instance of Juice Shop will be readily listening at `http://localhost:3000`.
-
-## Setting up [OWASP Mutillidae II](https://github.com/webpwnized/mutillidae) (Extra)
-
-**For this lab, we will only consider Juice Shop exercises.** Nevertheless, for students interested in a more extensive list of web vulnerabilities or learning more about a particular vulnerability, OWASP Mutillidae II is a good source. It is a vulnerable web site that contains a categorised listing of OWASP vulnerabilities and a series of example vulnerable pages per category. You may also easily find additional information such as tutorials. For simple demonstrations of various vulnerabilities, you may also check [Google firing range](https://public-firing-range.appspot.com/).
-
-<details>
-<summary>More details</summary>
-
-To install Mutillidae II, cd into the [vm](../vm) folder and run the following commands:
-```ShellSession
-git pull
-sh install-mutillidae.sh
-make start-mutillidae
-```
-You can try it out at <http://localhost/mutillidae/>.
-In the first run, you will need to setup the DB; check [this link](https://miloserdov.org/?p=87) for further information.
-You may also need to set a root mysql password; check [this link](https://miloserdov.org/?p=5873).
-
-*Another important difference is that Juice Shop relies intensively on JavaScript for both client and server code, while Mutillidae II is mostly implemented in PHP.
-Note that, in general, most security analysis tools and techniques perform better on static PHP code when compared to dynamic JavaScript content, due to its more predictable static structure.
-Therefore, it may prove slightly more challenging for the tools (and ourselves) to identify some vulnerabilities in Juice Shop when compared to similar vulnerabilities in Mutillidae II.*
-</details>
 
 ## Threat Modelling
 
@@ -275,7 +262,6 @@ Even better, you may search for vulnerabilities using a SAST vulnerability scann
 
 This won't be necessary for the **Score Board** challenge, but keep the following pre-generated scans over Juice Shop as a reference for future tasks:
 * [SonarCloud](https://sonarcloud.io/project/overview?id=hpacheco_juice-shop)
-* [LGTM](https://lgtm.com/projects/g/juice-shop/juice-shop/?mode=list)
 
 To scan your own code with these scanners, it is arguably more convenient to upload your code to a public git repository and run it through the online scanners. You may also fork the [juice-shop](https://github.com/juice-shop) git repository in order to test and analyse fixes to the `master` branch. Alternatively, you may try [GitLab](https://docs.gitlab.com/ee/user/application_security/secure_your_application.html), that offers free SAST support and paid DAST and API fuzzing services, or download the offline versions of [SonarQube](https://www.sonarqube.org/downloads/), [CodeQL](https://codeql.github.com/docs/codeql-for-visual-studio-code/analyzing-your-projects/) or [SemGrep](https://semgrep.dev/getting-started) and run them locally. You may also try [Coverity](https://scan.coverity.com/) online (login needed).
 
