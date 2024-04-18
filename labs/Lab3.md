@@ -402,7 +402,7 @@ if you inspect the logs, you will notice that some tools perform static taint an
 
 SQLMap is an open source penetration testing tool that automates the process of detecting and exploiting SQL injection flaws and taking over of database servers. Try running SQLMap over our login page as follows:
 ```Shell
-sqlmap -u 'http://localhost:3000/rest/user/login' --data=email=*&password=*" --level 5 --risk 3 -f --banner --ignore-code 401 --dbms='sqlite'
+sqlmap -u 'http://localhost:3000/rest/user/login' --data="email=*&password=*" --level 5 --risk 3 -f --banner --ignore-code 401 --dbms='sqlite'
 ```
 The `--data` options tells SQLMap to send a POST request; `*` is treated as a wildcard standing for any string that SQLMap will try to fill. SQLMap shall find a vulnerable input similar to our previous successful exploit.
 
