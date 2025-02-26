@@ -1623,12 +1623,12 @@ This time, infer will report no taint error. You may note that the C implementat
 There are several security vulnerability scanners that can automatically analyse a codebase for known vulnerabilities.
 The main advantage of these tools is that they tend to support various programming languages, require low setup and can be typically integrated into the software development process using continuous integration to periodically check for vulnerabilities.
 
-Although many of these scanners are full-fledged commercial solutions, we list a few that have free-to-use versions. The easiest way to try these tools is to set up a public repository and scan it online. For convenience, you may check the pre-computed analysis results for this repository:
+Although many of these scanners are full-fledged commercial solutions, we list a few that have free-to-use versions. The easiest way to try these tools is to set up a public repository and scan it online:
 * [Flawfinder](https://dwheeler.com/flawfinder/): for C/C++; needs to be run locally for your project;
 * [Coverity](https://scan.coverity.com/): requires login to view results, you need to set it up for your repository;
 * [GitHub Code Scanning](https://github.com/hpacheco/ses/security/code-scanning): public web interface for [CodeQL](https://codeql.github.com/) that offers automated code scanning for security vulnerabilities; formerly known as [LGTM](https://lgtm.com);
 * [GitLab](https://docs.gitlab.com/ee/user/application_security/secure_your_application.html): integrated static analysis of source code;
-* [SonarCloud](https://sonarcloud.io/summary/overall?id=hpacheco_ses): public web interface for [SonarQube](https://www.sonarqube.org/) analysis results;
+* [SonarCloud](https://sonarcloud.io/): public web interface for [SonarQube](https://www.sonarqube.org/) analysis results;
 * [Snyk Code Checker](https://snyk.io/code-checker/): a free version of the commercial [Snyk Code](https://snyk.io/product/snyk-code/);
 * [SemGrep](https://semgrep.dev/): a lightweight rule-based static analyser.
 
