@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 ```
 
 This program has a memory leak, since the buffer `buff` is not freed after before the variable is reassigned.
-Although this vulnerability does not affect the behavior of the program, it may clause a program to crash or run too slow due to excessive memory consumption. Valgrind will detect this leak:
+Although this vulnerability does not affect the behavior of the program, it may cause a program to crash or run too slow due to excessive memory consumption. Valgrind will detect this leak:
 
 <details>
 <summary>Result</summary>
