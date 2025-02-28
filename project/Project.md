@@ -60,7 +60,9 @@ As a starting point for exploring existing open-source projects, you may conside
 * [CryptPad](https://github.com/xwiki-labs/cryptpad)
 * [HedgeDoc](https://github.com/hedgedoc/hedgedoc)
 
-It is likely that none of the above will directly meet the requirements above. You may also build upon them to include new features involving encryption, access control, authentication, OAuth-based authorization, document sharing, or any other that you find interesting.
+Note that many of these systems are often more concerned with how to reconcile conflicting edits from multiple users at real-time. The way conflicts are prevented or resolved, including versioning, are not a concern for this project.
+
+It is also likely that none of the above will directly meet the requirements above. You may build upon them to include new features involving encryption, access control, authentication, OAuth-based authorization, document sharing, or any other that you find interesting.
 
 ## Analysis
 
