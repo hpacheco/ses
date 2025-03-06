@@ -12,7 +12,7 @@ The collaborative document editing platform shall be developed in the form of a 
 * **client**: a web page frontend that allows designated company employers to create, manage and configure courses, so that other company employers and/or the general public can consult and navigate its content.
 * **server**: a backend with REST endpoints that is called by the client web page. Advanced users may also directly call the REST endpoints.
 
-Quoting a recent document (February 2024, before 👨...) issued by the *US White House* on [A Path Toward Secure and
+Quoting a recent document (February 2024, before 👨) issued by the *US White House* on [A Path Toward Secure and
 Measurable Software](https://www.whitehouse.gov/wp-content/uploads/2024/02/Final-ONCD-Technical-Report.pdf), _"there are three fundamental dimensions to the risk software poses to the cybersecurity of an organization: the developer process, the software analysis and testing, and the execution environment"_ and _"reframing the discussion on cybersecurity from a reactive to a proactive approach enables a shift in focus from the front-line defenders to the wide range of individuals that have an important part to play in securing the digital ecosystem"_. The focus of our project is precisely to enable a proactive secure software development approach, focusing on the 3 main axes: design, analysis and implementation.
 
 ## Requirements
