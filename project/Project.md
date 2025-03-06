@@ -32,7 +32,7 @@ You shall design and build your collaborative document editing platform accordin
     * Note, however, that concrete authentication, communication or encryption methods are **not** a primary focus of this project. In particular, the details of the underlying protocols are not essential for evaluating the security of your proposed solution.
 - 3. **Access control**:
     * The system must support some form of *Role-Based Access Control*, such as considering owner, editor and viewer roles. Only users with the owner role should be able to configure document permissions or delete the document.
-    * The system shall support granular permissions. Users ny restrict access to whole documents or to certain sections or paragraphs of the document. 
+    * The system shall support granular permissions. Users may restrict access to whole documents or to certain sections or paragraphs of the document. 
 
 You are **not** required to provide more advanced functionality, but if you wish to do so remember to clearly consider and document its security requirements. If you choose to adapt an existing framework, and it is not directly possible to match the outlined requirements, remember to discuss that in your final report.
 
