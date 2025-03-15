@@ -60,6 +60,7 @@ As a starting point for exploring existing open-source projects, you may conside
 * [CryptPad](https://github.com/xwiki-labs/cryptpad)
 * [HedgeDoc](https://github.com/hedgedoc/hedgedoc)
 * [MUTE](https://github.com/coast-team/mute)
+* [PeerPad](https://github.com/peer-base/peer-pad)
 
 Note that many of these systems are often more concerned with how to reconcile conflicting edits from multiple users at real-time. The way conflicts are prevented or resolved, including versioning, are not a concern for this project.
 
