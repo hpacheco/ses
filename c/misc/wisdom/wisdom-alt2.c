@@ -59,7 +59,7 @@ void put_wisdom(void) {
     return;
   }
  
-  r = (int)gets(wis); 
+  r = (int)fgets(wis,DATA_SIZE,stdin); 
   if (r == 0)
     return;
 
