@@ -14,8 +14,8 @@ while (not win and iter < max):
   fuzzer = subprocess.Popen(["blab", "-s",str(seed),"-e","(\"w\"|\"s\"|\"a\"|\"d\")*"],stdout=subprocess.PIPE)
   inp, err = fuzzer.communicate()
   print ("trying %s" % inp)
-  fuzzee = subprocess.Popen([sys.argv[1],inp],stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-  out, err = fuzzee.communicate()
+  fuzzee = subprocess.Popen([sys.argv[1]],stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+  out, err = fuzzee.communicate(input=inp)
   print ("trying %s" % out)
   win = out.find(b"You win") >= 0
   seed = seed + 1
