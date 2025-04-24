@@ -30,6 +30,7 @@ Solving a challenge requires a basic understanding of an exploitation technique 
 Interesting for us, many Juice Shop challenges also feature:
 * a [mitigation link](https://owasp.org/www-project-juice-shop/) with pointers to the [OWASP cheat sheet](https://cheatsheetseries.owasp.org/) related to the vulnerability;
 * a [coding challenge](https://pwning.owasp-juice.shop/part1/challenges.html) that will open a dialog containing the actual code snippet responsible for the security vulnerability behind the challenge and ask the challenger to understand the code and suggest the best fix.
+* a [challenges.yml](https://github.com/juice-shop/juice-shop/blob/master/data/static/challenges.yml) file with some information about each challenge.
 
 There are various options to deploy an instance of Juice Shop, all listed in the GitHub [page](https://github.com/juice-shop).
 For a quick start, you may create a [Docker container](https://github.com/juice-shop/juice-shop#docker-container). However, for some tasks (and maximum vulnerability!) you will need to install [from sources](https://github.com/juice-shop/juice-shop#from-sources).
